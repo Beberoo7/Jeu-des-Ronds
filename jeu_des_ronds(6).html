@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Jeu des Ronds</title>
+<style>
+600;700&family=Zen+Dots&display=swap');
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;font-family:'Rajdhani',Arial,sans-serif;color:#f7f8ff;
+ background:
+ radial-gradient(circle at 15% 20%,#5b2cff44 0 13%,transparent 28%),
+ radial-gradient(circle at 85% 75%,#00c8ff33 0 12%,transparent 30%),
+ linear-gradient(135deg,#090b18,#11162b 50%,#090b18);
+ overflow-x:hidden
+}
+body:before{
+ content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;
+ background-image:linear-gradient(#ffffff0b 1px,transparent 1px),linear-gradient(90deg,#ffffff0b 1px,transparent 1px);
+ background-size:28px 28px
+}
+.app{width:min(760px,94vw);margin:auto;padding:32px 0 45px;text-align:center}
+.logo{
+ font-family:'Zen Dots',sans-serif;font-size:clamp(30px,7vw,52px);letter-spacing:2px;
+ text-shadow:0 0 18px #8e65ff99;margin:0
+}
+.subtitle{margin:8px 0 22px;color:#d4d9ee;font-size:19px;font-weight:600}
+.creator{display:inline-block;color:#d9d4ff;font-size:15px;margin-bottom:18px;padding:5px 13px;border:1px solid #ffffff22;border-radius:999px;background:#ffffff0b}
+.panel{
+ background:#10162af2;border:1px solid #ffffff1c;border-radius:26px;padding:22px;
+ box-shadow:0 18px 60px #0008,0 0 35px #5d42ff18;backdrop-filter:blur(8px)
+}
+.status{font-size:24px;font-weight:700;margin-bottom:14px}
+.red{color:#ff5368;text-shadow:0 0 12px #ff304866}
+.blue{color:#54a8ff;text-shadow:0 0 12px #308cff66}
+.info{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.badge{background:#ffffff0b;border:1px solid #ffffff16;padding:8px 14px;border-radius:999px;color:#dce3ff}
+.board{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ grid-template-rows:repeat(4,1fr);
+ gap:9px;
+ width:100%;
+ max-width:520px;
+ height:520px;
+ margin:0 auto;
+ padding:10px;
+ border-radius:20px;
+ background:#080b18;
+ border:1px solid #ffffff18;
+ box-shadow:inset 0 0 35px #0008
+}
+.cell{
+ width:100%;
+ height:100%;
+ min-width:0;
+ min-height:0;
+ background:linear-gradient(145deg,#171e38,#0c1123);
+ border:2px solid #273151;
+ border-radius:14px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ cursor:pointer;
+ transition:.15s;
+ position:relative;
+ -webkit-tap-highlight-color:transparent
+}
+.cell:hover{transform:translateY(-2px);border-color:#7564ff;background:#1b2342;box-shadow:0 0 18px #725cff44}
+.dot{width:49%;height:49%;border-radius:50%;position:relative;box-shadow:inset -5px -6px 8px #0005,0 0 18px currentColor}
+.dot:after{content:"";position:absolute;width:24%;height:24%;top:16%;left:20%;border-radius:50%;background:#fff8}
+.redDot{background:#ff4059;color:#ff4059}.blueDot{background:#3d91ff;color:#3d91ff}
+.controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:17px 0 9px}
+button{
+ border:1px solid #ffffff1c;border-radius:13px;padding:11px 18px;font-weight:700;font-size:17px;
+ cursor:pointer;font-family:inherit;transition:.15s
+}
+.primary{background:linear-gradient(135deg,#6f4cff,#9a5cff);color:#fff;box-shadow:0 0 18px #704cff44}
+.primary:hover{transform:translateY(-2px);box-shadow:0 0 25px #704cff77}
+.secondary{background:#ffffff0c;color:#e8ecff}.secondary:hover{background:#ffffff16}
+.warning{color:#ff7180;font-weight:700;min-height:25px}
+.result{font-size:25px;font-weight:700;margin:13px 0;color:#fff}
+.choice{font-size:18px;color:#bdc7e5;margin-top:12px}
+.rules{text-align:left;background:#ffffff06;border:1px solid #ffffff12;border-radius:17px;padding:16px;margin-top:18px;line-height:1.55;color:#cbd4ef}
+.mode{display:inline-flex;align-items:center;gap:8px;margin-top:12px;color:#dce3ff;font-weight:600}
+.mode input{accent-color:#835cff;transform:scale(1.15)}
+.footer{margin-top:17px;color:#7f8aaa;font-size:13px}
+@media(max-width:600px){
+ body{overflow-x:hidden}
+ .app{width:100%;padding:18px 10px 30px}
+ .panel{padding:12px;border-radius:20px}
+ .board{
+   width:100%;
+   max-width:none;
+   height:calc(100vw - 44px);
+   max-height:calc(100vh - 250px);
+   min-height:280px;
+   gap:6px;
+   padding:6px
+ }
+ .cell{width:100%;height:100%;border-radius:9px}
+ .logo{font-size:28px;letter-spacing:1px}
+ .subtitle{font-size:17px}
+ button{padding:10px 13px;font-size:16px}
+ .dot{width:45%;height:45%}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<h1 class="logo">⭕ JEU DES RONDS</h1>
+<p class="subtitle">Je me fais tout seul, je profite tout seul.</p>
+<div class="creator">Créé par <b>André Orine Beberoo</b></div>
+<div class="panel">
+<div class="status" id="status"></div>
+<div class="info">
+<div class="badge">🔴 <span id="redCount">0</span></div>
+<div class="badge">Ronds sélectionnés : <span id="selectedCount">0</span>/4</div>
+<div class="badge">🔵 <span id="blueCount">0</span></div>
+</div>
+
+<div class="board" id="board"></div>
+<div class="warning" id="warning"></div>
+
+<div class="choice">
+Choisis directement <b>1 à 4 cases</b>, puis appuie sur « J'ai fini ».
+</div>
+<div class="controls">
+<button class="primary" id="finish">J'ai fini</button>
+<button class="secondary" id="undo">Effacer ma sélection</button>
+<button class="secondary" id="reset">Nouvelle partie</button>
+</div>
+
+<div class="result" id="result"></div>
+<label><input type="checkbox" id="hard"> Mode difficile</label>
+
+<div class="rules">
+<b>Règles :</b><br>
+• À ton tour, clique sur 1 à 4 cases pour placer tes ronds.<br>
+• Les cases sélectionnées doivent former une ligne horizontale ou verticale continue.<br>
+• Une sélection en diagonale est <b>refusée immédiatement</b> : le point ne se met pas.<br>
+• Tu ne peux pas traverser une ligne de points déjà existante, mais tu peux la compléter ou la prolonger.<br>
+• Quand il ne reste qu’une seule case vide, le joueur qui doit la jouer perd immédiatement : le dernier rond ne peut pas être joué.<br>
+• En mode difficile, le nombre de ronds joué doit être différent de celui du tour précédent.
+</div>
+</div>
+</div>
+
+<script>
+const boardEl=document.getElementById("board"), statusEl=document.getElementById("status");
+const warningEl=document.getElementById("warning"), resultEl=document.getElementById("result");
+const selectedCountEl=document.getElementById("selectedCount"), redCountEl=document.getElementById("redCount"), blueCountEl=document.getElementById("blueCount");
+
+let board,player,selected,lastAmount,gameOver;
+
+function reset(){
+ board=Array(16).fill(null);
+ player=Math.random()<0.5?"red":"blue";
+ selected=[]; lastAmount=null; gameOver=false;
+ resultEl.textContent="";
+ warningEl.textContent="";
+ render();
+}
+function render(){
+ // If there is only one empty square, the player whose turn it is would
+ // necessarily have to place the final round and therefore loses immediately.
+ const emptyCount=board.filter(x=>x===null).length;
+ if(!gameOver && emptyCount===1){
+   gameOver=true;
+   resultEl.textContent=`${player==="red"?"🔴 Rouge":"🔵 Bleu"} doit jouer le dernier rond : ${player==="red"?"Rouge":"Bleu"} perd !`;
+   selected=[];
+ }
+ boardEl.innerHTML="";
+ board.forEach((v,i)=>{
+  const c=document.createElement("div");
+  c.className="cell";
+  if(v==="red") c.innerHTML='<div class="dot redDot"></div>';
+  if(v==="blue") c.innerHTML='<div class="dot blueDot"></div>';
+  if(selected.includes(i)) c.innerHTML='<div class="dot '+player+'Dot"></div>';
+  c.onclick=()=>toggle(i);
+  boardEl.appendChild(c);
+ });
+ statusEl.innerHTML=gameOver?"Partie terminée":`Tour : <span class="${player}">${player==="red"?"🔴 Rouge":"🔵 Bleu"}</span>`;
+ selectedCountEl.textContent=selected.length;
+ redCountEl.textContent=board.filter(x=>x==="red").length;
+ blueCountEl.textContent=board.filter(x=>x==="blue").length;
+}
+function toggle(i){
+ if(gameOver||board[i]) return;
+ const pos=selected.indexOf(i);
+ if(pos>=0){selected.splice(pos,1);warningEl.textContent="";render();return}
+ if(selected.length>=4){warningEl.textContent="Tu ne peux pas sélectionner plus de 4 ronds.";return}
+ const test=[...selected,i];
+ if(test.length>=2){
+   const rows=test.map(x=>Math.floor(x/4)), cols=test.map(x=>x%4);
+   const sameRow=rows.every(r=>r===rows[0]);
+   const sameCol=cols.every(c=>c===cols[0]);
+   if(!sameRow&&!sameCol){
+     warningEl.textContent="❌ Diagonale interdite : ce rond n'est pas placé.";
+     return;
+   }
+   if(sameRow){
+     const min=Math.min(...cols),max=Math.max(...cols);
+     if(max-min+1!==test.length){warningEl.textContent="Les ronds doivent se suivre.";return}
+   }else{
+     const min=Math.min(...rows),max=Math.max(...rows);
+     if(max-min+1!==test.length){warningEl.textContent="Les ronds doivent se suivre.";return}
+   }
+ }
+ selected.push(i);warningEl.textContent="";render();
+}
+function blockedByExistingLine(){
+ if(selected.length<2) return false;
+
+ const rows=selected.map(x=>Math.floor(x/4));
+ const cols=selected.map(x=>x%4);
+ const horizontal=rows.every(r=>r===rows[0]);
+ const vertical=cols.every(c=>c===cols[0]);
+
+ // The selected cells form one continuous horizontal or vertical segment.
+ // We only forbid CROSSING an already occupied perpendicular line.
+ // Extending or completing an existing line is allowed.
+ const occupied = i => board[i] !== null && !selected.includes(i);
+
+ if(horizontal){
+   const r=rows[0];
+   const minC=Math.min(...cols), maxC=Math.max(...cols);
+
+   // A horizontal move crosses a vertical line when, at some selected
+   // column, there is an occupied cell immediately above AND below.
+   for(let c=minC;c<=maxC;c++){
+     const i=r*4+c;
+     if(occupied(i)){
+       // This should normally be impossible because occupied cells cannot be selected.
+       return true;
+     }
+     const up=r>0 ? (r-1)*4+c : -1;
+     const down=r<3 ? (r+1)*4+c : -1;
+     if(up>=0 && down>=0 && occupied(up) && occupied(down)) return true;
+   }
+ }else if(vertical){
+   const c=cols[0];
+   const minR=Math.min(...rows), maxR=Math.max(...rows);
+
+   // A vertical move crosses a horizontal line when, at some selected
+   // row, there is an occupied cell immediately to the left AND right.
+   for(let r=minR;r<=maxR;r++){
+     const i=r*4+c;
+     if(occupied(i)){
+       return true;
+     }
+     const left=c>0 ? r*4+c-1 : -1;
+     const right=c<3 ? r*4+c+1 : -1;
+     if(left>=0 && right>=0 && occupied(left) && occupied(right)) return true;
+   }
+ }
+ return false;
+}
+function finish(){
+ if(gameOver)return;
+ if(selected.length<1){warningEl.textContent="Choisis au moins 1 rond.";return}
+ if(document.getElementById("hard").checked && lastAmount===selected.length){
+   warningEl.textContent="❌ En mode difficile, tu dois jouer un nombre différent du tour précédent.";
+   return;
+ }
+ if(blockedByExistingLine()){
+   warningEl.textContent="❌ Ce coup coupe une ligne déjà existante.";
+   return;
+ }
+ const n=selected.length;
+ selected.forEach(i=>board[i]=player);
+ lastAmount=n;
+ if(board.every(Boolean)){
+   gameOver=true;
+   resultEl.textContent=`${player==="red"?"🔴 Rouge":"🔵 Bleu"} a joué le dernier rond : ${player==="red"?"Rouge":"Bleu"} perd !`;
+   selected=[];
+ }else{
+   player=player==="red"?"blue":"red";
+   selected=[];
+ }
+ warningEl.textContent="";render();
+}
+document.getElementById("finish").onclick=finish;
+document.getElementById("undo").onclick=()=>{selected=[];warningEl.textContent="";render()};
+document.getElementById("reset").onclick=reset;
+reset();
+</script>
+</body>
+</html>
