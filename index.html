@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Jeu des Ronds</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Zen+Dots&display=swap');
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;font-family:'Rajdhani',Arial,sans-serif;color:#f7f8ff;
+ background:
+ radial-gradient(circle at 15% 20%,#5b2cff44 0 13%,transparent 28%),
+ radial-gradient(circle at 85% 75%,#00c8ff33 0 12%,transparent 30%),
+ linear-gradient(135deg,#090b18,#11162b 50%,#090b18);
+ overflow-x:hidden
+}
+body:before{
+ content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;
+ background-image:linear-gradient(#ffffff0b 1px,transparent 1px),linear-gradient(90deg,#ffffff0b 1px,transparent 1px);
+ background-size:28px 28px
+}
+.app{width:min(760px,94vw);margin:auto;padding:32px 0 45px;text-align:center}
+.logo{
+ font-family:'Zen Dots',sans-serif;font-size:clamp(30px,7vw,52px);letter-spacing:2px;
+ text-shadow:0 0 18px #8e65ff99;margin:0
+}
+.subtitle{margin:8px 0 22px;color:#d4d9ee;font-size:19px;font-weight:600}
+.creator{display:inline-block;color:#d9d4ff;font-size:15px;margin-bottom:18px;padding:5px 13px;border:1px solid #ffffff22;border-radius:999px;background:#ffffff0b}
+.modebar{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:0 auto 14px}
+.mode{background:#ffffff0b;color:#dce3ff;border:1px solid #ffffff18;border-radius:12px;padding:10px 13px;font-weight:800;cursor:pointer}
+.mode.active{background:linear-gradient(135deg,#6f4cff,#9a5cff);color:white}
+.difficulty{display:none;max-width:520px;margin:0 auto 15px;text-align:left;background:#ffffff08;border:1px solid #ffffff14;border-radius:14px;padding:12px}
+.difficulty.show{display:block}.difficulty label{display:block;font-weight:800;margin-bottom:7px}
+.difficulty select{width:100%;padding:9px;border-radius:99px;background:#0b1020;color:white;border:1px solid #ffffff22}.hardnote{margin-top:9px;color:#bfc9e7;font-size:14px;line-height:1.4}.hardstats{margin-top:9px;padding:8px 10px;border-radius:10px;background:#ffffff08;border:1px solid #ffffff12;color:#dfe6ff;font-size:14px;text-align:center}
+.panel{
+ background:#10162af2;border:1px solid #ffffff1c;border-radius:26px;padding:22px;
+ box-shadow:0 18px 60px #0008,0 0 35px #5d42ff18;backdrop-filter:blur(8px)
+}
+.status{font-size:24px;font-weight:700;margin-bottom:14px}
+.red{color:#ff5368;text-shadow:0 0 12px #ff304866}
+.blue{color:#54a8ff;text-shadow:0 0 12px #308cff66}
+.info{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.badge{background:#ffffff0b;border:1px solid #ffffff16;padding:8px 14px;border-radius:999px;color:#dce3ff}
+.board{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ grid-template-rows:repeat(4,1fr);
+ gap:9px;
+ width:100%;
+ max-width:520px;
+ height:520px;
+ margin:0 auto;
+ padding:10px;
+ border-radius:20px;
+ background:#080b18;
+ border:1px solid #ffffff18;
+ box-shadow:inset 0 0 35px #0008
+}
+.cell{
+ width:100%;
+ height:100%;
+ min-width:0;
+ min-height:0;
+ background:linear-gradient(145deg,#171e38,#0c1123);
+ border:2px solid #273151;
+ border-radius:14px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ cursor:pointer;
+ transition:.15s;
+ position:relative;
+ -webkit-tap-highlight-color:transparent
+}
+.cell:hover{transform:translateY(-2px);border-color:#7564ff;background:#1b2342;box-shadow:0 0 18px #725cff44}
+.dot{width:49%;height:49%;border-radius:50%;position:relative;box-shadow:inset -5px -6px 8px #0005,0 0 18px currentColor}
+.dot:after{content:"";position:absolute;width:24%;height:24%;top:16%;left:20%;border-radius:50%;background:#fff8}
+.redDot{background:#ff4059;color:#ff4059}.blueDot{background:#3d91ff;color:#3d91ff}
+.controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:17px 0 9px}
+button{
+ border:1px solid #ffffff1c;border-radius:13px;padding:11px 18px;font-weight:700;font-size:17px;
+ cursor:pointer;font-family:inherit;transition:.15s
+}
+button:disabled{opacity:0.4;cursor:not-allowed;transform:none !important;box-shadow:none !important}
+.primary{background:linear-gradient(135deg,#6f4cff,#9a5cff);color:#fff;box-shadow:0 0 18px #704cff44}
+.primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 0 25px #704cff77}
+.secondary{background:#ffffff0c;color:#e8ecff}.secondary:hover:not(:disabled){background:#ffffff16}
+.warning{color:#ff7180;font-weight:700;min-height:25px}
+.result{font-size:25px;font-weight:700;margin:13px 0;color:#fff}
+.choice{font-size:18px;color:#bdc7e5;margin-top:12px}
+.rules{text-align:left;background:#ffffff06;border:1px solid #ffffff12;border-radius:17px;padding:16px;margin-top:18px;line-height:1.55;color:#cbd4ef}
+.footer{margin-top:17px;color:#7f8aaa;font-size:13px}
+@media(max-width:600px){
+ body{overflow-x:hidden}
+ .app{width:100%;padding:18px 10px 30px}
+ .panel{padding:12px;border-radius:20px}
+ .board{
+   width:100%;
+   max-width:none;
+   height:calc(100vw - 44px);
+   max-height:calc(100vh - 250px);
+   min-height:280px;
+   gap:6px;
+   padding:6px
+ }
+ .cell{width:100%;height:100%;border-radius:9px}
+ .logo{font-size:28px;letter-spacing:1px}
+ .subtitle{font-size:17px}
+ button{padding:10px 13px;font-size:16px}
+ .dot{width:45%;height:45%}
+}
+
+/* ===== SKINS ===== */
+.skin-toggle{
+ position:fixed;right:18px;top:18px;z-index:20;width:48px;height:48px;border-radius:14px;
+ display:flex;align-items:center;justify-content:center;background:#ffffff12;border:1px solid #ffffff20;
+ box-shadow:0 8px 25px #0005;cursor:pointer;font-size:22px;transition:.18s;backdrop-filter:blur(8px)
+}
+.skin-toggle:hover{transform:translateY(-2px) scale(1.03)}
+
+/* Panneau de skins déroulant */
+.skin-panel{
+ position:fixed;right:18px;top:74px;z-index:19;width:260px;
+ max-height:calc(100vh - 90px);
+ overflow-y:auto;
+ padding:10px;display:none;
+ background:#10162af5;border:1px solid #ffffff20;border-radius:17px;box-shadow:0 18px 50px #0008;backdrop-filter:blur(12px);
+ -webkit-overflow-scrolling:touch;
+}
+.skin-panel.show{display:block}
+.skin-title{position:sticky;top:0;z-index:2;background:#10162af5;font-size:14px;font-weight:800;color:#aeb9d8;padding:4px 8px 8px;text-transform:uppercase;letter-spacing:1px}
+.skin-option{
+ width:100%;display:flex;align-items:center;gap:10px;text-align:left;margin:5px 0;padding:9px;
+ border:1px solid transparent;border-radius:12px;background:#ffffff07;color:#eaf0ff;cursor:pointer
+}
+.skin-option:hover{background:#ffffff12}
+.skin-option.active{border-color:#795cff;background:#795cff18}
+.skin-option small{display:block;color:#8f9ab9;font-size:12px;margin-top:2px}
+.skin-preview{width:42px;height:42px;border-radius:9px;display:block;flex:none;border:1px solid #ffffff25;position:relative}
+.arcade-preview{background:linear-gradient(135deg,#090b18,#171e38);box-shadow:inset 0 0 12px #0008}
+.paper-preview{background:#f7f1df}
+.paper-preview:after{content:"";position:absolute;width:14px;height:14px;border-radius:50%;left:13px;top:13px;border:2px solid #24211d;box-shadow:7px 5px 0 -4px #f7f1df}
+.competition-preview{background:linear-gradient(145deg,#8a6b49,#c19b6a);box-shadow:inset 0 0 12px #503820}
+
+/* PAPER */
+body.skin-paper{color:#292722;background:#f5efdf;background-image:radial-gradient(#7a654220 1px,transparent 1px);background-size:13px 13px;}
+body.skin-paper:before{opacity:.12;background-image:linear-gradient(#5d4b3610 1px,transparent 1px),linear-gradient(90deg,#5d4b3610 1px,transparent 1px);background-size:24px 24px}
+body.skin-paper .skin-toggle{background:#fffaf0;border-color:#b7aa8e;color:#443d32;box-shadow:0 5px 18px #67553a22}
+body.skin-paper .skin-panel{background:#fbf7ea;border-color:#c9bda2;box-shadow:0 15px 40px #55462c25}
+body.skin-paper .skin-title{background:#fbf7ea;color:#766a55}
+body.skin-paper .skin-option{color:#342f28;background:#00000003}
+body.skin-paper .skin-option:hover{background:#00000007}
+body.skin-paper .skin-option.active{border-color:#6e6250;background:#6e62500e}
+body.skin-paper .skin-option small{color:#827763}
+body.skin-paper .app .logo{font-family:Georgia,serif;color:#28251f;text-shadow:none;letter-spacing:1px}
+body.skin-paper .subtitle,body.skin-paper .creator{color:#615849}
+body.skin-paper .creator{border-color:#c8bca5;background:#ffffff50}
+body.skin-paper .mode{background:#fffaf0;color:#3b352c;border-color:#c8bca5}
+body.skin-paper .mode.active{background:#e8dfcb;color:#29251f;box-shadow:none}
+body.skin-paper .panel{background:#fffaf0dd;border:1px solid #c8bca5;box-shadow:0 12px 35px #65543a20;backdrop-filter:none}
+body.skin-paper .status,body.skin-paper .result{color:#29251f;text-shadow:none}
+body.skin-paper .badge{background:#fffdf6;border-color:#d3c8b1;color:#544b3d}
+body.skin-paper .board{background:#e9dfc9;border-color:#b8aa90;box-shadow:inset 0 0 20px #78664a20}
+body.skin-paper .cell{background:#f8f2e5;border-color:#c7bba3;box-shadow:none}
+body.skin-paper .cell:hover{transform:none;border-color:#8d806a;background:#fffaf0;box-shadow:0 0 8px #796a5122}
+body.skin-paper .dot{box-shadow:none;width:47%;height:47%}
+body.skin-paper .redDot{background:transparent;border:3px solid #a63d35;color:#a63d35}
+body.skin-paper .blueDot{background:transparent;border:3px solid #315d8c;color:#315d8c}
+body.skin-paper .dot:after{display:none}
+body.skin-paper button{font-family:Georgia,serif}
+body.skin-paper .primary{background:#4e4940;color:#fffaf0;box-shadow:none}
+body.skin-paper .secondary{background:#fffaf0;color:#40392f;border-color:#c8bca5}
+body.skin-paper .rules{background:#fffaf0;border-color:#d0c4ad;color:#5c5141}
+body.skin-paper .warning{color:#9a3f38}
+body.skin-paper .red{color:#a63d35;text-shadow:none}
+body.skin-paper .blue{color:#315d8c;text-shadow:none}
+
+/* COMPETITION */
+body.skin-competition{color:#eee8dc;background:#211c16;background-image:linear-gradient(90deg,#00000012 50%,transparent 50%),linear-gradient(#0000000d 50%,transparent 50%);background-size:7px 7px,11px 11px;}
+body.skin-competition:before{opacity:.08;background-image:linear-gradient(#e9d5b311 1px,transparent 1px),linear-gradient(90deg,#e9d5b311 1px,transparent 1px);background-size:35px 35px}
+body.skin-competition .skin-toggle{background:#30271e;border-color:#66533e}
+body.skin-competition .skin-panel{background:#29221aee;border-color:#66533e}
+body.skin-competition .skin-title{background:#29221aee;color:#bba98e}
+body.skin-competition .skin-option{background:#ffffff05;color:#e8dfd0}
+body.skin-competition .skin-option:hover{background:#ffffff0c}
+body.skin-competition .skin-option.active{border-color:#a58b68;background:#a58b6815}
+body.skin-competition .skin-option small{color:#988973}
+body.skin-competition .app .logo{font-family:Georgia,serif;font-size:clamp(28px,6vw,46px);letter-spacing:3px;text-shadow:0 2px 8px #0008}
+body.skin-competition .subtitle{color:#bdb09c}
+body.skin-competition .creator{color:#bdb09c;border-color:#66533e;background:#00000015}
+body.skin-competition .mode{background:#2d251d;color:#d8cbb8;border-color:#66533e}
+body.skin-competition .mode.active{background:#6f5b43;color:#fff;box-shadow:none}
+body.skin-competition .panel{background:#29221de8;border-color:#66533e;box-shadow:0 20px 50px #0009}
+body.skin-competition .badge{background:#211b15;border-color:#5c4b39;color:#c7baa7}
+body.skin-competition .board{background:#17130f;border-color:#786249;box-shadow:inset 0 0 30px #000}
+body.skin-competition .cell{background:linear-gradient(145deg,#352a20,#251d16);border-color:#5d4a37}
+body.skin-competition .cell:hover{transform:none;border-color:#a58b68;background:#3b2e22;box-shadow:none}
+body.skin-competition .dot{box-shadow:inset -4px -5px 8px #0007,0 2px 8px #0008}
+body.skin-competition .primary{background:#79634a;color:#fff;box-shadow:none}
+body.skin-competition .secondary{background:#2d251d;color:#ded2c0;border-color:#66533e}
+body.skin-competition .rules{background:#211b15;border-color:#5c4b39;color:#c6b9a6}
+body.skin-competition .warning{color:#d78b7e}
+body.skin-competition .red{color:#d56a61;text-shadow:none}
+body.skin-competition .blue{color:#77a7d4;text-shadow:none}
+
+/* SKINS DEBLOCABLES */
+.skin-option.locked{filter:grayscale(0.8);opacity:.6}
+.skin-option.locked:hover{background:#ffffff12}
+.skin-option.locked small{color:#77819f}
+.skin-option .lock{margin-left:auto;font-size:15px;opacity:.9}
+
+.gold-preview{background:linear-gradient(135deg,#6f4b08,#f7d76b 35%,#b47b0d 65%,#fff0a6);box-shadow:inset 0 0 12px #5b3b00,0 0 8px #d9aa35}
+.gold-preview:after{content:"";position:absolute;inset:7px;border-radius:5px;background:linear-gradient(135deg,#ffe99a,#a96e08)}
+.diamond-preview{background:linear-gradient(135deg,#bff6ff,#4cc9ff 45%,#8feaff 65%,#d9fbff);box-shadow:inset 0 0 12px #1b9dcc,0 0 8px #6ee5ff}
+.diamond-preview:after{content:"";position:absolute;inset:6px;background:linear-gradient(135deg,#eaffff66,#4fcfff88);clip-path:polygon(50% 0,100% 35%,75% 100%,25% 100%,0 35%)}
+.void-preview{
+  background: radial-gradient(circle at 30% 30%, #a855f7 0%, transparent 60%),
+              radial-gradient(circle at 70% 70%, #06b6d4 0%, transparent 60%),
+              linear-gradient(135deg, #030014, #12002b);
+  box-shadow: 0 0 10px #a855f7;
+}
+.chess-preview{background:conic-gradient(#eee 25%,#333 0 50%,#eee 0 75%,#333 0) 0 0/20px 20px}
+.divine-preview{background:radial-gradient(circle at 30% 30%,#fff9d2 0 18%,transparent 42%),linear-gradient(135deg,#fff9d2,#e9c75c 45%,#fff7c2);box-shadow:inset 0 0 12px #fff,0 0 10px #e9c75c}
+
+body.skin-gold .board{
+  background: linear-gradient(135deg, #d4af37, #ffd700, #aa7c11) !important;
+  border-color: #ffe87c !important;
+  box-shadow: inset 0 0 25px #5c4308, 0 0 25px #d8aa3d88 !important;
+}
+body.skin-gold .cell{
+  background: linear-gradient(145deg, #2b1f0d, #423013) !important;
+  border: 2px solid #d4af37 !important;
+  box-shadow: inset 0 0 8px #000, 0 0 5px #d4af3744 !important;
+}
+body.skin-gold .cell:hover{
+  border-color: #fff099 !important;
+  background: #543e19 !important;
+  box-shadow: 0 0 15px #ffd70088 !important;
+}
+
+body.skin-diamond .board{background:linear-gradient(145deg,#55cfff,#b9f5ff,#39aee8);border-color:#d9fbff;box-shadow:inset 0 0 35px #075c88,0 0 28px #6ce5ff66}
+body.skin-diamond .cell{background:linear-gradient(145deg,#133848,#0d2531);border-color:#70dfff;box-shadow:inset 0 0 13px #000,0 0 8px #9cf1ff44}
+body.skin-diamond .cell:hover{border-color:#fff;background:#1b4a5e;box-shadow:0 0 20px #b5f7ff}
+
+body.skin-void {
+  background: radial-gradient(circle at 50% 30%, #2e0854 0%, #080014 70%, #020005 100%) !important;
+}
+body.skin-void .board {
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.25), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.25), transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.15), transparent 60%),
+    radial-gradient(1px 1px at 10px 10px, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 150px 80px, #a855f7, transparent),
+    radial-gradient(2px 2px at 300px 250px, #06b6d4, transparent),
+    radial-gradient(1px 1px at 420px 400px, #fff, transparent),
+    #050010 !important;
+  background-size: 100% 100%, 100% 100%, 100% 100%, 250px 250px, 350px 350px, 400px 400px, 200px 200px !important;
+  border: 2px solid #a855f7 !important;
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.4), inset 0 0 30px rgba(6, 182, 212, 0.3) !important;
+}
+body.skin-void .cell {
+  background: rgba(15, 5, 36, 0.7) !important;
+  border: 1.5px solid rgba(168, 85, 247, 0.4) !important;
+  box-shadow: inset 0 0 10px rgba(112, 26, 117, 0.5) !important;
+  backdrop-filter: blur(4px);
+}
+body.skin-void .cell:hover {
+  border-color: #06b6d4 !important;
+  background: rgba(30, 10, 70, 0.9) !important;
+  box-shadow: 0 0 18px #06b6d488, inset 0 0 12px #a855f766 !important;
+}
+body.skin-void .redDot {
+  background: radial-gradient(circle at 30% 30%, #ff7695, #d91b5c) !important;
+  color: #ff3377 !important;
+  box-shadow: 0 0 15px #ff3377aa !important;
+}
+body.skin-void .blueDot {
+  background: radial-gradient(circle at 30% 30%, #70f3ff, #0284c7) !important;
+  color: #38bdf8 !important;
+  box-shadow: 0 0 15px #38bdf8aa !important;
+}
+
+body.skin-chess .board{background:conic-gradient(#eee 25%,#333 0 50%,#eee 0 75%,#333 0) 0 0/25% 25% repeat;border-color:#777;padding:0;gap:0;border-radius:10px;overflow:hidden}
+body.skin-chess .cell{border:0;border-radius:0;box-shadow:none;background:transparent}
+body.skin-chess .cell:hover{transform:none;filter:brightness(1.2);box-shadow:none}
+body.skin-divine{background:radial-gradient(circle at 20% 15%,#fff9cf 0 8%,transparent 25%),radial-gradient(circle at 80% 70%,#fff 0 7%,transparent 25%),linear-gradient(135deg,#fffdf1,#d9bd5d 45%,#fff8d2);color:#5b4a18}
+body.skin-divine:before{opacity:.12;background-image:radial-gradient(#fff 1px,transparent 2px);background-size:24px 24px}
+body.skin-divine .panel{background:#fffdf0dd;border-color:#d7bc60;box-shadow:0 18px 50px #8a6b1933}
+body.skin-divine .board{background:linear-gradient(145deg,#fff8d0,#c89f2c,#fff8d0);border-color:#fff4ad;box-shadow:inset 0 0 35px #8a6916,0 0 30px #fff2a088}
+body.skin-divine .cell{background:linear-gradient(145deg,#fffef1,#f0d66d);border-color:#fff4b0;box-shadow:inset 0 0 12px #b28b22,0 0 8px #fff2a055}
+body.skin-divine .cell:hover{border-color:#fff;background:#fff8ce;box-shadow:0 0 20px #fff6b0}
+body.skin-divine .redDot{background:linear-gradient(145deg,#fff8c7,#d9aa35);color:#d9aa35}
+body.skin-divine .blueDot{background:linear-gradient(145deg,#fff0f7,#d99ab9);color:#d99ab9}
+body.skin-divine .dot{box-shadow:inset -5px -6px 8px #8d632555,0 0 18px #f1cde4}
+body.skin-divine .red,body.skin-divine .blue{color:#9a6d1a;text-shadow:none}
+
+@media(max-width:600px){
+ .skin-toggle{right:10px;top:10px;width:42px;height:42px}
+ .skin-panel{right:10px;top:60px;width:240px;max-height:calc(100vh - 80px)}
+}
+</style>
+</head>
+<body>
+
+<div class="skin-toggle" id="skinToggle" title="Choisir le skin">🎨</div>
+<div class="skin-panel" id="skinPanel">
+  <div class="skin-title">Apparence</div>
+  <button class="skin-option active" data-skin="arcade"><span class="skin-preview arcade-preview"></span><span><b>Arcade</b><small>Le style actuel</small></span></button>
+  <button class="skin-option" data-skin="paper"><span class="skin-preview paper-preview"></span><span><b>Papier</b><small>Comme dessiné au stylo</small></span></button>
+  <button class="skin-option" data-skin="competition"><span class="skin-preview competition-preview"></span><span><b>Compétition</b><small>Sobre &amp; sérieux</small></span></button>
+  <button class="skin-option locked" data-skin="gold"><span class="skin-preview gold-preview"></span><span><b>🥇 Plateau doré</b><small>20 victoires contre le Bot Difficile</small></span><span class="lock">🔒</span></button>
+  <button class="skin-option locked" data-skin="diamond"><span class="skin-preview diamond-preview"></span><span><b>💎 Plateau diamant</b><small>50 victoires contre le Bot Difficile</small></span><span class="lock">🔒</span></button>
+  <button class="skin-option locked" data-skin="void"><span class="skin-preview void-preview"></span><span><b>🌌 Plateau voilacté</b><small>100 victoires contre le Bot Difficile</small></span><span class="lock">🔒</span></button>
+  <button class="skin-option locked" data-skin="chess"><span class="skin-preview chess-preview"></span><span><b>♟️ Échec</b><small>5 victoires d'affilée contre le Bot Difficile</small></span><span class="lock">🔒</span></button>
+  <button class="skin-option locked" data-skin="divine"><span class="skin-preview divine-preview"></span><span><b>✨ Divin</b><small>200 victoires contre le Bot Difficile</small></span><span class="lock">🔒</span></button>
+</div>
+
+<div class="app">
+<h1 class="logo">⭕ JEU DES RONDS</h1>
+<p class="subtitle">Je me fais tout seul, je profite tout seul.</p>
+<div class="creator">Créé par <b>André Orine Beberoo</b></div>
+<div class="modebar">
+<button class="mode active" data-mode="local">👥 2 joueurs</button>
+<button class="mode" data-mode="bot">🤖 1 joueur vs Bot</button>
+</div>
+<div id="difficultyBox" class="difficulty">
+<label>Difficulté du Bot</label>
+<select id="difficulty">
+<option value="easy">Facile</option>
+<option value="medium">Moyen</option>
+<option value="hard">Difficile</option>
+</select>
+<div class="hardnote">🏆 Le Bot Difficile reste jouable en mode normal. La règle spéciale ne s’active que si tu coches « Mode difficile » ci-dessous.</div>
+<div class="hardstats" id="hardStats">🏆 Victoires contre le Bot Difficile : <b id="hardWins">0</b> • Série : <b id="hardStreak">0</b>/5</div>
+</div>
+<div class="panel">
+<div class="status" id="status"></div>
+<div class="info">
+<div class="badge">🔴 <span id="redCount">0</span></div>
+<div class="badge">Ronds sélectionnés : <span id="selectedCount">0</span>/4</div>
+<div class="badge">🔵 <span id="blueCount">0</span></div>
+</div>
+
+<div class="board" id="board"></div>
+<div class="warning" id="warning"></div>
+
+<div class="choice">
+Choisis directement <b>1 à 4 cases</b>, puis appuie sur « J'ai fini ».
+</div>
+<div class="controls">
+<button class="primary" id="finish">J'ai fini</button>
+<button class="secondary" id="undo">Effacer ma sélection</button>
+<button class="secondary" id="reset">Nouvelle partie</button>
+</div>
+
+<div class="result" id="result"></div>
+<label><input type="checkbox" id="hard"> Mode difficile — le nombre de ronds doit être différent du tour précédent</label>
+
+<div class="rules">
+<b>Règles :</b><br>
+• À ton tour, clique sur 1 à 4 cases pour placer tes ronds.<br>
+• Tu peux choisir les cases dans l’ordre que tu veux.<br>
+• Les cases jouées pendant un même tour doivent former une ligne horizontale ou verticale sans trou : aucune case vide ne peut être laissée entre deux ronds joués.<br>
+• Les lignes existantes peuvent être complétées ou prolongées : il est autorisé de jouer entre deux points déjà présents.<br>
+• Il n’est plus interdit de couper ou de croiser une ligne existante.<br>
+• Quand il ne reste qu’une seule case vide, le joueur qui doit la jouer perd immédiatement : le dernier rond ne peut pas être joué.<br>
+• En mode difficile, le nombre de ronds joué doit être différent de celui du tour précédent (sauf s'il est impossible physiquement de faire une autre quantité sur le plateau).
+</div>
+</div>
+</div>
+
+<script>
+const B=document.getElementById("board"),S=document.getElementById("status"),W=document.getElementById("warning");
+const R=document.getElementById("result"),RC=document.getElementById("redCount"),BC=document.getElementById("blueCount");
+const SC=document.getElementById("selectedCount"),finishBtn=document.getElementById("finish"),undoBtn=document.getElementById("undo");
+const diff=document.getElementById("difficulty"),diffBox=document.getElementById("difficultyBox");
+const hardCheckbox=document.getElementById("hard");
+
+let board,player,selected,lastAmount,gameOver,mode="local",botColor,thinking=false,hardMode=false;
+let gameResultCounted=false;
+let activeSkin="arcade", previewSkin=false;
+let hardWins=Number(localStorage.getItem("jeuDesRondsHardWins")||0);
+let hardStreak=Number(localStorage.getItem("jeuDesRondsHardStreak")||0);
+const solverCache=new Map();
+
+function updateHardStats(){
+  const el=document.getElementById("hardStats");
+  if(el)el.innerHTML=`🏆 Victoires contre le Bot Difficile : <b>${hardWins}</b> • Série : <b>${hardStreak}</b>/5`;
+}
+
+function updateSkinUnlocks(){
+  const u={gold:hardWins>=20,diamond:hardWins>=50,void:hardWins>=100,chess:hardStreak>=5,divine:hardWins>=200};
+  skinOptions.forEach(x=>{
+    if(!(x.dataset.skin in u))return;
+    const ok=u[x.dataset.skin];
+    x.classList.toggle("locked",!ok);
+    const l=x.querySelector(".lock");
+    if(l)l.textContent=ok?"✓":"🔒";
+  });
+}
+
+function registerHardResult(winner){
+  if(gameResultCounted||mode!=="bot"||diff.value!=="hard")return;
+  gameResultCounted=true;
+  if(winner!==botColor){hardWins++;hardStreak++;}else hardStreak=0;
+  localStorage.setItem("jeuDesRondsHardWins",hardWins);
+  localStorage.setItem("jeuDesRondsHardStreak",hardStreak);
+  updateHardStats();
+  updateSkinUnlocks();
+}
+
+function reset(){
+ board=Array(16).fill(null);
+ hardMode=hardCheckbox.checked;
+ selected=[];lastAmount=null;gameOver=false;thinking=false;gameResultCounted=false;
+ R.textContent="";W.textContent="";
+
+ if(mode==="bot"){
+   const botCommence = Math.random() < 0.5;
+   if(botCommence){
+     botColor = "red";
+     player = "red";
+   } else {
+     botColor = "blue";
+     player = "red";
+   }
+ } else {
+   player = Math.random() < 0.5 ? "red" : "blue";
+ }
+
+ render();
+ 
+ if(botIsTurn()){
+   botTurn();
+ }
+}
+
+function botIsTurn(){return mode==="bot"&&player===botColor&&!gameOver}
+
+function hasOtherAmountMove(){
+ if(!hardMode || lastAmount === null) return true;
+ for(let i=0;i<16;i++){
+  for(let n=1;n<=4;n++){
+   if(n === lastAmount) continue;
+   let r=i>>2,c=i%4;
+   if(c+n<=4){
+    let a=Array.from({length:n},(_,k)=>r*4+c+k);
+    if(a.every(idx=>board[idx]===null) && contiguous(a)) return true;
+   }
+   if(r+n<=4){
+    let a=Array.from({length:n},(_,k)=>(r+k)*4+c);
+    if(a.every(idx=>board[idx]===null) && contiguous(a)) return true;
+   }
+  }
+ }
+ return false;
+}
+
+function render(){
+ const empty=board.filter(x=>x===null).length;
+ if(!gameOver&&(empty<=1||(!thinking&&botIsTurn()&&moves().length===0))){
+  gameOver=true;selected=[];
+  const winner=player==="red"?"blue":"red";
+  if(empty===1){R.textContent=`${player==="red"?"🔴 Rouge":"🔵 Bleu"} doit jouer le dernier rond : ${player==="red"?"Rouge":"Bleu"} perd !`;
+  }else if(empty===0){R.textContent=`${winner==="red"?"🔴 Rouge":"🔵 Bleu"} gagne ! Toutes les cases ont été jouées.`;
+  }else{R.textContent=`${player==="red"?"🔴 Rouge":"🔵 Bleu"} n'a aucun coup légal : il perd !`;}
+  registerHardResult(winner);
+ }
+ B.innerHTML="";
+ board.forEach((v,i)=>{
+  let c=document.createElement("div");c.className="cell";
+  if(v)c.innerHTML=`<div class="dot ${v}Dot"></div>`;
+  if(selected.includes(i))c.innerHTML=`<div class="dot ${player}Dot"></div>`;
+  c.onclick=()=>pick(i);B.appendChild(c);
+ });
+ S.innerHTML=gameOver?"Partie terminée":thinking?"🤖 Le Bot réfléchit...":`Tour : <span class="${player}">${player==="red"?"🔴 Rouge":"🔵 Bleu"}</span>`;
+ RC.textContent=board.filter(x=>x==="red").length;BC.textContent=board.filter(x=>x==="blue").length;SC.textContent=selected.length;
+ 
+ const allowSameAmount = !hasOtherAmountMove();
+ const isInvalidSameAmount = hardMode && selected.length === lastAmount && !allowSameAmount;
+ const isValidSelection = selected.length > 0 && !isInvalidSameAmount;
+ 
+ finishBtn.disabled = gameOver || thinking || botIsTurn() || !isValidSelection;
+ undoBtn.disabled = gameOver || thinking || botIsTurn() || selected.length === 0;
+}
+
+function contiguous(a){
+ if(a.length<2)return true;
+ let rs=a.map(i=>i>>2),cs=a.map(i=>i%4),hr=rs.every(x=>x===rs[0]),vc=cs.every(x=>x===cs[0]);
+ if(!hr&&!vc)return false;
+ if(hr){let mn=Math.min(...cs),mx=Math.max(...cs);return mx-mn+1===a.length}
+ let mn=Math.min(...rs),mx=Math.max(...rs);return mx-mn+1===a.length;
+}
+
+function legal(a){
+  const allowSameAmount = !hasOtherAmountMove();
+  return a.length>=1&&a.length<=4&&a.every(i=>board[i]===null)&&contiguous(a)
+    &&!(hardMode && lastAmount===a.length && !allowSameAmount);
+}
+
+function pick(i){
+ if(previewSkin){W.textContent="👁️ Aperçu uniquement : ce skin est verrouillé.";return;}
+ if(gameOver||thinking||botIsTurn()||board[i])return;
+ let a=selected.includes(i)?selected.filter(x=>x!==i):[...selected,i];
+ if(a.length>4){W.textContent="Maximum 4 ronds.";return}
+ if(!contiguous(a)){W.textContent="❌ Les ronds doivent être collés en ligne horizontale ou verticale.";return}
+ 
+ selected=a;
+ 
+ const allowSameAmount = !hasOtherAmountMove();
+ if(hardMode && lastAmount === a.length){
+   if(allowSameAmount){
+     W.textContent=`ℹ️ Impasse détectée : tu es exceptionnellement autorisé à jouer ${a.length} rond(s) car aucune autre quantité n'est possible.`;
+   } else {
+     W.textContent=`❌ En mode difficile, le coup final ne peut pas être de ${a.length} rond(s) comme au tour précédent. Ajoute d'autres ronds ou change de sélection.`;
+   }
+ } else {
+   W.textContent="";
+ }
+ 
+ render();
+}
+
+function play(a){
+ if(!legal(a)){return false}
+ a.forEach(i=>board[i]=player);lastAmount=a.length;selected=[];player=player==="red"?"blue":"red";render();return true;
+}
+
+function finish(){
+ if(!selected.length){W.textContent="Choisis au moins 1 rond.";return}
+ const allowSameAmount = !hasOtherAmountMove();
+ if(hardMode && selected.length === lastAmount && !allowSameAmount){
+   W.textContent=`❌ En mode difficile, le nombre de ronds doit être différent du tour précédent (${lastAmount}).`;
+   return;
+ }
+ if(play(selected)){W.textContent="";botTurn()}
+}
+
+function moves(){
+ let out=[];
+ for(let i=0;i<16;i++)for(let n=1;n<=4;n++){
+  let r=i>>2,c=i%4;
+  if(c+n<=4){let a=Array.from({length:n},(_,k)=>r*4+c+k);if(legal(a))out.push(a)}
+  if(r+n<=4){let a=Array.from({length:n},(_,k)=>(r+k)*4+c);if(legal(a))out.push(a)}
+ }
+ let seen=new Set();return out.filter(a=>{let k=a.join();if(seen.has(k))return false;seen.add(k);return true});
+}
+
+function randomMove(m){return m[Math.floor(Math.random()*m.length)]}
+
+function scoreMove(a){
+ let s=Math.random()*3+(4-a.length);
+ let center=[5,6,9,10];s+=a.filter(i=>center.includes(i)).length*.4;
+ return s;
+}
+
+function bestHeuristic(ms){
+ let best=-1e9,b=[];
+ ms.forEach(a=>{let s=scoreMove(a);if(s>best){best=s;b=[a]}else if(s===best)b.push(a)});
+ return randomMove(b);
+}
+
+function boardMask(){
+ let mask=0;
+ board.forEach((v,i)=>{if(v)mask|=(1<<i)});
+ return mask;
+}
+
+function popcount(x){
+ x=x>>>0;let c=0;
+ while(x){x&=x-1;c++}
+ return c;
+}
+
+function legalMaskMoves(mask,last,ruleHard){
+ let out=[];
+ let hasOther=false;
+ if(ruleHard && last !== null){
+  for(let r=0;r<4;r++)for(let c=0;c<4;c++)for(let n=1;n<=4;n++){
+   if(n===last)continue;
+   if(c+n<=4){let bits=0;for(let k=0;k<n;k++)bits|=(1<<(r*4+c+k));if((mask&bits)===0){hasOther=true;break;}}
+   if(r+n<=4){let bits=0;for(let k=0;k<n;k++)bits|=(1<<((r+k)*4+c));if((mask&bits)===0){hasOther=true;break;}}
+  }
+ }
+
+ for(let r=0;r<4;r++)for(let c=0;c<4;c++)for(let n=1;n<=4;n++){
+  if(ruleHard && n===last && hasOther) continue;
+  if(c+n<=4){
+   let bits=0;for(let k=0;k<n;k++)bits|=(1<<(r*4+c+k));
+   if((mask&bits)===0)out.push({bits,n});
+  }
+  if(r+n<=4){
+   let bits=0;for(let k=0;k<n;k++)bits|=(1<<((r+k)*4+c));
+   if((mask&bits)===0)out.push({bits,n});
+  }
+ }
+ const seen=new Set();
+ return out.filter(m=>{const k=m.bits+"_"+m.n;if(seen.has(k))return false;seen.add(k);return true});
+}
+
+function canForceWin(mask,last,ruleHard){
+ const key=ruleHard?("H|"+mask+"|"+last):("N|"+mask);
+ if(solverCache.has(key))return solverCache.get(key);
+ if(16-popcount(mask)<=1){solverCache.set(key,false);return false}
+ const ms=legalMaskMoves(mask,last,ruleHard);
+ if(!ms.length){solverCache.set(key,false);return false}
+ for(const m of ms){
+  if(!canForceWin(mask|m.bits,m.n,ruleHard)){
+   solverCache.set(key,true);return true;
+  }
+ }
+ solverCache.set(key,false);return false;
+}
+
+function exactMove(ms){
+ const mask=boardMask(),ruleHard=hardMode;
+ const winning=[];
+ for(const a of ms){
+  let bits=0;a.forEach(i=>bits|=(1<<i));
+  if(!canForceWin(mask|bits,a.length,ruleHard))winning.push(a);
+ }
+ if(winning.length)return randomMove(winning);
+
+ let best=[],bestReplies=Infinity;
+ for(const a of ms){
+  let bits=0;a.forEach(i=>bits|=(1<<i));
+  const replies=legalMaskMoves(mask|bits,a.length,ruleHard);
+  let winningReplies=0;
+  for(const m of replies){
+   if(!canForceWin((mask|bits)|m.bits,m.n,ruleHard))winningReplies++;
+  }
+  if(winningReplies<bestReplies){bestReplies=winningReplies;best=[a]}
+  else if(winningReplies===bestReplies)best.push(a);
+ }
+ return randomMove(best.length?best:ms);
+}
+
+function botTurn(){
+ if(!botIsTurn())return;
+ thinking=true;render();
+ setTimeout(()=>{
+  let ms=moves();
+  if(!ms.length){thinking=false;render();return}
+  let level=diff.value,a;
+  if(level==="easy")a=randomMove(ms);
+  else if(level==="medium")a=Math.random()<.78?exactMove(ms):bestHeuristic(ms);
+  else a=exactMove(ms);
+  thinking=false;
+  if(play(a)){render();botTurn()}
+ },450+Math.random()*450);
+}
+
+document.querySelectorAll(".mode").forEach(x=>x.onclick=()=>{
+ mode=x.dataset.mode;
+ document.querySelectorAll(".mode").forEach(y=>y.classList.toggle("active",y===x));
+ diffBox.classList.toggle("show",mode!=="local");
+ reset();
+});
+
+hardCheckbox.onchange=()=>{
+  hardMode=hardCheckbox.checked;
+  selected=[];
+  W.textContent="";
+  render();
+};
+
+finishBtn.onclick=finish;
+undoBtn.onclick=()=>{selected=[];W.textContent="";render()};
+document.getElementById("reset").onclick=reset;
+
+// ===== GESTION DES SKINS =====
+const skinToggle=document.getElementById("skinToggle");
+const skinPanel=document.getElementById("skinPanel");
+const skinOptions=document.querySelectorAll(".skin-option");
+const savedSkin=localStorage.getItem("jeuDesRondsSkin")||"arcade";
+
+function isSkinUnlocked(skin){
+  if(skin==="gold")return hardWins>=20;
+  if(skin==="diamond")return hardWins>=50;
+  if(skin==="void")return hardWins>=100;
+  if(skin==="chess")return hardStreak>=5;
+  if(skin==="divine")return hardWins>=200;
+  return true;
+}
+
+function applySkin(skin,save=true){
+  document.body.classList.remove("skin-paper","skin-competition","skin-gold","skin-diamond","skin-void","skin-chess","skin-divine");
+  if(skin==="paper") document.body.classList.add("skin-paper");
+  if(skin==="competition") document.body.classList.add("skin-competition");
+  if(skin==="gold") document.body.classList.add("skin-gold");
+  if(skin==="diamond") document.body.classList.add("skin-diamond");
+  if(skin==="void") document.body.classList.add("skin-void");
+  if(skin==="chess") document.body.classList.add("skin-chess");
+  if(skin==="divine") document.body.classList.add("skin-divine");
+  
+  previewSkin=!isSkinUnlocked(skin);
+  activeSkin=skin;
+  
+  skinOptions.forEach(x=>{
+    x.classList.toggle("active",x.dataset.skin===skin);
+  });
+  
+  if(save&&!previewSkin)localStorage.setItem("jeuDesRondsSkin",skin);
+  if(previewSkin){selected=[];W.textContent="👁️ Aperçu : ce skin est verrouillé. Débloque-le pour pouvoir jouer dessus.";}else{W.textContent="";}
+  render();
+}
+
+skinToggle.onclick=()=>skinPanel.classList.toggle("show");
+skinOptions.forEach(x=>x.onclick=()=>{
+  const skin=x.dataset.skin;
+  applySkin(skin, isSkinUnlocked(skin));
+  skinPanel.classList.remove("show");
+});
+
+document.addEventListener("click",e=>{
+  if(!skinPanel.contains(e.target)&&!skinToggle.contains(e.target))skinPanel.classList.remove("show");
+});
+
+updateHardStats();
+updateSkinUnlocks();
+applySkin(isSkinUnlocked(savedSkin)?savedSkin:"arcade",true);
+diff.onchange=()=>{updateHardStats();reset()};
+
+reset();
+</script>
+</body>
+</html>
