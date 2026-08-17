@@ -1,0 +1,2751 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Jeu des Ronds</title>
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="manifest" href="./manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Jeu des Ronds">
+<meta name="application-name" content="Jeu des Ronds">
+<meta name="theme-color" content="#090b18">
+<!-- Mode en ligne : relais HTTPS/SSE natif (port 443), sans P2P/WebRTC ni MQTT -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Zen+Dots&display=swap');
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;font-family:'Rajdhani',Arial,sans-serif;color:#f7f8ff;
+ background:
+ radial-gradient(circle at 15% 20%,#5b2cff44 0 13%,transparent 28%),
+ radial-gradient(circle at 85% 75%,#00c8ff33 0 12%,transparent 30%),
+ linear-gradient(135deg,#090b18,#11162b 50%,#090b18);
+ overflow-x:hidden
+}
+body:before{
+ content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;
+ background-image:linear-gradient(#ffffff0b 1px,transparent 1px),linear-gradient(90deg,#ffffff0b 1px,transparent 1px);
+ background-size:28px 28px
+}
+.app{width:min(760px,94vw);margin:auto;padding:32px 0 45px;text-align:center}
+.logo{
+ font-family:'Zen Dots',sans-serif;font-size:clamp(30px,7vw,52px);letter-spacing:2px;
+ text-shadow:0 0 18px #8e65ff99;margin:0
+}
+.subtitle{margin:8px 0 22px;color:#d4d9ee;font-size:19px;font-weight:600}
+.creator{display:inline-block;color:#d9d4ff;font-size:15px;margin-bottom:18px;padding:5px 13px;border:1px solid #ffffff22;border-radius:999px;background:#ffffff0b}
+.modebar{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:0 auto 14px}
+.mode{background:#ffffff0b;color:#dce3ff;border:1px solid #ffffff18;border-radius:12px;padding:10px 13px;font-weight:800;cursor:pointer}
+.mode.active{background:linear-gradient(135deg,#6f4cff,#9a5cff);color:white}
+.difficulty{display:none;max-width:520px;margin:0 auto 15px;text-align:left;background:#ffffff08;border:1px solid #ffffff14;border-radius:14px;padding:12px}
+.difficulty.show{display:block}.difficulty label{display:block;font-weight:800;margin-bottom:10px}
+.hardnote{margin-top:9px;color:#bfc9e7;font-size:14px;line-height:1.4}.hardstats{margin-top:9px;padding:8px 10px;border-radius:10px;background:#ffffff08;border:1px solid #ffffff12;color:#dfe6ff;font-size:14px;text-align:center}
+
+/* Styles pour le Mode En Ligne */
+.online-box{display:none;max-width:520px;margin:0 auto 15px;text-align:center;background:#ffffff08;border:1px solid #ffffff14;border-radius:14px;padding:15px}
+.online-box.show{display:block}
+.online-inputs{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.online-inputs input{padding:10px;border-radius:10px;border:1px solid #ffffff22;background:#0b1020;color:#fff;font-weight:bold;text-align:center;letter-spacing:2px;font-size:16px;width:140px;text-transform:uppercase}
+.online-status{margin-top:10px;font-weight:bold;color:#70f3ff;font-size:15px}
+.online-stats{margin-top:10px;padding:10px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff12;color:#dfe6ff;font-size:14px;line-height:1.55}
+.online-stats b{color:#fff}
+
+/* === SAISON 1 — ONGLET CLASSEMENT === */
+.ranking-box{display:none;max-width:620px;margin:0 auto 15px;text-align:left}
+.ranking-box.show{display:block}
+.ranking-hero{background:#10162af2;border:1px solid #ffffff1c;border-radius:22px;padding:20px;box-shadow:0 18px 50px #0007}
+.ranking-season{text-align:center;color:#aeb9d8;font-size:14px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase}
+.ranking-title{text-align:center;font-size:28px;font-weight:900;margin:5px 0 12px}
+.ranking-current{text-align:center;font-size:24px;font-weight:900;color:#fff}
+.ranking-meta{text-align:center;color:#cbd4ef;margin-top:6px;line-height:1.55}
+.placement-wrap{margin:14px auto 4px;max-width:430px}
+.placement-label{display:flex;justify-content:space-between;gap:10px;color:#dce3ff;font-weight:800;font-size:14px;margin-bottom:6px}
+.placement-bar{height:10px;border-radius:999px;background:#ffffff12;overflow:hidden;border:1px solid #ffffff18}
+.placement-fill{height:100%;width:0;background:linear-gradient(90deg,#6f4cff,#00c8ff);transition:.2s}
+.ranking-list{margin-top:14px;display:grid;gap:7px}
+.rank-row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 13px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff12;color:#dce3ff}
+.rank-row.active{border-color:#8d72ff;background:#795cff20;box-shadow:0 0 18px #725cff22}
+.rank-name{font-weight:900;color:#fff}
+.rank-range{font-size:13px;color:#aeb9d8;text-align:right}
+.ranking-note{margin-top:13px;padding:12px 13px;border-radius:12px;background:#ffffff06;border:1px solid #ffffff12;color:#bfc9e7;line-height:1.5;font-size:14px}
+
+/* === PROFIL LOCAL — sans compte ni connexion === */
+.profile-box{display:none;max-width:620px;margin:0 auto 15px;text-align:left}
+.profile-box.show{display:block}
+.profile-card{background:#10162af2;border:1px solid #ffffff1c;border-radius:22px;padding:20px;box-shadow:0 18px 50px #0007}
+.profile-title{text-align:center;font-size:28px;font-weight:900;margin:0 0 5px}
+.profile-sub{text-align:center;color:#aeb9d8;font-size:14px;margin-bottom:16px}
+.profile-name-row{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+.profile-name-input{min-width:210px;max-width:320px;flex:1;padding:11px 12px;border-radius:12px;border:1px solid #ffffff22;background:#090e1d;color:#fff;font:inherit;font-weight:900;font-size:18px;text-align:center;outline:none}
+.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
+.profile-stat{background:#ffffff08;border:1px solid #ffffff12;border-radius:13px;padding:12px}
+.profile-stat small{display:block;color:#aeb9d8;font-size:13px;margin-bottom:3px}
+.profile-stat b{font-size:18px;color:#fff}
+.profile-section{margin-top:16px;font-size:15px;font-weight:900;color:#dce3ff}
+.profile-note{margin-top:13px;color:#aeb9d8;font-size:13px;line-height:1.45;text-align:center}
+.online-vs{display:none;margin-top:12px;padding:10px 12px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff12;font-weight:900}
+.online-vs.show{display:block}
+.online-vs .vs{color:#aeb9d8;margin:0 7px}
+@media(max-width:600px){.profile-card{padding:15px;border-radius:18px}.profile-grid{grid-template-columns:1fr 1fr}.profile-title{font-size:24px}}
+body.skin-paper .profile-card{background:#f8f2e2f2 !important;border:2px solid #4a433b !important;box-shadow:7px 9px 0 #00000015 !important}
+body.skin-paper .profile-title,body.skin-paper .profile-sub,body.skin-paper .profile-section,body.skin-paper .profile-note{color:#322d28 !important;font-family:"Comic Sans MS","Bradley Hand",cursive !important}
+body.skin-paper .profile-stat{background:#fffaf04f !important;border:1.8px dashed #5d554b !important}
+body.skin-paper .profile-stat small,body.skin-paper .profile-stat b{color:#322d28 !important}
+body.skin-paper .profile-name-input{background:#fffaf0 !important;color:#29251f !important;border:2px solid #4a433b !important;font-family:"Comic Sans MS","Bradley Hand",cursive !important}
+body.skin-paper .online-vs{background:#fffaf04f !important;border:1.8px dashed #5d554b !important;color:#322d28 !important}
+@media(max-width:600px){
+  .ranking-hero{padding:15px;border-radius:18px}
+  .ranking-title{font-size:24px}
+  .ranking-current{font-size:21px}
+  .rank-row{padding:10px}
+}
+
+/* Le nouvel écran respecte le skin Papier sans modifier le skin lui-même. */
+body.skin-paper .ranking-hero{background:#f8f2e2f2 !important;border:2px solid #4a433b !important;box-shadow:7px 9px 0 #00000015 !important}
+body.skin-paper .ranking-season,body.skin-paper .ranking-title,body.skin-paper .ranking-current,body.skin-paper .ranking-meta,body.skin-paper .placement-label,body.skin-paper .ranking-note{color:#322d28 !important;font-family:"Comic Sans MS","Bradley Hand",cursive !important}
+body.skin-paper .rank-row{background:#fffaf04f !important;border:1.8px dashed #5d554b !important;color:#322d28 !important}
+body.skin-paper .rank-row.active{background:#ded4ba !important;border:2px solid #2d2924 !important}
+body.skin-paper .rank-name{color:#29251f !important}
+body.skin-paper .rank-range{color:#746b5f !important}
+body.skin-paper .ranking-note{background:#fffaf04f !important;border:1.8px dashed #5d554b !important}
+body.skin-paper .placement-bar{background:#ded4ba !important;border-color:#5d554b !important}
+
+.panel{
+ background:#10162af2;border:1px solid #ffffff1c;border-radius:26px;padding:22px;
+ box-shadow:0 18px 60px #0008,0 0 35px #5d42ff18;backdrop-filter:blur(8px)
+}
+.status{font-size:24px;font-weight:700;margin-bottom:14px}
+.red{color:#ff5368;text-shadow:0 0 12px #ff304866}
+.blue{color:#54a8ff;text-shadow:0 0 12px #308cff66}
+.info{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.badge{background:#ffffff0b;border:1px solid #ffffff16;padding:8px 14px;border-radius:999px;color:#dce3ff}
+.board{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ grid-template-rows:repeat(4,1fr);
+ gap:9px;
+ width:100%;
+ max-width:520px;
+ height:520px;
+ margin:0 auto;
+ padding:10px;
+ border-radius:20px;
+ background:#080b18;
+ border:1px solid #ffffff18;
+ box-shadow:inset 0 0 35px #0008
+}
+.cell{
+ width:100%;
+ height:100%;
+ min-width:0;
+ min-height:0;
+ background:linear-gradient(145deg,#171e38,#0c1123);
+ border:2px solid #273151;
+ border-radius:14px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ cursor:pointer;
+ transition:.15s;
+ position:relative;
+ -webkit-tap-highlight-color:transparent
+}
+.cell:hover{transform:translateY(-2px);border-color:#7564ff;background:#1b2342;box-shadow:0 0 18px #725cff44}
+.dot{width:49%;height:49%;border-radius:50%;position:relative;box-shadow:inset -5px -6px 8px #0005,0 0 18px currentColor}
+.dot:after{content:"";position:absolute;width:24%;height:24%;top:16%;left:20%;border-radius:50%;background:#fff8}
+.redDot{background:#ff4059;color:#ff4059}.blueDot{background:#3d91ff;color:#3d91ff}
+.controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:17px 0 9px}
+button{
+ border:1px solid #ffffff1c;border-radius:13px;padding:11px 18px;font-weight:700;font-size:17px;
+ cursor:pointer;font-family:inherit;transition:.15s
+}
+button:disabled{opacity:0.4;cursor:not-allowed;transform:none !important;box-shadow:none !important}
+.primary{background:linear-gradient(135deg,#6f4cff,#9a5cff);color:#fff;box-shadow:0 0 18px #704cff44}
+.primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 0 25px #704cff77}
+.secondary{background:#ffffff0c;color:#e8ecff}.secondary:hover:not(:disabled){background:#ffffff16}
+.warning{color:#ff7180;font-weight:700;min-height:25px}
+.result{font-size:25px;font-weight:700;margin:13px 0;color:#fff}
+.choice{font-size:18px;color:#bdc7e5;margin-top:12px}
+.rules{text-align:left;background:#ffffff06;border:1px solid #ffffff12;border-radius:17px;padding:16px;margin-top:18px;line-height:1.55;color:#cbd4ef}
+.footer{margin-top:17px;color:#7f8aaa;font-size:13px}
+@media(max-width:600px){
+ body{overflow-x:hidden}
+ .app{width:100%;padding:18px 10px 30px}
+ .panel{padding:12px;border-radius:20px}
+ .board{
+   width:100%;
+   max-width:none;
+   height:calc(100vw - 44px);
+   max-height:calc(100vh - 250px);
+   min-height:280px;
+   gap:6px;
+   padding:6px
+ }
+ .cell{width:100%;height:100%;border-radius:9px}
+ .logo{font-size:28px;letter-spacing:1px}
+ .subtitle{font-size:17px}
+ button{padding:10px 13px;font-size:16px}
+ .dot{width:45%;height:45%}
+}
+
+.skin-toggle{
+ position:fixed;right:18px;top:18px;z-index:20;width:48px;height:48px;border-radius:14px;
+ display:flex;align-items:center;justify-content:center;background:#ffffff12;border:1px solid #ffffff20;
+ box-shadow:0 8px 25px #0005;cursor:pointer;font-size:22px;transition:.18s;backdrop-filter:blur(8px)
+}
+.skin-toggle:hover{transform:translateY(-2px) scale(1.03)}
+
+.skin-panel{
+ position:fixed;right:18px;top:74px;z-index:19;width:260px;
+ max-height:calc(100vh - 90px);
+ overflow-y:auto;
+ padding:10px;display:none;
+ background:#10162af5;border:1px solid #ffffff20;border-radius:17px;box-shadow:0 18px 50px #0008;backdrop-filter:blur(12px);
+ -webkit-overflow-scrolling:touch;
+}
+.skin-panel.show{display:block}
+.skin-title{position:sticky;top:0;z-index:2;background:#10162af5;font-size:14px;font-weight:800;color:#aeb9d8;padding:4px 8px 8px;text-transform:uppercase;letter-spacing:1px}
+.skin-option{
+ width:100%;display:flex;align-items:center;gap:10px;text-align:left;margin:5px 0;padding:9px;
+ border:1px solid transparent;border-radius:12px;background:#ffffff07;color:#eaf0ff;cursor:pointer
+}
+.skin-option:hover{background:#ffffff12}
+.skin-option.active{border-color:#795cff;background:#795cff18}
+.skin-option small{display:block;color:#8f9ab9;font-size:12px;margin-top:2px}
+.skin-preview{width:42px;height:42px;border-radius:9px;display:block;flex:none;border:1px solid #ffffff25;position:relative}
+.arcade-preview{background:linear-gradient(135deg,#090b18,#171e38);box-shadow:inset 0 0 12px #0008}
+.paper-preview{background:#f7f1df}
+.paper-preview:after{content:"";position:absolute;width:14px;height:14px;border-radius:50%;left:13px;top:13px;border:2px solid #24211d;box-shadow:7px 5px 0 -4px #f7f1df}
+.competition-preview{background:linear-gradient(145deg,#8a6b49,#c19b6a);box-shadow:inset 0 0 12px #503820}
+
+/* VOILACTÉ — ÉDITION COSMIQUE / CIEL ÉTOILÉ */
+body.skin-void{
+  background:
+    radial-gradient(circle at 50% -5%,#dffcff55 0 4%,transparent 22%),
+    radial-gradient(circle at 18% 25%,#54cfff22 0 5%,transparent 25%),
+    radial-gradient(circle at 82% 70%,#7be8ff1f 0 7%,transparent 28%),
+    radial-gradient(circle at 50% 50%,#153c69 0%,#071a35 38%,#020816 78%,#00030a 100%) !important;
+}
+body.skin-void .panel{
+  background:
+    radial-gradient(circle at 50% 0%,#d9fbff10,transparent 30%),
+    linear-gradient(145deg,#0b2945ee,#06152aef 52%,#020713f5) !important;
+  border:1px solid #91edff88 !important;
+  box-shadow:0 25px 80px #000e,0 0 45px #36d8ff35,0 0 100px #138bff18,inset 0 0 45px #6be9ff0b !important;
+}
+body.skin-void .board{
+  position:relative;
+  isolation:isolate;
+  background:
+    radial-gradient(circle at 50% 42%,#65eaff22 0 3%,transparent 18%),
+    radial-gradient(circle at 20% 80%,#248dff25 0 7%,transparent 25%),
+    radial-gradient(circle at 80% 20%,#b7f8ff18 0 5%,transparent 22%),
+    radial-gradient(circle at 15% 15%,#ffffff 0 1px,transparent 1.6px),
+    radial-gradient(circle at 33% 73%,#b9f7ff 0 1px,transparent 1.7px),
+    radial-gradient(circle at 72% 31%,#ffffff 0 1px,transparent 1.5px),
+    radial-gradient(circle at 88% 82%,#82eaff 0 1px,transparent 1.8px),
+    radial-gradient(circle at 58% 12%,#ffffff 0 1px,transparent 1.5px),
+    radial-gradient(circle at 43% 91%,#6ddfff 0 1px,transparent 1.5px),
+    linear-gradient(145deg,#071b35,#062b4d 38%,#041a37 62%,#010814) !important;
+  background-size:100% 100%,100% 100%,100% 100%,137px 137px,181px 181px,211px 211px,157px 157px,233px 233px,191px 191px,100% 100% !important;
+  border:2px solid #b9f8ff !important;
+  border-radius:24px;
+  padding:11px;
+  gap:8px;
+  box-shadow:0 0 0 2px #2f9fc8,0 0 0 5px #06203a,0 0 38px #55eaff66,0 0 90px #168cff24,inset 0 0 35px #001020,inset 0 0 5px #d9ffffaa !important;
+}
+body.skin-void .board::before{
+  content:"";
+  position:absolute;
+  inset:-18px;
+  z-index:-1;
+  border-radius:30px;
+  background:conic-gradient(from 0deg,transparent 0deg,#6cecff 28deg,transparent 55deg,#2a9dff 120deg,transparent 160deg,#b7faff 225deg,transparent 270deg,#238fff 325deg,transparent 360deg);
+  filter:blur(12px);
+  opacity:.28;
+  animation:voidCosmicRing 9s linear infinite;
+  pointer-events:none;
+}
+@keyframes voidCosmicRing{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+body.skin-void .board::after{
+  content:"✦  ·  ✧     ·     ✦   ·   ✧     ·     ✦";
+  position:absolute;
+  inset:6px;
+  z-index:5;
+  color:#c9fbff66;
+  font-size:11px;
+  letter-spacing:14px;
+  pointer-events:none;
+  text-shadow:0 0 8px #75efff;
+  animation:voidStars 4s ease-in-out infinite alternate;
+}
+@keyframes voidStars{from{opacity:.22;transform:translateY(0)}to{opacity:.58;transform:translateY(-2px)}}
+body.skin-void .cell{
+  position:relative;
+  background:radial-gradient(circle at 28% 22%,#c8fbff0d,transparent 25%),linear-gradient(145deg,#0b3552,#06253f 55%,#031529) !important;
+  border:1px solid #62dfff88 !important;
+  border-radius:12px;
+  box-shadow:inset 0 1px 0 #eaffff22,inset 0 -9px 16px #0009,0 0 8px #43dfff12 !important;
+  overflow:hidden;
+}
+body.skin-void .cell:hover{
+  transform:translateY(-2px) scale(1.018);
+  border-color:#d9ffff !important;
+  background:radial-gradient(circle at 30% 20%,#bfffff18,transparent 30%),linear-gradient(145deg,#145575,#083a5c,#06233d) !important;
+  box-shadow:0 0 22px #65eaff66,inset 0 0 15px #9df5ff18 !important;
+}
+body.skin-void .dot{
+  box-shadow:inset -7px -8px 11px #000a,inset 4px 4px 8px #ffffff55,0 0 12px currentColor,0 0 28px currentColor,0 0 48px currentColor !important;
+}
+body.skin-void .blueDot{
+  background:radial-gradient(circle at 28% 20%,#fff 0 5%,#dfffff 13%,#67efff 35%,#159fd4 63%,#063e79 86%,#01172e) !important;
+  color:#70efff !important;
+  border:1px solid #c9ffff !important;
+}
+body.skin-void .redDot{
+  background:radial-gradient(circle at 28% 20%,#fff 0 5%,#ffe8f2 13%,#ff7fae 34%,#bf3f8d 61%,#57215d 84%,#160c2d) !important;
+  color:#ff78c4 !important;
+  border:1px solid #ffd0f0 !important;
+}
+body.skin-void button{
+  border-color:#66ddff66 !important;
+  box-shadow:0 0 12px #29cfff18,inset 0 0 12px #6deaff08;
+}
+body.skin-void button:hover{
+  border-color:#bfffff !important;
+  box-shadow:0 0 22px #55eaff55,inset 0 0 15px #b9faff10;
+}
+
+
+
+/* PAPIER — DESSIN À MAIN LEVÉE */
+body.skin-paper{
+  color:#29251f !important;
+  background:
+    repeating-linear-gradient(0deg,rgba(85,120,165,.10) 0 1px,transparent 1px 28px),
+    linear-gradient(90deg,transparent 0 42px,rgba(205,82,82,.20) 42px 44px,transparent 44px),
+    #f3ecd8 !important;
+}
+body.skin-paper:before{
+  opacity:.22 !important;
+  background-image:
+    radial-gradient(circle at 15% 25%,#6e625326 0 1px,transparent 1.5px),
+    radial-gradient(circle at 77% 68%,#6e62531f 0 1px,transparent 1.5px) !important;
+  background-size:37px 41px,53px 47px !important;
+}
+body.skin-paper .skin-toggle{
+  background:#f7f0dc !important;color:#27231e !important;border:2px solid #4a4339 !important;
+  box-shadow:3px 4px 0 #00000018 !important;transform:rotate(-1deg);
+}
+body.skin-paper .skin-panel{
+  background:#f7f0dff7 !important;color:#29251f !important;border:2px solid #51493f !important;
+  box-shadow:7px 9px 0 #00000018 !important;
+}
+body.skin-paper .skin-title{background:#f7f0dff7 !important;color:#4b4338 !important;font-family:"Comic Sans MS","Bradley Hand",cursive !important;}
+body.skin-paper .skin-option{background:#ffffff35 !important;color:#29251f !important;border:1px dashed #62594e55 !important;}
+body.skin-paper .skin-option small{color:#746b5f !important;}
+body.skin-paper .skin-option.active{border:2px solid #2d2924 !important;background:#ffffff78 !important;transform:rotate(-.35deg);}
+body.skin-paper .app .logo{
+  font-family:"Comic Sans MS","Bradley Hand",cursive !important;color:#25211d !important;
+  text-shadow:none !important;letter-spacing:1px !important;transform:rotate(-.6deg);
+}
+body.skin-paper .subtitle,body.skin-paper .creator{color:#514a42 !important;}
+body.skin-paper .creator{background:#ffffff44 !important;border:1px dashed #6d6459 !important;border-radius:5px 9px 6px 8px !important;transform:rotate(.4deg);}
+body.skin-paper .mode{
+  font-family:"Comic Sans MS","Bradley Hand",cursive !important;background:#f8f1dd !important;color:#39332d !important;
+  border:2px solid #544b42 !important;border-radius:8px 5px 9px 6px !important;box-shadow:2px 3px 0 #00000012 !important;
+}
+body.skin-paper .mode.active{background:#ded4ba !important;color:#1f1c19 !important;transform:rotate(-.5deg);}
+body.skin-paper .panel{
+  background:#f8f2e2f2 !important;border:2px solid #4a433b !important;border-radius:13px 10px 15px 9px !important;
+  box-shadow:7px 9px 0 #00000015 !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;
+}
+body.skin-paper .status,body.skin-paper .choice,body.skin-paper .rules,body.skin-paper .badge,body.skin-paper label{
+  color:#322d28 !important;font-family:"Comic Sans MS","Bradley Hand",cursive !important;
+}
+body.skin-paper .badge{background:#fffaf0 !important;border:1.7px solid #5e554b !important;border-radius:12px 7px 10px 8px !important;}
+body.skin-paper .board{
+  background:
+    repeating-linear-gradient(0deg,rgba(84,119,160,.12) 0 1px,transparent 1px 25px),
+    #f7f0dd !important;
+  border:3px solid #37322c !important;
+  border-radius:12px 8px 14px 9px !important;
+  gap:8px !important;padding:10px !important;
+  box-shadow:4px 6px 0 #00000017,inset 0 0 18px #8c7c5f12 !important;
+  transform:rotate(.15deg);
+}
+body.skin-paper .cell{
+  background:rgba(255,255,255,.20) !important;
+  border:2px solid #3d3832 !important;
+  border-radius:9px 6px 11px 5px !important;
+  box-shadow:none !important;transition:.12s !important;
+}
+body.skin-paper .cell:nth-child(4n+1){transform:rotate(-.7deg);border-radius:7px 11px 6px 10px !important;}
+body.skin-paper .cell:nth-child(4n+2){transform:rotate(.45deg);border-radius:11px 6px 9px 7px !important;}
+body.skin-paper .cell:nth-child(4n+3){transform:rotate(-.35deg);border-radius:6px 10px 8px 12px !important;}
+body.skin-paper .cell:nth-child(4n){transform:rotate(.65deg);border-radius:10px 8px 12px 6px !important;}
+body.skin-paper .cell:hover{background:#fffaf08c !important;border-color:#1d1a17 !important;box-shadow:2px 3px 0 #00000012 !important;}
+body.skin-paper .dot{
+  width:52% !important;height:52% !important;
+  border-radius:48% 53% 46% 55% / 55% 45% 54% 47% !important;
+  box-shadow:none !important;
+  background:transparent !important;
+  border:4px solid currentColor !important;
+  transform:rotate(-4deg) scaleX(.96) !important;
+}
+body.skin-paper .cell:nth-child(3n+1) .dot{border-radius:53% 45% 55% 47% / 46% 55% 44% 54% !important;transform:rotate(5deg) scaleY(.95) !important;}
+body.skin-paper .cell:nth-child(3n+2) .dot{border-radius:46% 56% 48% 52% / 54% 47% 56% 45% !important;transform:rotate(-7deg) scaleX(1.03) !important;}
+body.skin-paper .dot:after{display:none !important;}
+body.skin-paper .redDot{color:#c93434 !important;}
+body.skin-paper .blueDot{color:#285fa8 !important;}
+body.skin-paper .red{color:#b92e2e !important;text-shadow:none !important;}
+body.skin-paper .blue{color:#235c9e !important;text-shadow:none !important;}
+body.skin-paper button.primary,body.skin-paper button.secondary{
+  font-family:"Comic Sans MS","Bradley Hand",cursive !important;background:#f8f1df !important;color:#2c2823 !important;
+  border:2px solid #4a433b !important;border-radius:8px 6px 10px 7px !important;box-shadow:2px 3px 0 #00000016 !important;
+}
+body.skin-paper button.primary{background:#e7ddc5 !important;}
+body.skin-paper .rules,body.skin-paper .save-box{
+  background:#fffaf04f !important;border:1.8px dashed #5d554b !important;border-radius:9px 13px 8px 11px !important;
+}
+body.skin-paper .warning{color:#9f312c !important;}
+body.skin-paper .game-end-overlay{background:rgba(85,76,62,.38) !important;}
+body.skin-paper .game-end-card{background:#f8f1df !important;border:2px solid #403a34 !important;box-shadow:5px 7px 0 #0002 !important;}
+body.skin-paper .game-end-subtitle{color:#39332d !important;}
+
+@media(max-width:600px){
+  body.skin-paper .board{gap:6px !important;padding:7px !important;border-width:2.5px !important;}
+  body.skin-paper .cell{border-width:1.8px !important;}
+  body.skin-paper .dot{border-width:3px !important;width:50% !important;height:50% !important;}
+  body.skin-paper .panel{box-shadow:4px 6px 0 #00000014 !important;}
+}
+
+body.skin-competition{color:#eee8dc;background:#211c16;background-image:linear-gradient(90deg,#00000012 50%,transparent 50%),linear-gradient(#0000000d 50%,transparent 50%);background-size:7px 7px,11px 11px;}
+body.skin-competition:before{opacity:.08;background-image:linear-gradient(#e9d5b311 1px,transparent 1px),linear-gradient(90deg,#e9d5b311 1px,transparent 1px);background-size:35px 35px}
+body.skin-competition .skin-toggle{background:#30271e;border-color:#66533e}
+body.skin-competition .skin-panel{background:#29221aee;border-color:#66533e}
+body.skin-competition .skin-title{background:#29221aee;color:#bba98e}
+body.skin-competition .skin-option{background:#ffffff05;color:#e8dfd0}
+body.skin-competition .skin-option:hover{background:#ffffff0c}
+body.skin-competition .skin-option.active{border-color:#a58b68;background:#a58b6815}
+body.skin-competition .skin-option small{color:#988973}
+body.skin-competition .app .logo{font-family:Georgia,serif;font-size:clamp(28px,6vw,46px);letter-spacing:3px;text-shadow:0 2px 8px #0008}
+body.skin-competition .subtitle{color:#bdb09c}
+body.skin-competition .creator{color:#bdb09c;border-color:#66533e;background:#00000015}
+body.skin-competition .mode{background:#2d251d;color:#d8cbb8;border-color:#66533e}
+body.skin-competition .mode.active{background:#6f5b43;color:#fff;box-shadow:none}
+body.skin-competition .panel{background:#29221de8;border-color:#66533e;box-shadow:0 20px 50px #0009}
+body.skin-competition .badge{background:#211b15;border-color:#5c4b39;color:#c7baa7}
+body.skin-competition .board{background:#17130f;border-color:#786249;box-shadow:inset 0 0 30px #000}
+body.skin-competition .cell{background:linear-gradient(145deg,#352a20,#251d16);border-color:#5d4a37}
+body.skin-competition .cell:hover{transform:none;border-color:#a58b68;background:#3b2e22;box-shadow:none}
+body.skin-competition .dot{box-shadow:inset -4px -5px 8px #0007,0 2px 8px #0008}
+body.skin-competition .primary{background:#79634a;color:#fff;box-shadow:none}
+body.skin-competition .secondary{background:#2d251d;color:#ded2c0;border-color:#66533e}
+body.skin-competition .rules{background:#211b15;border-color:#5c4b39;color:#c6b9a6}
+body.skin-competition .warning{color:#d78b7e}
+body.skin-competition .red{color:#d56a61;text-shadow:none}
+body.skin-competition .blue{color:#77a7d4;text-shadow:none}
+
+.skin-option.locked{filter:grayscale(0.8);opacity:.6}
+.skin-option.locked:hover{background:#ffffff12}
+.skin-option.locked small{color:#77819f}
+.skin-option .lock{margin-left:auto;font-size:15px;opacity:.9}
+
+.gold-preview{background:linear-gradient(135deg,#6f4b08,#f7d76b 35%,#b47b0d 65%,#fff0a6);box-shadow:inset 0 0 12px #5b3b00,0 0 8px #d9aa35}
+.gold-preview:after{content:"";position:absolute;inset:7px;border-radius:5px;background:linear-gradient(135deg,#ffe99a,#a96e08)}
+.diamond-preview{background:linear-gradient(135deg,#bff6ff,#4cc9ff 45%,#8feaff 65%,#d9fbff);box-shadow:inset 0 0 12px #1b9dcc,0 0 8px #6ee5ff}
+.diamond-preview:after{content:"";position:absolute;inset:6px;background:linear-gradient(135deg,#eaffff66,#4fcfff88);clip-path:polygon(50% 0,100% 35%,75% 100%,25% 100%,0 35%)}
+.void-preview{
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 18% 20%,#ffffff 0 1px,transparent 1.8px),
+    radial-gradient(circle at 72% 28%,#b9f7ff 0 1px,transparent 1.8px),
+    radial-gradient(circle at 42% 78%,#6ddfff 0 1px,transparent 1.8px),
+    radial-gradient(circle at 30% 30%,#a855f7 0%,transparent 52%),
+    radial-gradient(circle at 72% 70%,#06b6d4 0%,transparent 55%),
+    linear-gradient(135deg,#030014,#0b2b4b 52%,#020816);
+  background-size:29px 29px,37px 37px,43px 43px,100% 100%,100% 100%,100% 100%;
+  box-shadow:0 0 10px #55eaff88,inset 0 0 9px #001020;
+}
+.void-preview:after{
+  content:"✦";
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#d9ffff;
+  font-size:18px;
+  text-shadow:0 0 8px #55eaff,0 0 12px #a855f7;
+}
+.void-preview{
+  border-color:#8ff6ff88;
+}
+.chess-preview{background:conic-gradient(#eee 25%,#333 0 50%,#eee 0 75%,#333 0) 0 0/20px 20px}
+.divine-preview{
+  background: radial-gradient(circle at 50% 50%, #f59e0b 0%, #311042 70%), #0d021a;
+  border: 1px solid #ffd700;
+  box-shadow: 0 0 12px #f59e0b, inset 0 0 8px #ffd700;
+}
+
+.crystal-preview{
+  overflow:hidden;
+  border-radius:12px !important;
+  background:
+    radial-gradient(circle at 30% 25%,#ffffff 0 10%,transparent 32%),
+    radial-gradient(circle at 75% 65%,#ffb7de88 0 18%,transparent 40%),
+    linear-gradient(145deg,#f8f3ff,#d9c6ff 48%,#b68cff 100%) !important;
+  border:1px solid #f9e8ff !important;
+  box-shadow:inset 0 0 10px #fff,0 0 10px #c879ff66 !important;
+}
+.crystal-preview:before{
+  content:"🌸";
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:21px;
+  filter:drop-shadow(0 0 5px #ffffff);
+}
+.crystal-preview:after{
+  content:"";
+  position:absolute;inset:4px;
+  border:1px solid #ffffff77;border-radius:9px;
+  box-shadow:inset 0 0 8px #ffffff88;
+}
+
+
+/* GOLD — ÉDITION LÉGENDAIRE */
+body.skin-gold{
+  background:
+    radial-gradient(circle at 50% 8%,#fff2a855 0 3%,transparent 18%),
+    radial-gradient(circle at 15% 25%,#ffd70033 0 8%,transparent 25%),
+    radial-gradient(circle at 85% 75%,#ffb30022 0 8%,transparent 26%),
+    linear-gradient(135deg,#090704,#211706 48%,#080604) !important;
+}
+body.skin-gold .panel{
+  background:linear-gradient(145deg,#211707f2,#0e0b06f5) !important;
+  border:1px solid #f7d66a99 !important;
+  box-shadow:0 20px 65px #000c,0 0 45px #d4af3730,inset 0 0 30px #ffd7000c !important;
+}
+body.skin-gold .board{
+  background:
+    radial-gradient(circle at 20% 20%,#fff3a833 0 1px,transparent 2px),
+    radial-gradient(circle at 80% 70%,#ffd70044 0 1px,transparent 2px),
+    linear-gradient(135deg,#5d420d,#e5bd3d 18%,#8d6412 45%,#3a2708 75%,#d6ad35) !important;
+  background-size:85px 85px,120px 120px,100% 100% !important;
+  border:3px solid #ffe88a !important;
+  border-radius:24px;
+  box-shadow:0 0 0 2px #8b6415,0 0 0 5px #3c2908,0 0 35px #ffd70055,inset 0 0 30px #211300,inset 0 0 5px #fff2a855 !important;
+}
+body.skin-gold .cell{
+  background:linear-gradient(145deg,#3c2a0d,#181106 60%,#49340e) !important;
+  border:1px solid #c79d2f !important;
+  border-radius:12px;
+  box-shadow:inset 0 1px 0 #fff2a522,inset 0 -8px 14px #0008,0 2px 5px #0008 !important;
+}
+body.skin-gold .cell:hover{
+  transform:translateY(-2px) scale(1.015);
+  border-color:#fff5b0 !important;
+  background:linear-gradient(145deg,#5b4316,#291b08,#654a16) !important;
+  box-shadow:0 0 20px #ffd84a88,inset 0 0 12px #ffd70022 !important;
+}
+body.skin-gold .dot{box-shadow:inset -5px -7px 9px #0008,0 0 12px currentColor,0 0 25px currentColor !important;}
+body.skin-gold .blueDot{background:radial-gradient(circle at 30% 25%,#fff7b2,#ffd83d 28%,#b87a08 75%,#6d4500) !important;color:#ffd43b !important;}
+body.skin-gold .redDot{background:radial-gradient(circle at 30% 25%,#fff0a0,#ff5965 28%,#b51d2f 75%,#570914) !important;color:#ff5362 !important;}
+
+/* DIAMOND — ÉDITION CRISTAL */
+body.skin-diamond{
+  background:
+    radial-gradient(circle at 50% 0%,#bdf8ff55 0 5%,transparent 28%),
+    radial-gradient(circle at 10% 80%,#36cfff33 0 8%,transparent 30%),
+    radial-gradient(circle at 90% 35%,#e7ffff22 0 7%,transparent 28%),
+    linear-gradient(135deg,#020a12,#06283a 48%,#01070d) !important;
+}
+body.skin-diamond .panel{
+  background:linear-gradient(145deg,#09283bf2,#03131ff5) !important;
+  border:1px solid #aaf4ff99 !important;
+  box-shadow:0 20px 65px #000c,0 0 45px #49dfff33,inset 0 0 35px #6eeaff0c !important;
+}
+body.skin-diamond .board{
+  background:linear-gradient(135deg,#dfffff,#65dcff 12%,#168bb8 38%,#073c59 65%,#9ef1ff 88%,#dfffff) !important;
+  border:3px solid #d9fcff !important;
+  border-radius:24px;
+  box-shadow:0 0 0 2px #3cbddd,0 0 0 5px #063b56,0 0 40px #5feaff66,inset 0 0 30px #001b2a,inset 0 0 7px #fff !important;
+}
+body.skin-diamond .cell{
+  background:linear-gradient(145deg,#174c63,#092a3b 48%,#061a27) !important;
+  border:1px solid #75eaff !important;
+  border-radius:12px;
+  box-shadow:inset 0 1px 0 #eaffff44,inset 0 -8px 15px #0009,0 0 8px #42dfff18 !important;
+}
+body.skin-diamond .cell:hover{
+  transform:translateY(-2px) scale(1.015);
+  border-color:#fff !important;
+  background:linear-gradient(145deg,#287b9c,#0c4159,#0a2432) !important;
+  box-shadow:0 0 25px #8ff6ff99,inset 0 0 12px #bffbff22 !important;
+}
+body.skin-diamond .dot{box-shadow:inset -5px -7px 9px #0008,0 0 13px currentColor,0 0 28px currentColor !important;}
+body.skin-diamond .blueDot{background:radial-gradient(circle at 28% 22%,#fff,#cfffff 18%,#52e6ff 45%,#0a8db8 78%,#034a67) !important;color:#6eeeff !important;}
+body.skin-diamond .redDot{background:radial-gradient(circle at 28% 22%,#fff,#ffd8de 18%,#ff6880 45%,#b51e46 78%,#5a0925) !important;color:#ff6381 !important;}
+
+/* ÉCHEC — ÉDITION TOURNOI */
+body.skin-chess{
+  background:radial-gradient(circle at 50% 20%,#ffffff12,transparent 35%),linear-gradient(135deg,#111,#050505 55%,#151515) !important;
+}
+body.skin-chess .panel{
+  background:linear-gradient(145deg,#1c1c1cef,#090909f5) !important;
+  border:1px solid #777 !important;
+  box-shadow:0 22px 60px #000d,0 0 25px #ffffff10 !important;
+}
+body.skin-chess .board{
+  background:conic-gradient(from 90deg,#f4f0e6 0 25%,#272727 0 50%,#f4f0e6 0 75%,#272727 0) 0 0/25% 25% repeat !important;
+  border:4px solid #b9b9b9 !important;
+  padding:0 !important;
+  gap:0 !important;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 0 0 2px #444,0 0 25px #000,inset 0 0 18px #0008 !important;
+}
+body.skin-chess .cell{
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:inset 0 0 1px #0005 !important;
+  background:transparent !important;
+  transition:.12s !important;
+}
+body.skin-chess .cell:hover{
+  transform:none !important;
+  filter:brightness(1.22);
+  box-shadow:inset 0 0 0 3px #ffffff88,inset 0 0 15px #ffffff33 !important;
+}
+body.skin-chess .dot{
+  width:54%;
+  height:54%;
+  box-shadow:inset -6px -7px 10px #0008,0 3px 7px #0009,0 0 10px currentColor !important;
+}
+body.skin-chess .redDot{
+  background:radial-gradient(circle at 30% 24%,#fff,#d9d9d9 12%,#777 40%,#222 80%) !important;
+  color:#eee !important;
+}
+body.skin-chess .blueDot{
+  background:radial-gradient(circle at 30% 24%,#666,#303030 25%,#090909 75%) !important;
+  color:#111 !important;
+  border:1px solid #aaa;
+}
+
+/* NOUTEAU SKIN DIVIN OVERLORD (1% ELITE) */
+body.skin-divine {
+  background: 
+    radial-gradient(circle at 50% 15%, #581c87 0%, transparent 55%),
+    radial-gradient(circle at 50% 85%, #b45309 0%, transparent 60%),
+    #05000a !important;
+  color: #fef3c7 !important;
+}
+body.skin-divine:before {
+  opacity: 0.35;
+  background-image: 
+    radial-gradient(#fbbf24 1px, transparent 1px),
+    radial-gradient(#c084fc 1px, transparent 1px);
+  background-size: 32px 32px, 24px 24px;
+  background-position: 0 0, 16px 16px;
+}
+body.skin-divine .logo {
+  color: #fef3c7;
+  text-shadow: 0 0 20px #f59e0b, 0 0 40px #a855f7;
+}
+body.skin-divine .panel {
+  background: rgba(15, 2, 28, 0.92) !important;
+  border: 1px solid #f59e0b88 !important;
+  box-shadow: 0 0 50px rgba(168, 85, 247, 0.3), 0 0 30px rgba(245, 158, 11, 0.2) !important;
+}
+body.skin-divine .board {
+  background: 
+    linear-gradient(135deg, rgba(88, 28, 135, 0.6), rgba(15, 2, 28, 0.9)),
+    radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.15), transparent 70%) !important;
+  border: 2px solid #fbbf24 !important;
+  box-shadow: 0 0 35px rgba(251, 191, 36, 0.4), inset 0 0 25px rgba(168, 85, 247, 0.5) !important;
+}
+body.skin-divine .cell {
+  background: linear-gradient(145deg, #1f0734, #0b0114) !important;
+  border: 1.5px solid #d97706 !important;
+  box-shadow: inset 0 0 12px rgba(168, 85, 247, 0.4) !important;
+}
+body.skin-divine .cell:hover {
+  border-color: #fef3c7 !important;
+  background: #320c52 !important;
+  box-shadow: 0 0 22px #f59e0b, inset 0 0 15px #c084fc !important;
+  transform: translateY(-3px) scale(1.02);
+}
+body.skin-divine .redDot {
+  background: radial-gradient(circle at 30% 30%, #ff88a5, #dc2626) !important;
+  color: #ef4444 !important;
+  box-shadow: 0 0 20px #ef4444, inset -3px -4px 6px #7f1d1d !important;
+}
+body.skin-divine .blueDot {
+  background: radial-gradient(circle at 30% 30%, #fef08a, #d97706) !important;
+  color: #f59e0b !important;
+  box-shadow: 0 0 20px #f59e0b, inset -3px -4px 6px #78350f !important;
+}
+body.skin-divine .red { color: #f87171 !important; text-shadow: 0 0 10px #ef444488 !important; }
+body.skin-divine .blue { color: #fbbf24 !important; text-shadow: 0 0 10px #f59e0b88 !important; }
+body.skin-divine .primary {
+  background: linear-gradient(135deg, #b45309, #d97706 50%, #7e22ce) !important;
+  border-color: #fef3c7 !important;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.5) !important;
+}
+
+
+/* === SAISON 1 — SPIRIT BLOSSOM ===
+   Remplace uniquement la direction visuelle du skin saisonnier.
+   La logique, le déblocage Grand Maître et les sauvegardes restent inchangés. */
+body.skin-crystal{
+  color:#4e386e !important;
+  background:
+    radial-gradient(circle at 14% 12%,#ffffffee 0 5%,transparent 24%),
+    radial-gradient(circle at 86% 20%,#ffd5f099 0 7%,transparent 28%),
+    radial-gradient(circle at 20% 80%,#e8d7ff99 0 9%,transparent 32%),
+    radial-gradient(circle at 84% 76%,#f2b8e6aa 0 11%,transparent 34%),
+    linear-gradient(145deg,#fbf8ff 0%,#efe7ff 34%,#dfcdfb 60%,#c6a9ee 100%) !important;
+  background-attachment:fixed !important;
+}
+body.skin-crystal:before{
+  opacity:.85 !important;
+  background:
+    radial-gradient(circle at 12% 18%,#fff 0 1px,transparent 1.8px),
+    radial-gradient(circle at 75% 23%,#f7c4e8 0 1px,transparent 1.8px),
+    radial-gradient(circle at 31% 72%,#ffffff 0 1px,transparent 1.8px),
+    radial-gradient(circle at 89% 78%,#d9b1ff 0 1px,transparent 1.8px),
+    linear-gradient(120deg,transparent 0 37%,#ffffff88 38%,transparent 39% 100%) !important;
+  background-size:73px 73px,101px 101px,127px 127px,151px 151px,210px 210px !important;
+}
+
+/* Titre */
+body.skin-crystal .app .logo{
+  color:#a66bea !important;
+  text-shadow:
+    0 0 7px #ffffff,
+    0 0 18px #d4a8ff,
+    0 0 34px #c17df266 !important;
+}
+body.skin-crystal .subtitle{color:#6f5b88 !important;}
+body.skin-crystal .creator{
+  color:#6b4d8d !important;
+  background:linear-gradient(145deg,#ffffffc9,#f5e9ff9c) !important;
+  border:1px solid #ffffffee !important;
+  box-shadow:inset 0 1px 0 #fff,0 8px 24px #ae7dd52b !important;
+}
+
+/* Boutons, badges, cartes - garder exactement la même disposition */
+body.skin-crystal .mode,
+body.skin-crystal button.primary,
+body.skin-crystal button.secondary,
+body.skin-crystal .badge,
+body.skin-crystal .online-stats,
+body.skin-crystal .hardstats,
+body.skin-crystal .profile-stat,
+body.skin-crystal .online-vs,
+body.skin-crystal .rank-row{
+  color:#5d427d !important;
+  background:
+    radial-gradient(circle at 20% 10%,#ffffffcc 0 5%,transparent 28%),
+    linear-gradient(145deg,#ffffffb8,#f9f2ff77 50%,#d8bcf57f) !important;
+  border:1px solid #ffffffee !important;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 6px 18px #9f71c82a,
+    0 0 0 1px #cfb2e955 !important;
+  -webkit-backdrop-filter:blur(14px) saturate(1.35);
+  backdrop-filter:blur(14px) saturate(1.35);
+}
+body.skin-crystal .mode.active,
+body.skin-crystal button.primary{
+  color:#fff !important;
+  background:linear-gradient(135deg,#bd7df0,#d99de9 52%,#f4badf) !important;
+  border-color:#fcecff !important;
+  box-shadow:
+    inset 0 1px 0 #fff9,
+    0 8px 20px #b573d03b,
+    0 0 18px #d992e855 !important;
+}
+body.skin-crystal .mode:hover,
+body.skin-crystal button:hover:not(:disabled){
+  border-color:#fff !important;
+  box-shadow:0 8px 20px #b77bd83d,0 0 18px #e2a0ec66 !important;
+}
+
+/* Principal panel */
+body.skin-crystal .panel{
+  position:relative;
+  overflow:visible;
+  color:#533b71 !important;
+  background:
+    radial-gradient(circle at 50% 0%,#ffffffcc 0 3%,transparent 28%),
+    radial-gradient(circle at 50% 100%,#d9b2f355 0 10%,transparent 42%),
+    linear-gradient(155deg,#ffffffbc,#f5edff83 50%,#dec7f58c) !important;
+  border:1px solid #ffffffee !important;
+  box-shadow:
+    0 22px 54px #a678c337,
+    0 0 0 1px #d6b9ed66,
+    inset 0 1px 0 #fff !important;
+  -webkit-backdrop-filter:blur(18px) saturate(1.35);
+  backdrop-filter:blur(18px) saturate(1.35);
+}
+
+/* Fond prestigieux autour du plateau, sans déplacer quoi que ce soit */
+body.skin-crystal .panel:before{
+  content:"";
+  position:absolute;
+  left:12px;right:12px;
+  top:108px;
+  height:min(610px,calc(100vw - 4px));
+  max-height:610px;
+  border-radius:30px;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(circle at 17% 20%,#ffffffaa 0 4%,transparent 26%),
+    radial-gradient(circle at 83% 77%,#f4b5df66 0 8%,transparent 34%),
+    radial-gradient(circle at 50% 50%,#d8b8ff66 0 12%,transparent 48%),
+    linear-gradient(145deg,#fdf8ffba,#ead9ff85 48%,#cfa9ef8a) !important;
+  border:1px solid #ffffffdd;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 0 38px #ffffff66,
+    0 14px 35px #a876ca2e,
+    0 0 28px #d5a5f24a;
+}
+body.skin-crystal .panel > *{position:relative;z-index:1}
+
+/* Cartes secondaires */
+body.skin-crystal .difficulty,
+body.skin-crystal .online-box,
+body.skin-crystal .ranking-hero,
+body.skin-crystal .profile-card,
+body.skin-crystal .save-box,
+body.skin-crystal .rules{
+  color:#5e4677 !important;
+  background:linear-gradient(145deg,#ffffffba,#f7f0ff80 50%,#dec8f580) !important;
+  border:1px solid #ffffffeb !important;
+  box-shadow:inset 0 1px 0 #fff,0 12px 30px #9f73c72f !important;
+  -webkit-backdrop-filter:blur(16px) saturate(1.3);
+  backdrop-filter:blur(16px) saturate(1.3);
+}
+body.skin-crystal .status,
+body.skin-crystal .choice,
+body.skin-crystal .save-title,
+body.skin-crystal .profile-title,
+body.skin-crystal .ranking-title,
+body.skin-crystal .ranking-current,
+body.skin-crystal .profile-section,
+body.skin-crystal label{color:#5c3f7d !important;}
+body.skin-crystal .save-help,
+body.skin-crystal .ranking-meta,
+body.skin-crystal .profile-sub,
+body.skin-crystal .profile-note,
+body.skin-crystal .hardnote,
+body.skin-crystal .rank-range,
+body.skin-crystal .profile-stat small{color:#816d95 !important;}
+body.skin-crystal .rank-name,
+body.skin-crystal .profile-stat b{color:#563d73 !important;}
+body.skin-crystal .rank-row.active{
+  border-color:#c38be8aa !important;
+  background:linear-gradient(145deg,#fff,#efdfff9a 50%,#d7b9ef9c) !important;
+  box-shadow:0 0 18px #c48ce044 !important;
+}
+body.skin-crystal .placement-bar{
+  background:#ffffff8a !important;border-color:#c9a6e599 !important;
+}
+body.skin-crystal .placement-fill{
+  background:linear-gradient(90deg,#b275e0,#e49bdc,#f1b8d7) !important;
+}
+body.skin-crystal .save-code,
+body.skin-crystal .profile-name-input,
+body.skin-crystal .online-inputs input{
+  color:#5b4475 !important;
+  background:#ffffffa8 !important;
+  border:1px solid #d4b7e99a !important;
+}
+
+/* Menu skins */
+body.skin-crystal .skin-toggle{
+  color:#9b61d3 !important;
+  background:linear-gradient(145deg,#ffffffd8,#f4e8ff9f 55%,#d7b7ee88) !important;
+  border:1px solid #ffffffef !important;
+  box-shadow:inset 0 1px 0 #fff,0 8px 22px #986ac332 !important;
+}
+body.skin-crystal .skin-panel{
+  color:#5b4275 !important;
+  background:linear-gradient(155deg,#fffefdf0,#f4ebffea 62%,#dfc9f5e2) !important;
+  border:1px solid #ffffffef !important;
+  box-shadow:0 18px 48px #9a6cc13a,inset 0 1px 0 #fff !important;
+}
+body.skin-crystal .skin-title{
+  color:#9860cc !important;
+  background:#fffafff0 !important;
+}
+body.skin-crystal .skin-option{
+  color:#5e4478 !important;
+  background:#ffffff78 !important;
+  border-color:#d6b8e744 !important;
+}
+body.skin-crystal .skin-option small{color:#8a759b !important;}
+body.skin-crystal .skin-option.active{
+  border-color:#c88be6aa !important;
+  background:linear-gradient(145deg,#ffffffc9,#f2dfff8e 52%,#d8b8ef8c) !important;
+}
+
+/* Plateau violet clair + blanc, façon jardin spirituel */
+body.skin-crystal .board{
+  overflow:visible;
+  padding:9px !important;
+  gap:8px !important;
+  border-radius:26px !important;
+  background:
+    radial-gradient(circle at 50% 50%,#ffffff99 0 3%,transparent 26%),
+    radial-gradient(circle at 16% 18%,#f6c7e977 0 8%,transparent 34%),
+    radial-gradient(circle at 84% 78%,#b887e488 0 10%,transparent 36%),
+    linear-gradient(145deg,#eee4ff,#d8c0f2 46%,#b98ce0 100%) !important;
+  border:2px solid #f9ebff !important;
+  box-shadow:
+    0 0 0 1px #c58ce0aa,
+    0 0 0 4px #ffffff4c,
+    0 12px 34px #9766c33b,
+    0 0 30px #dba6ee55,
+    inset 0 0 30px #ffffff88 !important;
+}
+body.skin-crystal .board:before{
+  content:"";
+  position:absolute;
+  inset:-14px;
+  border-radius:35px;
+  z-index:-1;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 20% 10%,#ffffff99 0 4%,transparent 26%),
+    radial-gradient(circle at 80% 90%,#f6b5e466 0 9%,transparent 36%),
+    conic-gradient(from 210deg,transparent,#e8c3ff55,transparent 28%,#ffffff55,transparent 58%,#e7b2e955,transparent);
+  filter:blur(6px);
+}
+body.skin-crystal .board:after{
+  content:"✦   ✿   ✦";
+  position:absolute;
+  inset:-8px;
+  border-radius:32px;
+  pointer-events:none;
+  z-index:-1;
+  color:#ffffffaa;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding-top:3px;
+  letter-spacing:12px;
+  text-shadow:0 0 9px #d598ef;
+}
+
+/* Cases : verre floral */
+body.skin-crystal .cell{
+  overflow:hidden;
+  border-radius:15px !important;
+  background:
+    radial-gradient(circle at 20% 14%,#ffffffb8 0 4%,transparent 26%),
+    linear-gradient(145deg,#ffffff92,#f4e9ff5a 50%,#d7bce87a) !important;
+  border:1px solid #ffffffdd !important;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 0 14px #ffffff66,
+    0 5px 12px #9e72c22c !important;
+}
+body.skin-crystal .cell:before{
+  content:"";
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(120deg,transparent 0 28%,#ffffffa8 29% 34%,transparent 35% 100%),
+    radial-gradient(circle at 80% 78%,#f5b7dd45 0 10%,transparent 30%);
+}
+body.skin-crystal .cell:hover{
+  transform:translateY(-2px) scale(1.012);
+  border-color:#fff !important;
+  background:linear-gradient(145deg,#ffffffc2,#f2e1ff82 48%,#e5b5e793) !important;
+  box-shadow:0 0 18px #d697e355,0 7px 15px #9e6ec72d !important;
+}
+
+/* Pions Spirit Blossom : fleurs complètes à 5 pétales.
+   Le Rouge -> fleur rose ; le Bleu -> fleur blanche. */
+body.skin-crystal .dot{
+  width:57% !important;
+  height:57% !important;
+  border-radius:50% !important;
+  transform:none !important;
+  border:0 !important;
+  position:relative;
+  background:transparent !important;
+  box-shadow:none !important;
+  filter:drop-shadow(0 5px 7px #9a65bd35);
+}
+
+/* Cinq pétales construits en CSS, sans image externe. */
+body.skin-crystal .dot:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background:
+    radial-gradient(ellipse at 50% 18%, var(--flower-light) 0 18%, var(--flower-mid) 19% 35%, transparent 36%),
+    radial-gradient(ellipse at 82% 40%, var(--flower-light) 0 18%, var(--flower-mid) 19% 35%, transparent 36%),
+    radial-gradient(ellipse at 70% 79%, var(--flower-light) 0 18%, var(--flower-mid) 19% 35%, transparent 36%),
+    radial-gradient(ellipse at 30% 79%, var(--flower-light) 0 18%, var(--flower-mid) 19% 35%, transparent 36%),
+    radial-gradient(ellipse at 18% 40%, var(--flower-light) 0 18%, var(--flower-mid) 19% 35%, transparent 36%);
+  box-shadow:
+    inset 0 0 9px #ffffff70,
+    0 0 13px var(--flower-glow);
+}
+
+/* Cœur de la fleur + petit reflet spirituel. */
+body.skin-crystal .dot:after{
+  content:"";
+  display:block !important;
+  position:absolute;
+  width:29% !important;
+  height:29% !important;
+  left:35.5% !important;
+  top:35.5% !important;
+  border-radius:50% !important;
+  background:
+    radial-gradient(circle at 38% 32%,#ffffff 0 13%,transparent 14%),
+    radial-gradient(circle,#f8d7ff 0 24%,#c681e0 25% 58%,#8d4db8 59% 100%) !important;
+  border:1px solid #ffffffb5;
+  box-shadow:
+    0 0 8px #ffffff,
+    0 0 14px #d999ef88 !important;
+}
+
+/* Fleur rose */
+body.skin-crystal .redDot{
+  --flower-light:#fff2fa;
+  --flower-mid:#ed8bc7;
+  --flower-glow:#e98acb;
+  color:#e672b6 !important;
+}
+
+/* Fleur blanche */
+body.skin-crystal .blueDot{
+  --flower-light:#ffffff;
+  --flower-mid:#e9deef;
+  --flower-glow:#ffffff;
+  color:#ffffff !important;
+}
+
+/* Les textes Rouge/Bleu restent lisibles, sans modifier la logique interne. */
+body.skin-crystal .red{
+  color:#db6aac !important;
+  text-shadow:0 0 8px #fff,0 0 13px #ec9bd2 !important;
+}
+body.skin-crystal .blue{
+  color:#ffffff !important;
+  text-shadow:0 1px 1px #a58caf,0 0 8px #fff !important;
+}
+
+/* Fin de partie */
+body.skin-crystal .game-end-overlay{
+  background:rgba(238,222,255,.58) !important;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+}
+body.skin-crystal .game-end-card{
+  color:#5b4277 !important;
+  background:linear-gradient(145deg,#ffffffdc,#f2e6ffae 58%,#ddbfeeaa) !important;
+  border:1px solid #ffffffef !important;
+  box-shadow:0 16px 40px #9d70c335,inset 0 1px 0 #fff !important;
+}
+body.skin-crystal .game-end-subtitle{color:#7a6790 !important;}
+
+@media(max-width:600px){
+  body.skin-crystal .panel:before{
+    left:5px;right:5px;
+    top:94px;
+    height:calc(100vw - 10px);
+    max-height:none;
+    border-radius:25px;
+  }
+  body.skin-crystal .board{
+    gap:6px !important;
+    padding:7px !important;
+    border-radius:22px !important;
+  }
+  body.skin-crystal .cell{border-radius:11px !important;}
+  body.skin-crystal .dot{width:57% !important;height:57% !important;}
+}
+
+@media(max-width:600px){
+ .skin-toggle{right:10px;top:10px;width:42px;height:42px}
+ .skin-panel{right:10px;top:60px;width:240px;max-height:calc(100vh - 80px)}
+
+ /* VOILACTÉ MOBILE — animation légère et bien visible sur Safari/Chrome mobile */
+ body.skin-void .board{
+   background:
+     radial-gradient(circle at 15% 22%,#ffffff 0 1.5px,transparent 2.2px),
+     radial-gradient(circle at 77% 18%,#7eeeff 0 1.2px,transparent 2px),
+     radial-gradient(circle at 38% 76%,#e8ffff 0 1.3px,transparent 2px),
+     radial-gradient(circle at 72% 68%,#8a7dff 0 1.4px,transparent 2.2px),
+     radial-gradient(ellipse at 25% 35%,#5d38ff77 0 8%,transparent 32%),
+     radial-gradient(ellipse at 78% 68%,#00cfff66 0 10%,transparent 35%),
+     linear-gradient(135deg,#020313,#071b45 48%,#020714) !important;
+   background-size:55px 55px,73px 73px,91px 91px,111px 111px,135% 135%,140% 140%,100% 100% !important;
+   animation:voidMobileSky 10s linear infinite !important;
+   box-shadow:0 0 0 2px #3ccfff,0 0 28px #4de9ff88,0 0 55px #6b42ff55,inset 0 0 28px #001229 !important;
+ }
+ body.skin-void .board::before{
+   inset:3px;
+   z-index:0;
+   border-radius:18px;
+   filter:none;
+   opacity:.32;
+   background:radial-gradient(ellipse at 20% 50%,#7d4dff55,transparent 36%),radial-gradient(ellipse at 82% 45%,#18d9ff44,transparent 38%);
+   animation:voidMobileNebula 5.5s ease-in-out infinite alternate;
+ }
+ body.skin-void .board::after{
+   content:"✦  ·  ✧   ·   ✦  ·  ✧";
+   inset:10px;
+   z-index:1;
+   font-size:12px;
+   letter-spacing:9px;
+   opacity:.72;
+   animation:voidMobileStars 2.8s ease-in-out infinite alternate;
+ }
+ body.skin-void .cell{z-index:2;background:linear-gradient(145deg,#092b4dcc,#051832e8) !important;}
+}
+@keyframes voidMobileSky{
+  0%{background-position:0 0,0 0,0 0,0 0,0% 20%,100% 80%,0 0}
+  50%{background-position:28px 18px,-30px 24px,22px -30px,-26px -18px,45% 55%,45% 35%,0 0}
+  100%{background-position:55px 36px,-60px 48px,44px -60px,-52px -36px,100% 80%,0% 20%,0 0}
+}
+@keyframes voidMobileNebula{from{transform:scale(1);opacity:.25}to{transform:scale(1.06);opacity:.48}}
+@keyframes voidMobileStars{from{transform:translate3d(0,0,0);opacity:.45}to{transform:translate3d(3px,-4px,0);opacity:.9}}
+
+.save-box{margin-top:18px;padding:16px;border-radius:17px;background:#ffffff06;border:1px solid #ffffff16;text-align:left}
+.save-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:5px}
+.save-help{color:#aeb9d8;font-size:14px;line-height:1.45;margin-bottom:11px}
+.save-row{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
+.save-code{flex:1 1 260px;min-width:0;border:1px solid #ffffff22;border-radius:12px;padding:11px 12px;background:#090e1d;color:#f4f6ff;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;font-weight:800;letter-spacing:.5px;outline:none}
+.save-actions{display:flex;gap:7px;flex-wrap:wrap}.save-actions button{min-width:92px}
+.save-message{min-height:22px;margin-top:9px;font-size:14px;font-weight:700;color:#aeb9d8}
+@media(max-width:600px){.save-row{display:block}.save-code{width:100%;margin-bottom:9px}.save-actions{display:grid;grid-template-columns:repeat(3,1fr)}.save-actions button{min-width:0;padding:10px 6px;font-size:14px}}
+
+/* === RESULTAT FIN DE PARTIE — MOBILE + PC === */
+.board{position:relative}
+.game-end-overlay{
+  position:absolute;inset:0;z-index:50;display:none;align-items:center;justify-content:center;
+  padding:18px;border-radius:inherit;background:rgba(3,7,18,.82);
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);
+  touch-action:manipulation;
+}
+.game-end-overlay.show{display:flex}
+.game-end-card{
+  width:min(88%,360px);padding:22px 16px;border-radius:18px;background:#10162af2;
+  border:1px solid #ffffff2b;box-shadow:0 14px 38px #000a;text-align:center;
+}
+.game-end-title{font-size:clamp(25px,7vw,38px);font-weight:900;line-height:1.05;margin-bottom:9px}
+.game-end-title.win{color:#7dffad}.game-end-title.lose{color:#ff7d8d}
+.game-end-subtitle{font-size:clamp(15px,4vw,19px);font-weight:700;color:#dce3ff;margin-bottom:15px}
+.game-end-new{width:100%;min-height:48px;font-size:17px}
+@media(max-width:600px){
+ .game-end-overlay{padding:10px}
+ .game-end-card{width:90%;padding:18px 13px;border-radius:15px}
+ .game-end-new{min-height:46px}
+}
+
+
+/* === iPhone / Web App : zone sûre en haut === */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .app {
+    padding-top: calc(32px + env(safe-area-inset-top));
+  }
+  .skin-toggle {
+    top: calc(18px + env(safe-area-inset-top));
+  }
+  .skin-panel {
+    top: calc(74px + env(safe-area-inset-top));
+  }
+}
+@media(max-width:600px) {
+  @supports (padding-top: env(safe-area-inset-top)) {
+    .app {
+      padding-top: calc(18px + env(safe-area-inset-top));
+    }
+    .skin-toggle {
+      top: calc(10px + env(safe-area-inset-top));
+    }
+    .skin-panel {
+      top: calc(60px + env(safe-area-inset-top));
+      max-height: calc(100vh - 80px - env(safe-area-inset-top));
+    }
+  }
+}
+
+</style>
+</head>
+<body>
+
+<div class="skin-toggle" id="skinToggle" title="Choisir le skin">🎨</div>
+<div class="skin-panel" id="skinPanel">
+  <div class="skin-title">Apparence</div>
+  <button class="skin-option active" data-skin="arcade"><span class="skin-preview arcade-preview"></span><span><b>Arcade</b><small>Le style actuel</small></span></button>
+  <button class="skin-option" data-skin="paper"><span class="skin-preview paper-preview"></span><span><b>Papier</b><small>Comme dessiné au stylo</small></span></button>
+  <button class="skin-option" data-skin="competition"><span class="skin-preview competition-preview"></span><span><b>Compétition</b><small>Sobre &amp; sérieux</small></span></button>
+  <button class="skin-option locked" data-skin="crystal"><span class="skin-preview crystal-preview"></span><span><b>🌸 Spirit Blossom — Saison 1</b><small>Atteins 🌟 Grand Maître en Saison 1</small></span><span class="lock">🔒</span></button>
+  <button class="skin-option locked" data-skin="gold"><span class="skin-preview gold-preview"></span><span><b>🥇 Plateau doré</b><small>20 victoires contre le Bot Difficile</small></span><span class="lock">🔒</span></button>
+  <button class="skin-option locked" data-skin="diamond"><span class="skin-preview diamond-preview"></span><span><b>💎 Plateau diamant</b><small>50 victoires contre le Bot Difficile</small></span><span class="lock">🔒</span></button>
+  <button class="skin-option locked" data-skin="void"><span class="skin-preview void-preview"></span><span><b>🌌 Plateau voilacté</b><small>100 victoires contre le Bot Difficile</small></span><span class="lock">🔒</span></button>
+  <button class="skin-option locked" data-skin="chess"><span class="skin-preview chess-preview"></span><span><b>♟️ Échec</b><small>5 victoires d'affilée contre le Bot Difficile</small></span><span class="lock">🔒</span></button>
+  <button class="skin-option locked" data-skin="divine"><span class="skin-preview divine-preview"></span><span><b>👑 Maître Absolu</b><small>200 victoires contre le Bot Difficile</small></span><span class="lock">🔒</span></button>
+</div>
+
+<div class="app">
+<h1 class="logo">⭕ JEU DES RONDS</h1>
+<p class="subtitle">Je me fais tout seul, je profite tout seul.</p>
+<div class="creator">Créé par <b>André Orine Beberoo</b></div>
+<div class="modebar">
+<button class="mode active" data-mode="local">👥 2 joueurs</button>
+<button class="mode" data-mode="bot-easy">🤖 Bot Facile</button>
+<button class="mode" data-mode="bot-medium">🤖 Bot Moyen</button>
+<button class="mode" data-mode="bot-hard">🤖 Bot Difficile</button>
+<button class="mode" data-mode="online">🌐 En Ligne</button>
+<button class="mode" data-mode="ranking">🏆 Classement</button>
+<button class="mode" data-mode="profile">👤 Profil</button>
+</div>
+
+<div id="difficultyBox" class="difficulty">
+  <div class="hardnote">
+    <b>🤖 Bot Difficile</b><br>
+    Le Bot Difficile utilise l'IA la plus forte du jeu et s'adapte progressivement à ta façon de jouer sur cet appareil.<br>
+    🧠 Il mémorise localement tes habitudes de placement et de quantité pour varier ses réponses.<br>
+    🏆 Les victoires contre ce bot comptent pour débloquer les skins spéciaux.<br>
+    ⚙️ La case « Mode difficile » sous le plateau reste optionnelle : si tu l'actives, le nombre de ronds joué doit être différent du tour précédent, sauf si aucune autre quantité n'est possible.
+  </div>
+  <div class="hardstats" id="hardStats">🏆 Victoires contre le Bot Difficile : <b id="hardWins">0</b> • Série : <b id="hardStreak">0</b>/5</div>
+</div>
+
+<!-- Interface Mode En Ligne -->
+<div id="onlineBox" class="online-box">
+<div class="online-inputs">
+<button class="primary" id="hostBtn">Créer une partie</button>
+<input type="text" id="joinCode" placeholder="CODE" maxlength="4">
+<button class="secondary" id="joinBtn">Rejoindre</button>
+</div>
+<div class="online-status" id="onlineStatus">Choisis de créer ou rejoindre une partie.</div>
+<div class="online-vs" id="onlineVs"><span id="onlineMeName">Joueur</span><span class="vs">VS</span><span id="onlineOpponentName">Adversaire</span></div>
+<div class="online-stats" id="onlineStats">
+  <div>🏆 Victoires en ligne : <b id="onlineWins">0</b></div>
+  <div>📊 Winrate : <b id="onlineWinrate">0%</b> • <b id="onlineRank">Non classé</b></div>
+</div>
+</div>
+
+<!-- Saison 1 : écran de classement. Aucun code réseau/bot/skin n'est exécuté ici. -->
+<div id="rankingBox" class="ranking-box">
+  <div class="ranking-hero">
+    <div class="ranking-season">🏆 Saison 1</div>
+    <div class="ranking-title">Classement en ligne</div>
+    <div class="ranking-current" id="rankingCurrent">Non classé</div>
+    <div class="ranking-meta" id="rankingMeta">0 victoire • 0 défaite • 0 partie • 0.0%</div>
+    <div class="placement-wrap" id="placementWrap">
+      <div class="placement-label"><span>🎯 Matchs de placement</span><span id="placementText">0/5</span></div>
+      <div class="placement-bar"><div class="placement-fill" id="placementFill"></div></div>
+    </div>
+    <div class="ranking-list" id="rankingList"></div>
+    <div class="ranking-note">
+      Les 5 premières parties servent au placement. Après ces 5 matchs, ton rang évolue avec ton winrate.
+      ⚡ Challenger demande au moins 20 parties et 🔥 Challenger Ultime au moins 30 parties.
+    </div>
+  </div>
+</div>
+
+<!-- Profil local : identité sans compte. Les stats online réutilisent exactement celles de la saison. -->
+<div id="profileBox" class="profile-box">
+  <div class="profile-card">
+    <div class="profile-title">👤 Profil</div>
+    <div class="profile-sub">Enregistré uniquement sur cet appareil — aucun compte requis.</div>
+    <div class="profile-name-row">
+      <input id="profileNameInput" class="profile-name-input" maxlength="16" autocomplete="off" spellcheck="false" aria-label="Pseudo">
+      <button class="primary" id="saveProfileNameBtn" type="button">Enregistrer</button>
+    </div>
+
+    <div class="profile-section">🌐 Saison <span id="profileSeason">1</span> — En ligne</div>
+    <div class="profile-grid">
+      <div class="profile-stat"><small>Rang actuel</small><b id="profileRank">Non classé</b></div>
+      <div class="profile-stat"><small>Winrate</small><b id="profileWinrate">0.0%</b></div>
+      <div class="profile-stat"><small>Parties</small><b id="profileGames">0</b></div>
+      <div class="profile-stat"><small>Victoires / Défaites</small><b id="profileWL">0 / 0</b></div>
+    </div>
+
+    <div class="profile-section">🤖 Progression locale</div>
+    <div class="profile-grid">
+      <div class="profile-stat"><small>Victoires Bot Difficile</small><b id="profileHardWins">0</b></div>
+      <div class="profile-stat"><small>Série Bot Difficile</small><b id="profileHardStreak">0</b></div>
+      <div class="profile-stat"><small>Skins débloqués</small><b id="profileSkins">3 / 9</b></div>
+      <div class="profile-stat"><small>Pseudo en ligne</small><b id="profileNameDisplay">Joueur</b></div>
+    </div>
+    <div class="profile-note">Au changement de saison, seules les statistiques en ligne ci-dessus sont réinitialisées. Le pseudo, les skins et la progression Bot restent conservés.</div>
+  </div>
+</div>
+
+<div class="panel" id="gamePanel">
+<div class="status" id="status"></div>
+<div class="info">
+<div class="badge">🔴 <span id="redCount">0</span></div>
+<div class="badge">Ronds sélectionnés : <span id="selectedCount">0</span>/4</div>
+<div class="badge">🔵 <span id="blueCount">0</span></div>
+</div>
+
+<div class="board" id="board">
+  <div class="game-end-overlay" id="gameEndOverlay">
+    <div class="game-end-card">
+      <div class="game-end-title" id="gameEndTitle"></div>
+      <div class="game-end-subtitle" id="gameEndSubtitle"></div>
+      <button class="primary game-end-new" id="gameEndNew" type="button">Nouvelle partie</button>
+    </div>
+  </div>
+</div>
+<div class="warning" id="warning"></div>
+
+<div class="choice">
+Choisis directement <b>1 à 4 cases</b>, puis appuie sur « J'ai fini ».
+</div>
+<div class="controls">
+<button class="primary" id="finish">J'ai fini</button>
+<button class="secondary" id="undo">Effacer ma sélection</button>
+<button class="secondary" id="reset">Nouvelle partie</button>
+</div>
+
+<div class="result" id="result"></div>
+<label><input type="checkbox" id="hard"> Mode difficile — le nombre de ronds doit être différent du tour précédent</label>
+
+<div class="rules">
+<b>Règles :</b><br>
+• À ton tour, clique sur 1 à 4 cases pour placer tes ronds.<br>
+• Tu peux choisir les cases dans l’ordre que tu veux.<br>
+• Les cases jouées pendant un même tour doivent former une ligne horizontale ou verticale sans trou : aucune case vide ne peut être laissée entre deux ronds joués.<br>
+• Les lignes existantes peuvent être complétées ou prolongées : il est autorisé de jouer entre deux points déjà présents.<br>
+• Il n’est plus interdit de couper ou de croiser une ligne existante.<br>
+• Quand il ne reste qu’une seule case vide, le joueur qui doit la jouer perd immédiatement : le dernier rond ne peut pas être joué.<br>
+• En mode difficile, le nombre de ronds joué doit être différent de celui du tour précédent (sauf s'il est impossible physiquement de faire une autre quantité sur le plateau).
+</div>
+
+<div class="save-box" id="saveBox">
+  <div class="save-title">💾 Sauvegarde de progression</div>
+  <div class="save-help">Exporte ce code pour récupérer ta progression sur un autre appareil. Il sauvegarde tes statistiques en ligne, ton classement, tes victoires contre le Bot Difficile et tes déblocages importants.</div>
+  <div class="save-row">
+    <input id="saveCode" class="save-code" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Exemple : JDR3-....">
+    <div class="save-actions">
+      <button class="primary" id="exportSaveBtn" type="button">Exporter</button>
+      <button class="secondary" id="copySaveBtn" type="button">Copier</button>
+      <button class="secondary" id="importSaveBtn" type="button">Importer</button>
+    </div>
+  </div>
+  <div class="save-message" id="saveMessage"></div>
+</div>
+
+</div>
+</div>
+
+<script>
+const B=document.getElementById("board"),S=document.getElementById("status"),W=document.getElementById("warning");
+const R=document.getElementById("result"),RC=document.getElementById("redCount"),BC=document.getElementById("blueCount");
+const SC=document.getElementById("selectedCount"),finishBtn=document.getElementById("finish"),undoBtn=document.getElementById("undo");
+const diff=null,diffBox=document.getElementById("difficultyBox");
+const onlineBox=document.getElementById("onlineBox"), onlineStatus=document.getElementById("onlineStatus");
+const rankingBox=document.getElementById("rankingBox"), profileBox=document.getElementById("profileBox"), gamePanel=document.getElementById("gamePanel");
+const rankingCurrent=document.getElementById("rankingCurrent"), rankingMeta=document.getElementById("rankingMeta");
+const placementWrap=document.getElementById("placementWrap"), placementText=document.getElementById("placementText"), placementFill=document.getElementById("placementFill");
+const rankingList=document.getElementById("rankingList");
+const hostBtn=document.getElementById("hostBtn"), joinBtn=document.getElementById("joinBtn"), joinCodeInput=document.getElementById("joinCode");
+const hardCheckbox=document.getElementById("hard");
+const saveCodeInput=document.getElementById("saveCode");
+const exportSaveBtn=document.getElementById("exportSaveBtn");
+const copySaveBtn=document.getElementById("copySaveBtn");
+const importSaveBtn=document.getElementById("importSaveBtn");
+const saveMessage=document.getElementById("saveMessage");
+const gameEndOverlay=document.getElementById("gameEndOverlay");
+const gameEndTitle=document.getElementById("gameEndTitle");
+const gameEndSubtitle=document.getElementById("gameEndSubtitle");
+const gameEndNew=document.getElementById("gameEndNew");
+const profileNameInput=document.getElementById("profileNameInput");
+const saveProfileNameBtn=document.getElementById("saveProfileNameBtn");
+const onlineVs=document.getElementById("onlineVs");
+const onlineMeName=document.getElementById("onlineMeName");
+const onlineOpponentNameEl=document.getElementById("onlineOpponentName");
+
+
+const PLAYER_PROFILE_NAME_KEY="jeuDesRondsPlayerNameV1";
+function cleanPlayerName(value){
+  const s=String(value||"").replace(/[<>]/g,"").replace(/\s+/g," ").trim().slice(0,16);
+  return s || "Joueur";
+}
+function defaultPlayerName(){
+  const existing=localStorage.getItem(PLAYER_PROFILE_NAME_KEY);
+  if(existing)return cleanPlayerName(existing);
+  const generated="Joueur "+Math.floor(1000+Math.random()*9000);
+  localStorage.setItem(PLAYER_PROFILE_NAME_KEY,generated);
+  return generated;
+}
+let playerProfileName=defaultPlayerName();
+let onlineOpponentProfileName="Adversaire";
+
+function unlockedSkinCount(){
+  return ["arcade","paper","competition","crystal","gold","diamond","void","chess","divine"].filter(isSkinUnlocked).length;
+}
+function updateProfileScreen(){
+  if(!profileBox)return;
+  const total=onlineWins+onlineLosses;
+  const rate=getOnlineWinrate();
+  profileNameInput.value=playerProfileName;
+  document.getElementById("profileNameDisplay").textContent=playerProfileName;
+  document.getElementById("profileSeason").textContent=ONLINE_SEASON;
+  document.getElementById("profileRank").textContent=getOnlineRank(rate,total);
+  document.getElementById("profileWinrate").textContent=rate.toFixed(1)+"%";
+  document.getElementById("profileGames").textContent=total;
+  document.getElementById("profileWL").textContent=onlineWins+" / "+onlineLosses;
+  document.getElementById("profileHardWins").textContent=hardWins;
+  document.getElementById("profileHardStreak").textContent=hardStreak;
+  document.getElementById("profileSkins").textContent=unlockedSkinCount()+" / 9";
+  onlineMeName.textContent=playerProfileName;
+  onlineOpponentNameEl.textContent=onlineOpponentProfileName;
+  onlineVs.classList.toggle("show",mode==="online" && onlineConnected);
+}
+function savePlayerProfileName(){
+  playerProfileName=cleanPlayerName(profileNameInput.value);
+  localStorage.setItem(PLAYER_PROFILE_NAME_KEY,playerProfileName);
+  profileNameInput.value=playerProfileName;
+  updateProfileScreen();
+  // Si une partie est déjà connectée, informe l'autre téléphone sans toucher à la partie.
+  if(mode==="online" && onlineConnected)sendOnlineData({type:"PROFILE_NAME",profileName:playerProfileName});
+}
+saveProfileNameBtn.addEventListener("click",savePlayerProfileName);
+profileNameInput.addEventListener("keydown",e=>{if(e.key==="Enter")savePlayerProfileName();});
+
+function hideGameEndOverlay(){
+  gameEndOverlay.classList.remove("show");
+  gameEndTitle.textContent="";
+  gameEndSubtitle.textContent="";
+}
+function resultContextText(didWin){
+  if(mode==="bot-easy")return didWin?"Victoire contre le Bot Facile":"Défaite contre le Bot Facile";
+  if(mode==="bot-medium")return didWin?"Victoire contre le Bot Moyen":"Défaite contre le Bot Moyen";
+  if(mode==="bot-hard")return didWin?"Bot Difficile vaincu !":"Défaite contre le Bot Difficile";
+  if(mode==="online")return didWin?`${playerProfileName} bat ${onlineOpponentProfileName}`:`${onlineOpponentProfileName} bat ${playerProfileName}`;
+  return "";
+}
+function showGameEndOverlay(winner){
+  if(!winner || !(isBotMode() || mode==="online"))return;
+  let didWin;
+  if(isBotMode())didWin=winner!==botColor;
+  else didWin=winner===myRole;
+  gameEndTitle.textContent=didWin?"🏆 VOUS AVEZ GAGNÉ !":"❌ VOUS AVEZ PERDU !";
+  gameEndTitle.className="game-end-title "+(didWin?"win":"lose");
+  gameEndSubtitle.textContent=resultContextText(didWin);
+  gameEndOverlay.classList.add("show");
+}
+gameEndNew.addEventListener("click",()=>reset(false));
+
+let board=Array(16).fill(null),player="red",lastPlayer=null,selected=[],lastAmount=null,gameOver=false,mode="local",botColor=null,thinking=false,hardMode=false;
+function isBotMode(){return mode==="bot-easy"||mode==="bot-medium"||mode==="bot-hard";}
+function difficultyForMode(){
+  if(mode==="bot-medium")return "medium";
+  if(mode==="bot-hard")return "hard";
+  return "easy";
+}
+// Difficulté réellement utilisée par le bot. Les ratios restent internes et ne sont jamais affichés au joueur.
+let botDifficulty="easy";
+const BOT_STRENGTH={easy:0.50, medium:0.70, hard:0.90}; // objectifs de winrate
+// Probabilité calibrée d'utiliser le solveur parfait.
+// Des simulations contre plusieurs styles de joueurs donnent des résultats
+// beaucoup plus proches des objectifs 50/70/90 qu'un simple 50/70/90 de coups parfaits.
+const BOT_SOLVER_RATE={easy:0.08, medium:0.43, hard:0.84};
+let gameResultCounted=false;
+let activeSkin="arcade", previewSkin=false;
+let hardWins=Number(localStorage.getItem("jeuDesRondsHardWins")||0);
+let hardStreak=Number(localStorage.getItem("jeuDesRondsHardStreak")||0);
+let hardStreakAchieved=localStorage.getItem("jeuDesRondsHardStreakAchieved")==="1" || hardStreak>=5;
+if(hardStreakAchieved)localStorage.setItem("jeuDesRondsHardStreakAchieved","1");
+const CRYSTAL_S1_KEY="jeuDesRondsCrystalS1Unlocked";
+let crystalS1Unlocked=localStorage.getItem(CRYSTAL_S1_KEY)==="1";
+const solverCache=new Map();
+
+// === MÉMOIRE DU BOT DIFFICILE ===
+// Stockée uniquement sur l'appareil du joueur. Elle survit aux nouvelles parties
+// et permet au Bot Difficile de reconnaître progressivement les habitudes locales.
+const HUMAN_PROFILE_KEY="jeuDesRondsHumanProfileV1";
+
+function freshHumanProfile(){
+  return {
+    moves:0,
+    games:0,
+    lengths:[0,0,0,0,0],
+    cells:Array(16).fill(0),
+    openings:Array(16).fill(0),
+    earlyLengths:[0,0,0,0,0],
+    lateLengths:[0,0,0,0,0]
+  };
+}
+
+function loadHumanProfile(){
+  try{
+    const p=JSON.parse(localStorage.getItem(HUMAN_PROFILE_KEY)||"null");
+    if(!p || !Array.isArray(p.lengths) || !Array.isArray(p.cells))return freshHumanProfile();
+    const clean=freshHumanProfile();
+    clean.moves=Number(p.moves)||0;
+    clean.games=Number(p.games)||0;
+    for(let i=0;i<5;i++)clean.lengths[i]=Number(p.lengths[i])||0;
+    for(let i=0;i<16;i++)clean.cells[i]=Number(p.cells[i])||0;
+    if(Array.isArray(p.openings))for(let i=0;i<16;i++)clean.openings[i]=Number(p.openings[i])||0;
+    if(Array.isArray(p.earlyLengths))for(let i=0;i<5;i++)clean.earlyLengths[i]=Number(p.earlyLengths[i])||0;
+    if(Array.isArray(p.lateLengths))for(let i=0;i<5;i++)clean.lateLengths[i]=Number(p.lateLengths[i])||0;
+    return clean;
+  }catch(e){return freshHumanProfile();}
+}
+
+let humanProfile=loadHumanProfile();
+let humanMovesThisGame=0;
+
+function saveHumanProfile(){
+  try{localStorage.setItem(HUMAN_PROFILE_KEY,JSON.stringify(humanProfile));}catch(e){}
+}
+
+function learnHumanMove(a){
+  if(mode!=="bot-hard" || !Array.isArray(a) || !a.length)return;
+  humanProfile.moves++;
+  humanMovesThisGame++;
+
+  const n=a.length;
+  humanProfile.lengths[n]=(humanProfile.lengths[n]||0)+1;
+  a.forEach(i=>humanProfile.cells[i]=(humanProfile.cells[i]||0)+1);
+
+  const occupiedBefore=board.filter(Boolean).length;
+  if(occupiedBefore<=4){
+    humanProfile.earlyLengths[n]=(humanProfile.earlyLengths[n]||0)+1;
+    a.forEach(i=>humanProfile.openings[i]=(humanProfile.openings[i]||0)+1);
+  }
+  if(occupiedBefore>=10){
+    humanProfile.lateLengths[n]=(humanProfile.lateLengths[n]||0)+1;
+  }
+  saveHumanProfile();
+}
+
+function humanPreferenceForCell(i){
+  const total=Math.max(1,humanProfile.moves);
+  return (humanProfile.cells[i]||0)/total;
+}
+
+function preferredHumanLength(){
+  let best=1,bestV=-1;
+  for(let n=1;n<=4;n++){
+    const v=humanProfile.lengths[n]||0;
+    if(v>bestV){bestV=v;best=n;}
+  }
+  return best;
+}
+
+// Score utilisé UNIQUEMENT pour départager plusieurs coups raisonnables.
+// Le bot cherche ainsi à occuper les zones que le joueur aime utiliser,
+// à perturber sa taille de coup favorite et à varier légèrement pour rester humain.
+function adaptiveHumanCounterScore(a){
+  if(!a || !a.length)return -Infinity;
+  let s=Math.random()*1.25;
+
+  // Bloquer progressivement les cases favorites du joueur.
+  for(const i of a)s += humanPreferenceForCell(i)*7.0;
+
+  // Si le joueur joue souvent une certaine quantité, le bot préfère parfois
+  // modifier la structure du plateau avec une quantité différente.
+  const fav=preferredHumanLength();
+  if(a.length!==fav)s+=0.55;
+  else s-=0.15;
+
+  // Petit biais central, mais faible pour éviter un comportement robotique fixe.
+  const center=[5,6,9,10];
+  s+=a.filter(i=>center.includes(i)).length*0.16;
+
+  // Avant d'avoir assez observé le joueur, l'adaptation reste discrète.
+  const confidence=Math.min(1,humanProfile.moves/24);
+  return s*confidence + Math.random()*(1-confidence)*2.2;
+}
+
+function adaptiveChoice(candidates){
+  if(!candidates || !candidates.length)return null;
+  if(humanProfile.moves<4)return randomMove(candidates);
+
+  let best=-Infinity,bestMoves=[];
+  for(const a of candidates){
+    const s=adaptiveHumanCounterScore(a);
+    if(s>best+1e-9){best=s;bestMoves=[a];}
+    else if(Math.abs(s-best)<1e-9)bestMoves.push(a);
+  }
+  return randomMove(bestMoves.length?bestMoves:candidates);
+}
+
+// Même logique que exactMove(), mais en cas de plusieurs solutions équivalentes
+// le Bot Difficile utilise ce qu'il a appris du joueur pour choisir.
+function adaptiveExactMove(ms){
+  const mask=boardMask(),ruleHard=hardMode;
+  const winning=[];
+  for(const a of ms){
+    let bits=0;a.forEach(i=>bits|=(1<<i));
+    if(!canForceWin(mask|bits,a.length,ruleHard))winning.push(a);
+  }
+  if(winning.length)return adaptiveChoice(winning);
+
+  let best=[],bestReplies=Infinity;
+  for(const a of ms){
+    let bits=0;a.forEach(i=>bits|=(1<<i));
+    const replies=legalMaskMoves(mask|bits,a.length,ruleHard);
+    let winningReplies=0;
+    for(const m of replies){
+      if(!canForceWin((mask|bits)|m.bits,m.n,ruleHard))winningReplies++;
+    }
+    if(winningReplies<bestReplies){bestReplies=winningReplies;best=[a];}
+    else if(winningReplies===bestReplies)best.push(a);
+  }
+  return adaptiveChoice(best.length?best:ms);
+}
+
+function adaptiveFallbackMove(ms){
+  // Mélange imitation humaine + contre-habitudes.
+  if(humanProfile.moves<4)return randomMove(ms);
+  return adaptiveChoice(ms);
+}
+
+// Variables En Ligne (relais WebSocket/MQTT)
+let onlineSource=null, onlineTopic=null, onlineClientId=null, onlineOpponentId=null, myRole=null, onlineConnected=false, connectionTimer=null;
+let onlineHostId=null, onlineStartedAt=0, onlineJoinTimers=[];
+let gameGeneration=0;
+
+// === SAISON 1 ===
+// Migration exécutée une seule fois sur chaque appareil.
+// Elle ne touche QU'aux victoires/défaites en ligne : bot, skins et progression restent intacts.
+const ONLINE_SEASON=1;
+const ONLINE_SEASON_KEY="jeuDesRondsOnlineSeason";
+if(Number(localStorage.getItem(ONLINE_SEASON_KEY)||0)!==ONLINE_SEASON){
+  localStorage.setItem("jeuDesRondsOnlineWins","0");
+  localStorage.setItem("jeuDesRondsOnlineLosses","0");
+  localStorage.setItem(ONLINE_SEASON_KEY,String(ONLINE_SEASON));
+}
+let onlineWins=Number(localStorage.getItem("jeuDesRondsOnlineWins")||0);
+let onlineLosses=Number(localStorage.getItem("jeuDesRondsOnlineLosses")||0);
+let onlineMatchCounted=false, onlineMatchId=null;
+
+function updateHardStats(){
+  const el=document.getElementById("hardStats");
+  if(el)el.innerHTML=`🏆 Victoires contre le Bot Difficile : <b>${hardWins}</b> • Série : <b>${hardStreak}</b>/5`;
+}
+function getOnlineWinrate(){
+  const total=onlineWins+onlineLosses;
+  return total ? (onlineWins/total)*100 : 0;
+}
+function getOnlineRank(rate,total=onlineWins+onlineLosses){
+  if(total===0) return "Non classé";
+  if(total<5) return `🎯 Placement ${total}/5`;
+
+  if(rate < 10) return "⚙️ Fer";
+  if(rate < 20) return "🥉 Bronze";
+  if(rate < 30) return "🥈 Silver";
+  if(rate < 40) return "🥇 Gold";
+  if(rate < 50) return "💠 Platine";
+  if(rate < 60) return "💚 Émeraude";
+  if(rate < 70) return "💎 Diamant";
+  if(rate < 80) return "👑 Maître";
+  if(rate < 90) return "🌟 Grand Maître";
+
+  // Les rangs d'élite demandent aussi de l'expérience, pas seulement quelques victoires.
+  if(rate < 95) return total>=20 ? "⚡ Challenger" : "🌟 Grand Maître";
+  if(total>=30) return "🔥 Challenger Ultime";
+  if(total>=20) return "⚡ Challenger";
+  return "🌟 Grand Maître";
+}
+function isGrandMasterOrHigherRank(rank){
+  return rank==="🌟 Grand Maître" || rank==="⚡ Challenger" || rank==="🔥 Challenger Ultime";
+}
+function checkCrystalSeasonUnlock(){
+  if(crystalS1Unlocked || ONLINE_SEASON!==1)return false;
+  const total=onlineWins+onlineLosses;
+  const rank=getOnlineRank(getOnlineWinrate(),total);
+  if(isGrandMasterOrHigherRank(rank)){
+    crystalS1Unlocked=true;
+    localStorage.setItem(CRYSTAL_S1_KEY,"1");
+    updateSkinUnlocks();
+    return true;
+  }
+  return false;
+}
+const ONLINE_RANK_ROWS=[
+  ["🔥 Challenger Ultime","95 à 100 %","30 parties minimum"],
+  ["⚡ Challenger","90 à 100 %","20 parties minimum"],
+  ["🌟 Grand Maître","80 à 89,9 %",""],
+  ["👑 Maître","70 à 79,9 %",""],
+  ["💎 Diamant","60 à 69,9 %",""],
+  ["💚 Émeraude","50 à 59,9 %",""],
+  ["💠 Platine","40 à 49,9 %",""],
+  ["🥇 Gold","30 à 39,9 %",""],
+  ["🥈 Silver","20 à 29,9 %",""],
+  ["🥉 Bronze","10 à 19,9 %",""],
+  ["⚙️ Fer","0 à 9,9 %",""]
+];
+function updateRankingScreen(){
+  const total=onlineWins+onlineLosses;
+  const rate=getOnlineWinrate();
+  const rank=getOnlineRank(rate,total);
+
+  rankingCurrent.textContent=rank;
+  rankingMeta.textContent=`${onlineWins} victoire${onlineWins!==1?"s":""} • ${onlineLosses} défaite${onlineLosses!==1?"s":""} • ${total} partie${total!==1?"s":""} • ${rate.toFixed(1)}%`;
+
+  const inPlacement=total<5;
+  placementWrap.style.display=inPlacement?"block":"none";
+  if(inPlacement){
+    placementText.textContent=`${total}/5`;
+    placementFill.style.width=`${Math.min(100,(total/5)*100)}%`;
+  }
+
+  rankingList.innerHTML="";
+  ONLINE_RANK_ROWS.forEach(([name,range,requirement])=>{
+    const row=document.createElement("div");
+    row.className="rank-row";
+    if(rank===name)row.classList.add("active");
+    const req=requirement?`<br><span>${requirement}</span>`:"";
+    row.innerHTML=`<div class="rank-name">${name}</div><div class="rank-range">${range}${req}</div>`;
+    rankingList.appendChild(row);
+  });
+}
+function updateOnlineStats(){
+  const total=onlineWins+onlineLosses;
+  const rate=getOnlineWinrate();
+  document.getElementById("onlineWins").textContent=onlineWins;
+  document.getElementById("onlineWinrate").textContent=rate.toFixed(1)+"%";
+  document.getElementById("onlineRank").textContent=getOnlineRank(rate,total);
+  updateRankingScreen();
+  updateProfileScreen();
+}
+function registerOnlineResult(didWin, matchId){
+  if(mode!=="online" || onlineMatchCounted) return;
+  if(matchId && onlineMatchId && matchId!==onlineMatchId) return;
+  onlineMatchCounted=true;
+  if(didWin) onlineWins++; else onlineLosses++;
+  localStorage.setItem("jeuDesRondsOnlineWins",onlineWins);
+  localStorage.setItem("jeuDesRondsOnlineLosses",onlineLosses);
+  checkCrystalSeasonUnlock();
+  updateOnlineStats();
+}
+function createOnlineMatchId(){
+  return Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8);
+}
+function registerOnlineWinner(winner, matchId=null){
+  if(!winner) return;
+  // Le résultat est envoyé avec l'identifiant de partie afin d'éviter
+  // qu'un ancien résultat ne soit comptabilisé dans une nouvelle partie.
+  if(matchId && onlineMatchId && matchId!==onlineMatchId) return;
+  registerOnlineResult(winner===myRole, matchId || onlineMatchId);
+}
+
+function finishOnlineMatch(winner){
+  if(mode!=="online" || !winner || !onlineConnected) return;
+  // Chaque téléphone enregistre immédiatement son propre résultat.
+  registerOnlineWinner(winner, onlineMatchId);
+  // Puis on informe l'autre téléphone. Le verrou onlineMatchCounted
+  // empêche tout double comptage si les deux côtés détectent la fin.
+  sendOnlineData({type:"RESULT", winner:winner, matchId:onlineMatchId});
+}
+
+
+function updateSkinUnlocks(){
+  const u={crystal:crystalS1Unlocked,gold:hardWins>=20,diamond:hardWins>=50,void:hardWins>=100,chess:hardStreakAchieved,divine:hardWins>=200};
+  skinOptions.forEach(x=>{
+    if(!(x.dataset.skin in u))return;
+    const ok=u[x.dataset.skin];
+    x.classList.toggle("locked",!ok);
+    const l=x.querySelector(".lock");
+    if(l)l.textContent=ok?"✓":"🔒";
+  });
+  if(typeof updateProfileScreen==="function")updateProfileScreen();
+}
+
+function registerHardResult(winner){
+  if(gameResultCounted||mode!=="bot-hard")return;
+  gameResultCounted=true;
+  if(winner!==botColor){
+    hardWins++;
+    hardStreak++;
+    if(hardStreak>=5){
+      hardStreakAchieved=true;
+      localStorage.setItem("jeuDesRondsHardStreakAchieved","1");
+    }
+  }else hardStreak=0;
+  localStorage.setItem("jeuDesRondsHardWins",hardWins);
+  localStorage.setItem("jeuDesRondsHardStreak",hardStreak);
+  updateHardStats();
+  updateSkinUnlocks();
+  updateProfileScreen();
+}
+
+function reset(isOnlineSync=false){
+ hideGameEndOverlay();
+ if(mode==="bot-hard" && humanMovesThisGame>0){
+   humanProfile.games++;
+   saveHumanProfile();
+ }
+ humanMovesThisGame=0;
+ gameGeneration++; // invalide immédiatement tout ancien tour asynchrone du bot
+ board=Array(16).fill(null);
+ hardMode=hardCheckbox.checked;
+ selected=[];lastAmount=null;gameOver=false;thinking=false;gameResultCounted=false;lastPlayer=null;
+  if(mode==="online") onlineMatchCounted=false;
+ R.textContent="";W.textContent="";
+
+ if(mode==="online"){
+   if(!isOnlineSync && onlineConnected){
+     // Les deux joueurs peuvent lancer une nouvelle partie.
+     player = Math.random() < 0.5 ? "red" : "blue";
+     onlineMatchId=createOnlineMatchId();
+    onlineMatchCounted=false;
+    sendOnlineData({type:"RESET", player:player, hardMode:hardMode, skin:activeSkin, matchId:onlineMatchId});
+   }
+ } else if(isBotMode()){
+   const botCommence = Math.random() < 0.5;
+   if(botCommence){
+     botColor = "red";
+     player = "red";
+   } else {
+     botColor = "blue";
+     player = "red";
+   }
+ } else {
+   player = Math.random() < 0.5 ? "red" : "blue";
+ }
+
+ render();
+ 
+ if(botIsTurn()){
+   botTurn();
+ }
+}
+
+function botIsTurn(){return isBotMode()&&player===botColor&&!gameOver}
+function onlineIsNotMyTurn(){return mode==="online"&&(!onlineConnected || player!==myRole)&&!gameOver}
+
+function hasOtherAmountMove(){
+ if(!hardMode || lastAmount === null) return true;
+ for(let i=0;i<16;i++){
+  for(let n=1;n<=4;n++){
+   if(n === lastAmount) continue;
+   let r=i>>2,c=i%4;
+   if(c+n<=4){
+    let a=Array.from({length:n},(_,k)=>r*4+c+k);
+    if(a.every(idx=>board[idx]===null) && contiguous(a)) return true;
+   }
+   if(r+n<=4){
+    let a=Array.from({length:n},(_,k)=>(r+k)*4+c);
+    if(a.every(idx=>board[idx]===null) && contiguous(a)) return true;
+   }
+  }
+ }
+ return false;
+}
+
+function render(){
+ const empty=board.filter(x=>x===null).length;
+ if(!gameOver){
+  if(empty===0){
+   gameOver=true;selected=[];
+   const loser=lastPlayer;
+   const winner=loser==="red"?"blue":"red";
+   R.textContent=`${loser==="red"?"🔴 Rouge":"🔵 Bleu"} a rempli le dernier rond : ${loser==="red"?"Rouge":"Bleu"} perd !`;
+   registerHardResult(winner);
+   finishOnlineMatch(winner);
+   showGameEndOverlay(winner);
+  } else if(empty===1){
+   gameOver=true;selected=[];
+   const winner=player==="red"?"blue":"red";
+   R.textContent=`${player==="red"?"🔴 Rouge":"🔵 Bleu"} doit jouer le dernier rond : ${player==="red"?"Rouge":"Bleu"} perd !`;
+   registerHardResult(winner);
+   finishOnlineMatch(winner);
+   showGameEndOverlay(winner);
+  } else if(!thinking&&botIsTurn()&&moves().length===0){
+   gameOver=true;selected=[];
+   const winner=player==="red"?"blue":"red";
+   R.textContent=`${player==="red"?"🔴 Rouge":"🔵 Bleu"} n'a aucun coup légal : il perd !`;
+   registerHardResult(winner);
+   finishOnlineMatch(winner);
+   showGameEndOverlay(winner);
+  }
+ }
+ B.querySelectorAll(":scope > .cell").forEach(c=>c.remove());
+ board.forEach((v,i)=>{
+  let c=document.createElement("div");c.className="cell";
+  if(v)c.innerHTML=`<div class="dot ${v}Dot"></div>`;
+  if(selected.includes(i))c.innerHTML=`<div class="dot ${player}Dot"></div>`;
+  c.onclick=()=>pick(i);B.insertBefore(c,gameEndOverlay);
+ });
+ 
+ if(mode==="online"){
+   if(!onlineConnected){
+     S.innerHTML="En attente d'un adversaire...";
+   } else {
+     const isMyTurn = player===myRole;
+     const turnName=isMyTurn?playerProfileName:onlineOpponentProfileName;
+     S.innerHTML=gameOver?"Partie terminée":`Tour : <span class="${player}">${player==="red"?"🔴":"🔵"} ${turnName}</span> ${isMyTurn?"<b>(À TOI !)</b>":"(Adversaire...)"}`;
+   }
+ } else {
+   S.innerHTML=gameOver?"Partie terminée":thinking?"🤖 Le Bot réfléchit...":`Tour : <span class="${player}">${player==="red"?"🔴 Rouge":"🔵 Bleu"}</span>`;
+ }
+
+ RC.textContent=board.filter(x=>x==="red").length;BC.textContent=board.filter(x=>x==="blue").length;SC.textContent=selected.length;
+ 
+ const allowSameAmount = !hasOtherAmountMove();
+ const isInvalidSameAmount = hardMode && selected.length === lastAmount && !allowSameAmount;
+ const isValidSelection = selected.length > 0 && !isInvalidSameAmount;
+ 
+ const canControl = !gameOver && !thinking && !botIsTurn() && !onlineIsNotMyTurn();
+ finishBtn.disabled = !canControl || !isValidSelection;
+ undoBtn.disabled = !canControl || selected.length === 0;
+}
+
+function contiguous(a){
+ if(a.length<2)return true;
+ let rs=a.map(i=>i>>2),cs=a.map(i=>i%4),hr=rs.every(x=>x===rs[0]),vc=cs.every(x=>x===cs[0]);
+ if(!hr&&!vc)return false;
+ if(hr){let mn=Math.min(...cs),mx=Math.max(...cs);return mx-mn+1===a.length}
+ let mn=Math.min(...rs),mx=Math.max(...rs);return mx-mn+1===a.length;
+}
+
+function legal(a){
+  const allowSameAmount = !hasOtherAmountMove();
+  return a.length>=1&&a.length<=4&&a.every(i=>board[i]===null)&&contiguous(a)
+    &&!(hardMode && lastAmount===a.length && !allowSameAmount);
+}
+
+function pick(i){
+ if(previewSkin){W.textContent="👁️ Aperçu uniquement : ce skin est verrouillé.";return;}
+ if(gameOver||thinking||botIsTurn()||onlineIsNotMyTurn()||board[i])return;
+ let a=selected.includes(i)?selected.filter(x=>x!==i):[...selected,i];
+ if(a.length>4){W.textContent="Maximum 4 ronds.";return}
+ if(!contiguous(a)){W.textContent="❌ Les ronds doivent être collés en ligne horizontale ou verticale.";return}
+ 
+ selected=a;
+ 
+ const allowSameAmount = !hasOtherAmountMove();
+ if(hardMode && lastAmount === a.length){
+   if(allowSameAmount){
+     W.textContent=`ℹ️ Impasse détectée : tu es exceptionnellement autorisé à jouer ${a.length} rond(s) car aucune autre quantité n'est possible.`;
+   } else {
+     W.textContent=`❌ En mode difficile, le coup final ne peut pas être de ${a.length} rond(s) comme au tour précédent. Ajoute d'autres ronds ou change de sélection.`;
+   }
+ } else {
+   W.textContent="";
+ }
+ 
+ render();
+}
+
+function play(a, isOnlineAction=false){
+ if(!legal(a)){return false}
+
+ // Le Bot Difficile observe uniquement les coups du joueur humain local.
+ if(mode==="bot-hard" && player!==botColor && !isOnlineAction){
+   learnHumanMove(a);
+ }
+
+ a.forEach(i=>board[i]=player);lastAmount=a.length;selected=[];lastPlayer=player;
+ 
+ if(mode==="online" && !isOnlineAction){
+   sendOnlineData({type:"MOVE", move:a});
+ }
+ 
+ player=player==="red"?"blue":"red";render();return true;
+}
+
+function finish(){
+ if(!selected.length){W.textContent="Choisis au moins 1 rond.";return}
+ const allowSameAmount = !hasOtherAmountMove();
+ if(hardMode && selected.length === lastAmount && !allowSameAmount){
+   W.textContent=`❌ En mode difficile, le nombre de ronds doit être différent du tour précédent (${lastAmount}).`;
+   return;
+ }
+ if(play(selected)){W.textContent="";botTurn()}
+}
+
+function moves(){
+ let out=[];
+ for(let i=0;i<16;i++)for(let n=1;n<=4;n++){
+  let r=i>>2,c=i%4;
+  if(c+n<=4){let a=Array.from({length:n},(_,k)=>r*4+c+k);if(legal(a))out.push(a)}
+  if(r+n<=4){let a=Array.from({length:n},(_,k)=>(r+k)*4+c);if(legal(a))out.push(a)}
+ }
+ let seen=new Set();return out.filter(a=>{let k=a.join();if(seen.has(k))return false;seen.add(k);return true});
+}
+
+function randomMove(m){return m[Math.floor(Math.random()*m.length)]}
+
+function scoreMove(a){
+ let s=Math.random()*3+(4-a.length);
+ let center=[5,6,9,10];s+=a.filter(i=>center.includes(i)).length*.4;
+ return s;
+}
+
+function bestHeuristic(ms){
+ let best=-1e9,b=[];
+ ms.forEach(a=>{let s=scoreMove(a);if(s>best){best=s;b=[a]}else if(s===best)b.push(a)});
+ return randomMove(b);
+}
+
+function boardMask(){
+ let mask=0;
+ board.forEach((v,i)=>{if(v)mask|=(1<<i)});
+ return mask;
+}
+
+function popcount(x){
+ x=x>>>0;let c=0;
+ while(x){x&=x-1;c++}
+ return c;
+}
+
+function legalMaskMoves(mask,last,ruleHard){
+ let out=[];
+ let hasOther=false;
+ if(ruleHard && last !== null){
+  for(let r=0;r<4;r++)for(let c=0;c<4;c++)for(let n=1;n<=4;n++){
+   if(n===last)continue;
+   if(c+n<=4){let bits=0;for(let k=0;k<n;k++)bits|=(1<<(r*4+c+k));if((mask&bits)===0){hasOther=true;break;}}
+   if(r+n<=4){let bits=0;for(let k=0;k<n;k++)bits|=(1<<((r+k)*4+c));if((mask&bits)===0){hasOther=true;break;}}
+  }
+ }
+
+ for(let r=0;r<4;r++)for(let c=0;c<4;c++)for(let n=1;n<=4;n++){
+  if(ruleHard && n===last && hasOther) continue;
+  if(c+n<=4){
+   let bits=0;for(let k=0;k<n;k++)bits|=(1<<(r*4+c+k));
+   if((mask&bits)===0)out.push({bits,n});
+  }
+  if(r+n<=4){
+   let bits=0;for(let k=0;k<n;k++)bits|=(1<<((r+k)*4+c));
+   if((mask&bits)===0)out.push({bits,n});
+  }
+ }
+ const seen=new Set();
+ return out.filter(m=>{const k=m.bits+"_"+m.n;if(seen.has(k))return false;seen.add(k);return true});
+}
+
+function canForceWin(mask,last,ruleHard){
+ const key=ruleHard?("H|"+mask+"|"+last):("N|"+mask);
+ if(solverCache.has(key))return solverCache.get(key);
+ if(16-popcount(mask)<=1){solverCache.set(key,false);return false}
+ const ms=legalMaskMoves(mask,last,ruleHard);
+ if(!ms.length){solverCache.set(key,false);return false}
+ for(const m of ms){
+  const nextMask=mask|m.bits;
+  // Remplir la toute dernière case fait perdre immédiatement le joueur qui vient de jouer.
+  // Ce coup ne doit donc jamais être considéré comme un coup gagnant par le solveur.
+  if(popcount(nextMask)===16)continue;
+  if(!canForceWin(nextMask,m.n,ruleHard)){
+   solverCache.set(key,true);return true;
+  }
+ }
+ solverCache.set(key,false);return false;
+}
+
+function exactMove(ms){
+ const mask=boardMask(),ruleHard=hardMode;
+ const winning=[];
+ for(const a of ms){
+  let bits=0;a.forEach(i=>bits|=(1<<i));
+  if(!canForceWin(mask|bits,a.length,ruleHard))winning.push(a);
+ }
+ if(winning.length)return randomMove(winning);
+
+ let best=[],bestReplies=Infinity;
+ for(const a of ms){
+  let bits=0;a.forEach(i=>bits|=(1<<i));
+  const replies=legalMaskMoves(mask|bits,a.length,ruleHard);
+  let winningReplies=0;
+  for(const m of replies){
+   if(!canForceWin((mask|bits)|m.bits,m.n,ruleHard))winningReplies++;
+  }
+  if(winningReplies<bestReplies){bestReplies=winningReplies;best=[a]}
+  else if(winningReplies===bestReplies)best.push(a);
+ }
+ return randomMove(best.length?best:ms);
+}
+
+function botTurn(){
+ if(!botIsTurn())return;
+ const generationAtStart=gameGeneration;
+ thinking=true;render();
+
+ setTimeout(()=>{
+  if(generationAtStart!==gameGeneration || !botIsTurn()){
+    thinking=false;render();return;
+  }
+
+  let ms=moves();
+  if(!ms.length){thinking=false;render();return;}
+
+  // Sécurité de fin de partie : s'il reste exactement 2 cases et qu'un coup de 1 rond est légal,
+  // le bot doit jouer 1 seul rond. Il laisse ainsi la dernière case à l'adversaire, qui perd.
+  // Cela évite que Facile, Moyen ou Difficile se suicide en remplissant les 2 dernières cases.
+  const emptyCount=board.filter(x=>x===null).length;
+  if(emptyCount===2){
+    const oneDotMoves=ms.filter(a=>a.length===1);
+    if(oneDotMoves.length)ms=oneDotMoves;
+  }
+
+  const level=botDifficulty;
+  const solverRate=BOT_SOLVER_RATE[level] ?? BOT_SOLVER_RATE.easy;
+  let a;
+
+  if(level==="hard"){
+    // Le difficile conserve son objectif de ~90 %, mais ses choix entre
+    // solutions équivalentes dépendent progressivement du joueur observé.
+    if(Math.random()<solverRate)a=adaptiveExactMove(ms);
+    else a=adaptiveFallbackMove(ms);
+  }else{
+    // Facile et Moyen restent simples et prévisibles dans leur philosophie :
+    // soit le solveur, soit une erreur humaine/aléatoire.
+    a=Math.random()<solverRate ? exactMove(ms) : randomMove(ms);
+  }
+
+  thinking=false;
+  if(generationAtStart!==gameGeneration)return;
+  if(play(a)){render();botTurn();}
+ },450+Math.random()*450);
+}
+
+// Logique Réseau En Ligne — HTTPS + SSE sur le port 443
+// Aucun lien direct entre téléphones : chaque appareil parle uniquement à ntfy.sh
+// en HTTPS standard. C'est beaucoup plus compatible avec les réseaux 4G/5G/CGNAT.
+const ONLINE_RELAY="https://ntfy.sh";
+const ONLINE_PREFIX="jdr-beberoo-v6";
+
+function clearConnectionTimer(){
+  if(connectionTimer){clearTimeout(connectionTimer);connectionTimer=null;}
+}
+
+function clearJoinTimers(){
+  onlineJoinTimers.forEach(t=>clearTimeout(t));
+  onlineJoinTimers=[];
+}
+
+function randomClientId(){
+  try{
+    const a=new Uint32Array(4);crypto.getRandomValues(a);
+    return "jdr-"+Array.from(a,x=>x.toString(36)).join("-");
+  }catch(e){
+    return "jdr-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,12);
+  }
+}
+
+function topicFor(code){
+  // Le jour est ajouté au topic pour éviter qu'un ancien salon portant le même
+  // code 4 chiffres ne pollue une partie créée plusieurs jours plus tard.
+  const d=new Date();
+  const day=`${d.getUTCFullYear()}${String(d.getUTCMonth()+1).padStart(2,"0")}${String(d.getUTCDate()).padStart(2,"0")}`;
+  return `${ONLINE_PREFIX}-${day}-${code}`;
+}
+
+function destroyOnlineConnection(){
+  clearConnectionTimer();
+  clearJoinTimers();
+  onlineConnected=false;
+  onlineOpponentId=null;
+  onlineHostId=null;
+  onlineOpponentProfileName="Adversaire";
+  if(typeof updateProfileScreen==="function")updateProfileScreen();
+  if(onlineSource){
+    try{onlineSource.close();}catch(e){}
+    onlineSource=null;
+  }
+  onlineTopic=null;
+}
+
+async function publishOnline(data){
+  if(!onlineTopic || !onlineClientId)return false;
+  const packet={...data,sender:onlineClientId,ts:Date.now()};
+  try{
+    const r=await fetch(ONLINE_RELAY+"/",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({topic:onlineTopic,message:JSON.stringify(packet)})
+    });
+    return r.ok;
+  }catch(e){
+    return false;
+  }
+}
+
+function sendOnlineData(data){
+  // Le jeu n'a pas besoin d'attendre la réponse HTTP pour rester fluide.
+  publishOnline(data).then(ok=>{
+    if(!ok && mode==="online"){
+      onlineStatus.innerHTML="🟠 Envoi réseau interrompu, nouvelle tentative au prochain échange…";
+    }
+  });
+  return true;
+}
+
+function scheduleGuestJoin(){
+  clearJoinTimers();
+  const send=()=>{
+    if(!onlineConnected && myRole==="guest")publishOnline({type:"JOIN",profileName:playerProfileName});
+  };
+  send();
+  [700,1600,3000,5000,8000,12000].forEach(ms=>onlineJoinTimers.push(setTimeout(send,ms)));
+}
+
+function handleOnlinePacket(data){
+  if(!data || typeof data!=="object" || data.sender===onlineClientId)return;
+  // Ignore les vieux messages éventuellement conservés par le relais.
+  if(data.ts && data.ts < onlineStartedAt-3000)return;
+  if(data.target && data.target!==onlineClientId)return;
+
+  // L'hôte accepte le premier adversaire qui rejoint ce code.
+  if(data.type==="JOIN" && (myRole==="host" || myRole==="red")){
+    if(onlineOpponentId && onlineOpponentId!==data.sender){
+      publishOnline({type:"ROOM_FULL",target:data.sender});
+      return;
+    }
+    onlineOpponentId=data.sender;
+    onlineOpponentProfileName=cleanPlayerName(data.profileName||"Adversaire");
+    onlineConnected=true;
+    myRole="red";
+    player=Math.random()<0.5?"red":"blue"; // nouveau tirage du premier joueur
+    onlineMatchId=createOnlineMatchId();
+    onlineMatchCounted=false;
+    onlineStatus.innerHTML="🟢 Adversaire connecté ! Partie lancée.";
+    publishOnline({
+      type:"INIT",target:onlineOpponentId,role:"blue",player,
+      profileName:playerProfileName,
+      hardMode,skin:activeSkin,matchId:onlineMatchId,board,
+      lastAmount,lastPlayer
+    });
+    clearConnectionTimer();
+    render();
+    return;
+  }
+
+  if(data.type==="INIT" && (myRole==="guest" || myRole==="blue")){
+    onlineHostId=data.sender;
+    onlineOpponentId=data.sender;
+    onlineOpponentProfileName=cleanPlayerName(data.profileName||"Adversaire");
+    myRole=data.role||"blue";
+    if(Array.isArray(data.board)&&data.board.length===16)board=data.board.slice();
+    player=data.player;
+    onlineMatchId=data.matchId||createOnlineMatchId();
+    onlineMatchCounted=false;
+    hardCheckbox.checked=!!data.hardMode;hardMode=!!data.hardMode;
+    applySkin(data.skin||"arcade",false,true);
+    onlineConnected=true;selected=[];gameOver=false;
+    lastAmount=data.lastAmount??null;lastPlayer=data.lastPlayer??null;
+    clearConnectionTimer();clearJoinTimers();
+    onlineStatus.innerHTML="🟢 Connecté à la partie !";
+    render();
+    return;
+  }
+
+  if(data.type==="ROOM_FULL" && myRole==="guest"){
+    clearConnectionTimer();clearJoinTimers();
+    onlineStatus.innerHTML="❌ Ce salon a déjà deux joueurs.";
+    return;
+  }
+
+  if(!onlineConnected)return;
+  if(onlineOpponentId && data.sender!==onlineOpponentId)return;
+
+  if(data.type==="MOVE" && Array.isArray(data.move)){
+    play(data.move,true);
+  }else if(data.type==="RESULT"){
+    registerOnlineWinner(data.winner,data.matchId);
+    if(data.winner){gameOver=true;showGameEndOverlay(data.winner);}
+  }else if(data.type==="RESET"){
+    player=data.player;
+    onlineMatchId=data.matchId||createOnlineMatchId();
+    onlineMatchCounted=false;
+    hardCheckbox.checked=!!data.hardMode;hardMode=!!data.hardMode;
+    applySkin(data.skin||activeSkin,false,true);
+    reset(true);
+    // reset(true) ne doit pas refaire le tirage reçu de l'autre appareil.
+    player=data.player;
+    render();
+  }else if(data.type==="SKIN"){
+    applySkin(data.skin,false,true);
+  }else if(data.type==="PROFILE_NAME"){
+    onlineOpponentProfileName=cleanPlayerName(data.profileName||"Adversaire");
+    updateProfileScreen();
+    render();
+  }else if(data.type==="PING"){
+    publishOnline({type:"PONG",target:data.sender});
+  }
+}
+
+function connectOnlineRelay(code,role){
+  destroyOnlineConnection();
+  onlineStartedAt=Date.now();
+  onlineTopic=topicFor(code);
+  onlineClientId=randomClientId();
+  myRole=role;
+
+  if(typeof EventSource==="undefined" || typeof fetch==="undefined"){
+    onlineStatus.innerHTML="❌ Ce navigateur ne prend pas en charge le mode en ligne.";
+    return;
+  }
+
+  onlineStatus.innerHTML=role==="host"?"Création du salon…":"Connexion au salon…";
+
+  // SSE passe en HTTPS normal sur le port 443, comme une page web classique.
+  const streamUrl=`${ONLINE_RELAY}/${encodeURIComponent(onlineTopic)}/sse?since=10s`;
+  onlineSource=new EventSource(streamUrl);
+
+  onlineSource.onopen=()=>{
+    if(role==="host"){
+      onlineStatus.innerHTML=`Salon créé ! Code : <b style="font-size:20px;color:#fff">${code}</b><br><small>Donne ce code à ton adversaire et garde cette page ouverte.</small>`;
+      publishOnline({type:"HOST_READY"});
+    }else{
+      onlineStatus.innerHTML="Recherche de l'adversaire…";
+      scheduleGuestJoin();
+    }
+  };
+
+  onlineSource.onmessage=(ev)=>{
+    try{
+      const envelope=JSON.parse(ev.data);
+      if(envelope.event!=="message" || !envelope.message)return;
+      const data=JSON.parse(envelope.message);
+      handleOnlinePacket(data);
+    }catch(e){}
+  };
+
+  onlineSource.onerror=()=>{
+    if(mode!=="online")return;
+    if(!onlineConnected){
+      onlineStatus.innerHTML="🟠 Réseau 5G en reconnexion… garde la page ouverte.";
+    }else{
+      onlineStatus.innerHTML="🟠 Connexion momentanément interrompue, reconnexion automatique…";
+    }
+  };
+}
+
+hostBtn.onclick=()=>{
+  selected=[];onlineConnected=false;
+  const roomCode=Math.floor(1000+Math.random()*9000).toString();
+  joinCodeInput.value=roomCode;
+  connectOnlineRelay(roomCode,"host");
+  clearConnectionTimer();
+  connectionTimer=setTimeout(()=>{
+    if(!onlineConnected && mode==="online"){
+      onlineStatus.innerHTML=`Salon ouvert — code <b>${roomCode}</b>. En attente de ton collègue…`;
+    }
+  },12000);
+};
+
+joinBtn.onclick=()=>{
+  const code=joinCodeInput.value.trim().replace(/\D/g,"");
+  joinCodeInput.value=code;
+  if(code.length!==4){onlineStatus.innerHTML="❌ Entre un code valide à 4 chiffres.";return;}
+  selected=[];onlineConnected=false;
+  connectOnlineRelay(code,"guest");
+  clearConnectionTimer();
+  connectionTimer=setTimeout(()=>{
+    if(!onlineConnected){
+      onlineStatus.innerHTML="❌ Aucun adversaire trouvé. Vérifie le code et que le créateur garde sa page ouverte.";
+    }
+  },18000);
+};
+
+document.querySelectorAll(".mode").forEach(x=>x.onclick=()=>{
+  mode=x.dataset.mode;
+  document.querySelectorAll(".mode").forEach(y=>y.classList.toggle("active",y===x));
+
+  // La fiche du Bot Difficile n'apparaît que sur ce mode.
+  diffBox.classList.toggle("show",mode==="bot-hard");
+  onlineBox.classList.toggle("show",mode==="online");
+  rankingBox.classList.toggle("show",mode==="ranking");
+  profileBox.classList.toggle("show",mode==="profile");
+  gamePanel.style.display=(mode==="ranking"||mode==="profile")?"none":"";
+
+  if(mode!=="online" && onlineSource){
+    destroyOnlineConnection();
+  }
+
+  // L'onglet Classement est seulement un écran d'information.
+  if(mode==="ranking"){
+    updateRankingScreen();
+    return;
+  }
+  if(mode==="profile"){
+    updateProfileScreen();
+    return;
+  }
+
+  if(isBotMode()){
+    botDifficulty=difficultyForMode();
+  }
+
+  // Chaque choix de mode de jeu démarre une vraie nouvelle partie.
+  reset();
+});
+
+hardCheckbox.onchange=()=>{
+  hardMode=hardCheckbox.checked;
+  selected=[];
+  W.textContent="";
+  if(mode==="online" && onlineConnected && myRole==="red"){
+    onlineMatchId = onlineMatchId || createOnlineMatchId();
+    onlineMatchCounted = false;
+    sendOnlineData({type:"RESET", player:player, hardMode:hardMode, skin:activeSkin, matchId:onlineMatchId});
+  }
+  render();
+};
+
+finishBtn.onclick=finish;
+undoBtn.onclick=()=>{selected=[];W.textContent="";render()};
+document.getElementById("reset").onclick=()=>reset();
+
+const skinToggle=document.getElementById("skinToggle");
+const skinPanel=document.getElementById("skinPanel");
+const skinOptions=document.querySelectorAll(".skin-option");
+const savedSkin=localStorage.getItem("jeuDesRondsSkin")||"arcade";
+
+function isSkinUnlocked(skin){
+  if(skin==="crystal")return crystalS1Unlocked;
+  if(skin==="gold")return hardWins>=20;
+  if(skin==="diamond")return hardWins>=50;
+  if(skin==="void")return hardWins>=100;
+  if(skin==="chess")return hardStreakAchieved;
+  if(skin==="divine")return hardWins>=200;
+  return true;
+}
+
+function applySkin(skin,save=true,remotePlayable=false){
+  document.body.classList.remove("skin-paper","skin-competition","skin-crystal","skin-gold","skin-diamond","skin-void","skin-chess","skin-divine");
+  if(skin==="paper") document.body.classList.add("skin-paper");
+  if(skin==="competition") document.body.classList.add("skin-competition");
+  if(skin==="crystal") document.body.classList.add("skin-crystal");
+  if(skin==="gold") document.body.classList.add("skin-gold");
+  if(skin==="diamond") document.body.classList.add("skin-diamond");
+  if(skin==="void") document.body.classList.add("skin-void");
+  if(skin==="chess") document.body.classList.add("skin-chess");
+  if(skin==="divine") document.body.classList.add("skin-divine");
+  
+  // Un skin reçu de l'autre joueur est utilisable pendant la partie,
+  // même s'il est encore verrouillé dans la progression locale.
+  previewSkin=remotePlayable ? false : !isSkinUnlocked(skin);
+  activeSkin=skin;
+  
+  skinOptions.forEach(x=>{
+    x.classList.toggle("active",x.dataset.skin===skin);
+  });
+  
+  if(save&&!previewSkin)localStorage.setItem("jeuDesRondsSkin",skin);
+  if(previewSkin){selected=[];W.textContent="👁️ Aperçu : ce skin est verrouillé. Débloque-le pour pouvoir jouer dessus.";}else{W.textContent="";}
+  render();
+}
+
+skinToggle.onclick=()=>skinPanel.classList.toggle("show");
+skinOptions.forEach(x=>x.onclick=()=>{
+  const skin=x.dataset.skin;
+  const unlocked=isSkinUnlocked(skin);
+
+  applySkin(skin, unlocked);
+  skinPanel.classList.remove("show");
+
+  // Le changement de skin ne réinitialise PAS la partie.
+  if(mode==="online" && onlineConnected && unlocked){
+    sendOnlineData({type:"SKIN", skin:activeSkin});
+  }
+});
+
+document.addEventListener("click",e=>{
+  if(!skinPanel.contains(e.target)&&!skinToggle.contains(e.target))skinPanel.classList.remove("show");
+});
+
+// Auto-connexion si un code est dans l'URL (?join=1234)
+window.addEventListener("load", ()=>{
+  const urlParams = new URLSearchParams(window.location.search);
+  const joinParam = urlParams.get('join');
+  if(joinParam){
+    document.querySelector('[data-mode="online"]').click();
+    joinCodeInput.value = joinParam;
+    joinBtn.click();
+  }
+});
+
+
+// === SAUVEGARDE PORTABLE JDR3 ===
+// Format fixe, uniquement hexadécimal, insensible à la casse.
+// Les tirets sont purement décoratifs et sont ignorés à l'import.
+const SAVE_PREFIX="JDR3";
+const SAVE_PAYLOAD_BYTES=15;
+const SAVE_HEX_LEN=SAVE_PAYLOAD_BYTES*2; // 30 caractères
+const SAVE_CHECK_HEX_LEN=8;              // checksum 32 bits
+
+function saveChecksumBytes(bytes){
+  // FNV-1a 32 bits sur les octets bruts.
+  let h=0x811c9dc5>>>0;
+  for(const b of bytes){
+    h^=b;
+    h=Math.imul(h,0x01000193)>>>0;
+  }
+  h^=0x6D2B79F5;
+  h=Math.imul(h^(h>>>16),0x85ebca6b)>>>0;
+  return h>>>0;
+}
+
+function writeUint32(arr,n){
+  n=Math.max(0,Math.min(0xffffffff,Number(n)||0))>>>0;
+  arr.push(n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255);
+}
+
+function readUint32(b,o){
+  return (b[o]|(b[o+1]<<8)|(b[o+2]<<16)|(b[o+3]<<24))>>>0;
+}
+
+function bytesToHex(bytes){
+  let s="";
+  for(const b of bytes)s+=b.toString(16).padStart(2,"0");
+  return s.toUpperCase();
+}
+
+function hexToBytes(hex){
+  if(!/^[0-9A-F]+$/i.test(hex) || hex.length%2)throw new Error("hex");
+  const out=new Uint8Array(hex.length/2);
+  for(let i=0;i<out.length;i++){
+    out[i]=parseInt(hex.slice(i*2,i*2+2),16);
+  }
+  return out;
+}
+
+function formatSaveCode(raw){
+  const clean=String(raw||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
+  const parts=[];
+  // On garde le préfixe lisible puis on groupe le reste par 4.
+  parts.push(clean.slice(0,4));
+  const rest=clean.slice(4);
+  for(let i=0;i<rest.length;i+=4)parts.push(rest.slice(i,i+4));
+  return parts.join("-");
+}
+
+function normalizeSaveCode(code){
+  return String(code||"")
+    .normalize("NFKC")
+    .trim()
+    .toUpperCase()
+    .replace(/[‐‑‒–—−]/g,"-")
+    .replace(/[^A-Z0-9]/g,"");
+}
+
+function buildSaveCode(){
+  const p=[];
+
+  // 4 octets : victoires online
+  writeUint32(p,onlineWins);
+  // 4 octets : défaites online
+  writeUint32(p,onlineLosses);
+  // 4 octets : victoires Bot Difficile
+  writeUint32(p,hardWins);
+  // 1 octet : série actuelle
+  p.push(Math.max(0,Math.min(255,hardStreak))&255);
+  // 1 octet : série de 5 déjà accomplie
+  p.push(hardStreakAchieved?1:0);
+  // 1 octet de drapeaux saisonniers (bit 0 = Crystal Saison 1)
+  p.push(crystalS1Unlocked?1:0);
+
+  const payload=Uint8Array.from(p);
+  if(payload.length!==SAVE_PAYLOAD_BYTES)throw new Error("payload-size");
+
+  const body=bytesToHex(payload);
+  const check=saveChecksumBytes(payload).toString(16).toUpperCase().padStart(8,"0");
+
+  return SAVE_PREFIX+body+check;
+}
+
+function parseSaveCode(input){
+  const raw=normalizeSaveCode(input);
+
+  if(!raw.startsWith(SAVE_PREFIX)){
+    if(raw.startsWith("JDR2"))throw new Error("old-version");
+    throw new Error("prefix");
+  }
+
+  const compact=raw.slice(SAVE_PREFIX.length);
+  const expectedLen=SAVE_HEX_LEN+SAVE_CHECK_HEX_LEN;
+  if(compact.length!==expectedLen)throw new Error("length");
+
+  const body=compact.slice(0,SAVE_HEX_LEN);
+  const check=compact.slice(SAVE_HEX_LEN);
+
+  if(!/^[0-9A-F]{30}$/.test(body))throw new Error("body");
+  if(!/^[0-9A-F]{8}$/.test(check))throw new Error("check");
+
+  const payload=hexToBytes(body);
+  if(payload.length!==SAVE_PAYLOAD_BYTES)throw new Error("payload");
+
+  const expected=saveChecksumBytes(payload).toString(16).toUpperCase().padStart(8,"0");
+  if(check!==expected)throw new Error("checksum");
+
+  return {
+    onlineWins:readUint32(payload,0),
+    onlineLosses:readUint32(payload,4),
+    hardWins:readUint32(payload,8),
+    hardStreak:payload[12],
+    hardStreakAchieved:!!(payload[13]&1),
+    crystalS1Unlocked:!!(payload[14]&1)
+  };
+}
+
+function setSaveMessage(msg,ok=false){
+  if(!saveMessage)return;
+  saveMessage.textContent=msg;
+  saveMessage.style.color=ok?"#7dffad":"#ff8b98";
+}
+
+function exportProgress(){
+  try{
+    const raw=buildSaveCode();
+
+    // AUTO-TEST : le jeu vérifie son propre code AVANT de l'afficher.
+    const selfTest=parseSaveCode(raw);
+    if(
+      selfTest.onlineWins!==onlineWins ||
+      selfTest.onlineLosses!==onlineLosses ||
+      selfTest.hardWins!==hardWins ||
+      selfTest.hardStreak!==Math.max(0,Math.min(255,hardStreak)) ||
+      selfTest.hardStreakAchieved!==!!hardStreakAchieved ||
+      selfTest.crystalS1Unlocked!==!!crystalS1Unlocked
+    ){
+      throw new Error("self-test");
+    }
+
+    saveCodeInput.value=formatSaveCode(raw);
+    saveCodeInput.focus();
+    saveCodeInput.select();
+    setSaveMessage("✅ Code V3 généré et vérifié. Tu peux le copier.",true);
+  }catch(e){
+    setSaveMessage("❌ Erreur interne pendant la génération du code.");
+  }
+}
+
+async function copyProgressCode(){
+  if(!saveCodeInput.value.trim())exportProgress();
+  try{
+    await navigator.clipboard.writeText(saveCodeInput.value.trim());
+    setSaveMessage("✅ Code copié dans le presse-papiers.",true);
+  }catch(e){
+    saveCodeInput.focus();
+    saveCodeInput.select();
+    try{
+      document.execCommand("copy");
+      setSaveMessage("✅ Code copié.",true);
+    }catch(err){
+      setSaveMessage("Sélectionne le code puis copie-le manuellement.");
+    }
+  }
+}
+
+function importProgress(){
+  const entered=saveCodeInput.value.trim();
+
+  if(!entered){
+    setSaveMessage("❌ Colle d'abord un code de sauvegarde.");
+    return;
+  }
+
+  // === CODE DE SECOURS — RESET ONLINE SAISON 1 ===
+  // Ne touche qu'aux statistiques compétitives en ligne.
+  // Aucun skin, aucune victoire Bot Difficile, aucune série et aucune mémoire IA ne sont modifiés.
+  const emergencyCode=String(entered).trim().toUpperCase().replace(/\s+/g,"");
+  if(emergencyCode==="JDR-RESET-ONLINE-S1"){
+    onlineWins=0;
+    onlineLosses=0;
+    onlineMatchCounted=false;
+    localStorage.setItem("jeuDesRondsOnlineWins","0");
+    localStorage.setItem("jeuDesRondsOnlineLosses","0");
+    localStorage.setItem(ONLINE_SEASON_KEY,String(ONLINE_SEASON));
+    updateOnlineStats();
+    saveCodeInput.value="";
+    setSaveMessage("✅ Stats en ligne remises à zéro : Non classé • Placement 0/5.",true);
+    return;
+  }
+
+  let d;
+  try{
+    d=parseSaveCode(entered);
+  }catch(e){
+    if(e && e.message==="old-version"){
+      setSaveMessage("❌ Ancien code JDR2 détecté. Génère un nouveau code JDR3 avec cette version.");
+    }else if(e && e.message==="length"){
+      setSaveMessage("❌ Code incomplet : vérifie que tu l'as copié en entier.");
+    }else if(e && e.message==="checksum"){
+      setSaveMessage("❌ Code modifié ou corrompu.");
+    }else{
+      setSaveMessage("❌ Code invalide.");
+    }
+    return;
+  }
+
+  const rate=(d.onlineWins+d.onlineLosses)
+    ? (d.onlineWins/(d.onlineWins+d.onlineLosses))*100
+    : 0;
+
+  const summary=
+    "Cette sauvegarde contient :\n\n"+
+    "• "+d.onlineWins+" victoire(s) en ligne\n"+
+    "• "+d.onlineLosses+" défaite(s) en ligne\n"+
+    "• Winrate : "+rate.toFixed(1)+" %\n"+
+    "• Rang : "+getOnlineRank(rate,d.onlineWins+d.onlineLosses)+"\n"+
+    "• "+d.hardWins+" victoire(s) contre le Bot Difficile\n"+
+    "• Série actuelle : "+d.hardStreak+"\n"+
+    "• Série de 5 déjà réalisée : "+(d.hardStreakAchieved?"Oui":"Non")+"\n"+
+    "• Crystal Saison 1 : "+(d.crystalS1Unlocked?"Débloqué":"Non débloqué")+
+    "\n\nRemplacer la progression actuelle par celle-ci ?";
+
+  if(!window.confirm(summary))return;
+
+  onlineWins=d.onlineWins;
+  onlineLosses=d.onlineLosses;
+  hardWins=d.hardWins;
+  hardStreak=d.hardStreak;
+  hardStreakAchieved=d.hardStreakAchieved || hardStreak>=5;
+  crystalS1Unlocked=!!d.crystalS1Unlocked;
+  if(!crystalS1Unlocked && ONLINE_SEASON===1){
+    const importedRank=getOnlineRank(rate,d.onlineWins+d.onlineLosses);
+    if(isGrandMasterOrHigherRank(importedRank))crystalS1Unlocked=true;
+  }
+
+  localStorage.setItem("jeuDesRondsOnlineWins",onlineWins);
+  localStorage.setItem("jeuDesRondsOnlineLosses",onlineLosses);
+  localStorage.setItem("jeuDesRondsHardWins",hardWins);
+  localStorage.setItem("jeuDesRondsHardStreak",hardStreak);
+  localStorage.setItem("jeuDesRondsHardStreakAchieved",hardStreakAchieved?"1":"0");
+  localStorage.setItem(CRYSTAL_S1_KEY,crystalS1Unlocked?"1":"0");
+
+  updateOnlineStats();
+  updateHardStats();
+  updateSkinUnlocks();
+
+  if(!isSkinUnlocked(activeSkin))applySkin("arcade",true);
+
+  saveCodeInput.value=formatSaveCode(buildSaveCode());
+  setSaveMessage("✅ Progression restaurée avec succès.",true);
+}
+
+exportSaveBtn.addEventListener("click",exportProgress);
+copySaveBtn.addEventListener("click",copyProgressCode);
+importSaveBtn.addEventListener("click",importProgress);
+
+
+updateHardStats();
+checkCrystalSeasonUnlock();
+updateOnlineStats();
+updateSkinUnlocks();
+updateProfileScreen();
+applySkin(isSkinUnlocked(savedSkin)?savedSkin:"arcade",true);
+
+</script>
+</body>
+</html>
