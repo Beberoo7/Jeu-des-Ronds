@@ -1201,212 +1201,500 @@ body.skin-crystal .game-end-subtitle{color:#7a6790 !important;}
 body.skin-paper .ultimate-hero,body.skin-paper .ultimate-card{background:#f8f2e2f2 !important;color:#322d28 !important;border:2px solid #4a433b !important;box-shadow:5px 7px 0 #00000015 !important}body.skin-paper .ultimate-title,body.skin-paper .ultimate-sub,body.skin-paper .u-stat small,body.skin-paper .achievement-desc,body.skin-paper .achievement-state,body.skin-paper .master-stage small{color:#6d6459 !important}body.skin-paper .u-stat,body.skin-paper .achievement,body.skin-paper .master-stage{background:#fffaf04f !important;border:1.8px dashed #5d554b !important}body.skin-paper .title-select{background:#fffaf0 !important;color:#29251f !important;border:2px solid #4a433b !important}
 
 
+
 /* =====================================================================
-   JEU DES RONDS — NEXUS UI 2026
-   Refonte purement visuelle : aucun ID, data-mode ou moteur de jeu modifié.
+   JEU DES RONDS — INTERFACE 2026 / REBUILD
+   Philosophie : interface lisible, structure de jeu moderne, skins protégés.
+   Les couleurs de skins ne sont plus écrasées par une couche globale.
    ===================================================================== */
+
 :root{
-  --nexus-bg:#05070d;
-  --nexus-panel:rgba(11,16,28,.78);
-  --nexus-panel-strong:rgba(13,20,36,.94);
-  --nexus-line:rgba(173,205,255,.13);
-  --nexus-line-hot:rgba(120,184,255,.48);
-  --nexus-text:#f7fbff;
-  --nexus-muted:#8592aa;
-  --nexus-cyan:#66e3ff;
-  --nexus-blue:#4f7dff;
-  --nexus-violet:#8d67ff;
-  --nexus-red:#ff4e6a;
-  --nexus-radius:18px;
-  --nexus-cut:10px;
+  --ui-bg:#07090d;
+  --ui-surface:#101319;
+  --ui-surface-2:#151922;
+  --ui-line:rgba(255,255,255,.10);
+  --ui-line-soft:rgba(255,255,255,.055);
+  --ui-text:#f5f7fb;
+  --ui-muted:#9299a8;
+  --ui-accent:#f4a62a;
+  --ui-accent-soft:rgba(244,166,42,.14);
+  --ui-danger:#ff5a6a;
+  --ui-blue:#62a7ff;
 }
-html{background:#05070d}
-body{
-  font-family:'Space Grotesk','Rajdhani',system-ui,sans-serif;
-  letter-spacing:-.01em;
-  background:
-    radial-gradient(ellipse at 50% -10%,rgba(72,111,255,.20),transparent 42%),
-    radial-gradient(ellipse at -5% 45%,rgba(0,210,255,.09),transparent 35%),
-    radial-gradient(ellipse at 105% 70%,rgba(132,75,255,.10),transparent 35%),
-    linear-gradient(160deg,#05070d 0%,#070b14 48%,#04060a 100%);
-}
-body:before{
-  opacity:.45;
-  background-image:
-    linear-gradient(120deg,transparent 0 48%,rgba(111,160,255,.035) 49% 50%,transparent 51%),
-    linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px);
-  background-size:180px 180px,100% 4px;
-  mask-image:linear-gradient(to bottom,#000 0%,transparent 85%);
-}
-body:after{
-  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(rgba(255,255,255,.014) 1px,transparent 1px);
-  background-size:72px 72px;
-  transform:perspective(600px) rotateX(62deg) scale(1.35) translateY(36%);
-  transform-origin:bottom center;opacity:.22;
-}
-.app{width:min(1060px,calc(100vw - 28px));padding:26px 0 52px;text-align:left}
-.logo{
-  font-family:'Chakra Petch','Zen Dots',sans-serif;
-  font-size:clamp(28px,5vw,46px);font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-  margin:0;color:#fff;text-shadow:0 0 34px rgba(102,227,255,.18);
-}
-.logo::first-letter{color:var(--nexus-cyan)}
-.subtitle{margin:3px 0 2px;color:#78869f;font:600 12px/1.3 'Space Grotesk',sans-serif;letter-spacing:.18em;text-transform:uppercase}
-.creator{margin:7px 0 18px;padding:0;border:0;background:none;color:#59667c;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
-.creator b{color:#8d9ab0;font-weight:600}
 
-/* Carte joueur : HUD, pas carte de site */
-.ultimate-hero{
-  position:relative;overflow:hidden;margin:0 0 14px;padding:18px 20px 16px;
-  border:1px solid var(--nexus-line);border-radius:var(--nexus-radius);
-  background:linear-gradient(105deg,rgba(14,22,39,.94),rgba(9,13,24,.82));
-  box-shadow:0 24px 70px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.035);
-  backdrop-filter:blur(18px) saturate(1.2);
+/* ---------- Structure commune : aucune palette de skin n'est remplacée ---------- */
+.app{
+  width:min(980px,calc(100vw - 28px));
+  margin:0 auto;
+  padding:26px 0 52px;
 }
-.ultimate-hero:before{
-  content:"";position:absolute;right:-40px;top:-100px;width:360px;height:250px;pointer-events:none;
-  background:linear-gradient(135deg,transparent 32%,rgba(99,125,255,.10) 32% 36%,transparent 36% 46%,rgba(102,227,255,.07) 46% 49%,transparent 49%);
-  transform:skewX(-18deg);
-}
-.ultimate-hero:after{content:"CAREER PROFILE";position:absolute;right:18px;bottom:9px;color:rgba(173,205,255,.13);font:700 10px 'Chakra Petch';letter-spacing:.25em}
-.ultimate-top{position:relative;z-index:1}
-.ultimate-name{font-family:'Chakra Petch';font-size:22px;letter-spacing:.04em;text-transform:uppercase}
-.ultimate-title{margin-top:1px;color:#7f8da5;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
-.ultimate-level{border:1px solid rgba(102,227,255,.24);background:rgba(102,227,255,.065);color:#bff6ff;padding:7px 11px;border-radius:8px;font:700 12px 'Chakra Petch';letter-spacing:.09em;text-transform:uppercase}
-.xpbar{height:5px;margin-top:15px;background:#151d2c;border:0;box-shadow:inset 0 1px 3px #000}
-.xpfill{background:linear-gradient(90deg,var(--nexus-blue),var(--nexus-cyan));box-shadow:0 0 16px rgba(102,227,255,.5)}
-.xpcaption{margin-top:7px;color:#69778e;font-size:11px;letter-spacing:.04em}
-
-/* Navigation = dock de jeu */
 .modebar{
-  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:0 auto 16px;
-  padding:7px;border:1px solid var(--nexus-line);border-radius:16px;
-  background:rgba(6,10,18,.72);box-shadow:0 20px 60px rgba(0,0,0,.24);backdrop-filter:blur(18px);
+  display:grid;
+  grid-template-columns:1.65fr .9fr .9fr;
+  gap:10px;
+  margin:0 0 16px;
+  align-items:stretch;
 }
+.mode-group{
+  min-width:0;
+  padding:10px;
+  border-radius:14px;
+}
+.mode-group-title{
+  margin:0 0 8px 2px;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+}
+.mode-group-buttons{
+  display:grid;
+  gap:7px;
+}
+.mode-group-play .mode-group-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}
+.mode-group-competition .mode-group-buttons,
+.mode-group-progression .mode-group-buttons{grid-template-columns:1fr}
 .mode{
-  position:relative;min-height:54px;padding:11px 8px;border:1px solid transparent;border-radius:11px;
-  background:transparent;color:#8390a5;font:700 12px/1.15 'Chakra Petch',sans-serif;letter-spacing:.035em;text-transform:uppercase;
-  box-shadow:none;overflow:hidden;
+  width:100%;
+  min-height:48px;
+  padding:10px 12px;
+  border-radius:8px;
+  font-weight:800;
+  line-height:1.15;
+  text-align:left;
+  white-space:normal;
 }
-.mode:before{content:"";position:absolute;left:10px;right:10px;bottom:0;height:2px;background:transparent;box-shadow:none}
-.mode:hover:not(.active){background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.055);color:#dce8f8;transform:none}
-.mode.active{
-  color:#f8fcff;background:linear-gradient(180deg,rgba(74,105,174,.18),rgba(22,31,52,.50));
-  border-color:rgba(118,181,255,.20);box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 9px 24px rgba(0,0,0,.18)
-}
-.mode.active:before{background:linear-gradient(90deg,transparent,var(--nexus-cyan),transparent);box-shadow:0 -4px 14px rgba(102,227,255,.5)}
+.mode.active{transform:none}
+.panel{position:relative}
+.info{display:grid;grid-template-columns:1fr 1.35fr 1fr;align-items:stretch}
+.badge{text-align:center}
+.controls{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px}
+.controls button{width:100%;min-height:46px}
+.ranking-box,.profile-box,.career-box,.achievements-box,.master-box{max-width:860px}
+.profile-grid,.stat-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.ultimate-top{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.xpcaption{display:flex;align-items:center;justify-content:space-between;gap:12px}
 
-/* Surface générale */
-.panel,.ranking-hero,.profile-card,.ultimate-card,.online-box,.difficulty{
-  border-radius:20px;border:1px solid var(--nexus-line);
-  background:linear-gradient(145deg,rgba(12,18,31,.93),rgba(7,11,20,.93));
-  box-shadow:0 28px 80px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.025);
-  backdrop-filter:blur(18px) saturate(1.15);
-}
-.panel{position:relative;padding:20px;overflow:hidden}
-.panel:after{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(102,227,255,.42),transparent);pointer-events:none}
-.status{font-family:'Chakra Petch';font-size:21px;letter-spacing:.045em;text-transform:uppercase;text-align:center;margin:2px 0 14px}
-.info{margin-bottom:13px;gap:7px}
-.badge{border-radius:7px;padding:7px 11px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.065);color:#8290a8;font:600 11px 'Space Grotesk';letter-spacing:.04em;text-transform:uppercase}
-.badge span{color:#f3f8ff;font-family:'Chakra Petch';font-size:13px}
-
-/* Plateau : arène principale */
-.board{
-  position:relative;max-width:580px;height:580px;padding:13px;gap:8px;border-radius:18px;
+/* ---------- Thème Arcade moderne : uniquement quand AUCUN skin n'est actif ---------- */
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine){
+  font-family:'Space Grotesk','Rajdhani',system-ui,sans-serif;
+  color:var(--ui-text);
   background:
-    linear-gradient(135deg,rgba(39,57,91,.22),transparent 38%),
-    linear-gradient(315deg,rgba(60,93,160,.12),transparent 35%),
-    #070b13;
-  border:1px solid rgba(127,176,255,.24);
-  box-shadow:0 0 0 6px rgba(255,255,255,.018),0 30px 70px rgba(0,0,0,.48),0 0 60px rgba(58,111,255,.08),inset 0 0 50px rgba(0,0,0,.65);
+    radial-gradient(ellipse at 78% 0%,rgba(244,166,42,.085),transparent 32%),
+    radial-gradient(ellipse at 4% 45%,rgba(74,103,160,.10),transparent 34%),
+    linear-gradient(145deg,#080a0f 0%,#0c1017 48%,#06070a 100%);
 }
-.board:before{content:"";position:absolute;inset:-1px;border-radius:18px;pointer-events:none;background:linear-gradient(135deg,rgba(102,227,255,.24),transparent 18% 80%,rgba(141,103,255,.16));mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;padding:1px}
-.cell{
-  border-radius:9px;border:1px solid rgba(119,150,203,.16);
-  background:linear-gradient(145deg,rgba(23,33,54,.92),rgba(10,15,27,.96));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.025),inset 0 -14px 30px rgba(0,0,0,.18);
-  transition:transform .10s ease,border-color .10s ease,background .10s ease,box-shadow .10s ease;
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine):before{
+  opacity:.24;
+  background-image:
+    linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);
+  background-size:52px 52px;
 }
-.cell:hover{transform:translateY(-1px);border-color:rgba(102,227,255,.52);background:linear-gradient(145deg,rgba(31,47,76,.98),rgba(12,20,34,.98));box-shadow:0 0 0 1px rgba(102,227,255,.08),0 0 24px rgba(102,227,255,.08)}
-.dot{width:52%;height:52%;box-shadow:inset -6px -8px 12px rgba(0,0,0,.35),inset 4px 4px 10px rgba(255,255,255,.25),0 0 18px currentColor,0 0 42px color-mix(in srgb,currentColor 35%,transparent)}
-.dot:after{width:18%;height:18%;top:18%;left:22%;background:rgba(255,255,255,.68);filter:blur(.2px)}
-.redDot{background:radial-gradient(circle at 30% 24%,#ffcad2 0 4%,#ff5670 22%,#c82045 70%,#660d2a);color:#ff4264}
-.blueDot{background:radial-gradient(circle at 30% 24%,#d8f6ff 0 4%,#61caff 22%,#3477ef 70%,#173678);color:#4ebcff}
-
-/* Boutons = commandes modernes */
-button{font-family:'Chakra Petch','Space Grotesk',sans-serif;letter-spacing:.025em}
-.controls{gap:8px;margin:15px 0 10px}
-.controls button{min-height:44px;border-radius:9px;text-transform:uppercase;font-size:12px;letter-spacing:.065em}
-.primary{
-  color:white;border:1px solid rgba(117,184,255,.34);border-radius:9px;
-  background:linear-gradient(135deg,#365ce9,#6257e8 58%,#446de9);
-  box-shadow:0 9px 28px rgba(53,86,224,.24),inset 0 1px 0 rgba(255,255,255,.18)
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .logo{
+  margin:0;
+  font-family:'Chakra Petch','Rajdhani',sans-serif;
+  font-size:clamp(31px,5vw,48px);
+  font-weight:700;
+  letter-spacing:.055em;
+  text-transform:uppercase;
+  color:#fff;
+  text-shadow:none;
 }
-.primary:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 12px 30px rgba(53,86,224,.34),0 0 18px rgba(102,227,255,.12)}
-.secondary{border:1px solid rgba(255,255,255,.085);border-radius:9px;background:rgba(255,255,255,.035);color:#a7b4c8}
-.secondary:hover:not(:disabled){background:rgba(255,255,255,.065);color:#fff}
-.choice{font-size:13px;color:#647188;text-align:center}.choice b{color:#a8b8cf}
-.warning{font-size:12px;text-align:center}
-.result{font-family:'Chakra Petch';font-size:18px;text-align:center}
-.panel>label{display:block;margin:8px auto 0;padding:10px 12px;max-width:580px;border-radius:9px;border:1px solid rgba(255,255,255,.055);background:rgba(255,255,255,.025);color:#77859a;font-size:12px;text-align:center}
-.rules,.save-box{max-width:760px;margin:15px auto 0;border-radius:12px;background:rgba(255,255,255,.018);border:1px solid rgba(255,255,255,.05);color:#748298;font-size:12px;line-height:1.55}
-.rules b,.save-title{color:#aebcd0;font-family:'Chakra Petch';text-transform:uppercase;letter-spacing:.08em}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .subtitle{
+  margin:3px 0 0;
+  color:#7f8795;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .creator{
+  margin:6px 0 18px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#505763;
+  font-size:10px;
+  letter-spacing:.05em;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .creator b{color:#777f8d}
 
-/* Écrans meta */
-.ranking-box,.profile-box,.career-box,.achievements-box,.master-box{max-width:820px}
-.ranking-hero,.profile-card,.ultimate-card{padding:22px}
-.ranking-season,.profile-sub,.ultimate-sub{color:#66748a;letter-spacing:.10em;text-transform:uppercase;font-size:11px}
-.ranking-title,.profile-title,.ultimate-heading{font-family:'Chakra Petch';font-size:26px;text-transform:uppercase;letter-spacing:.05em;text-align:left;margin-bottom:4px}
-.ranking-season{text-align:left}.ranking-current{text-align:left;font-family:'Chakra Petch';font-size:32px;margin-top:18px}.ranking-meta{text-align:left;color:#738199}
-.profile-title{text-align:left}.profile-sub{text-align:left}.ultimate-sub{text-align:left}
-.profile-grid,.stat-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.profile-stat,.u-stat{min-height:82px;border-radius:11px;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.055);padding:12px}
-.profile-stat small,.u-stat small{color:#66758c;text-transform:uppercase;letter-spacing:.055em;font-size:10px}
-.profile-stat b,.u-stat b{font-family:'Chakra Petch';font-size:18px}
-.profile-section,.u-section{color:#aab7cb;font-family:'Chakra Petch';letter-spacing:.07em;text-transform:uppercase;font-size:12px}
-.title-select,.profile-name-input,.online-inputs input{border-radius:9px;border:1px solid rgba(119,163,225,.16);background:#080d17;color:#f6faff;box-shadow:inset 0 1px 8px rgba(0,0,0,.32)}
-.achievement,.master-stage,.rank-row{border-radius:10px;background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.055)}
-.achievement.unlocked,.master-stage:not(.locked),.rank-row.active{border-color:rgba(101,179,255,.22);background:linear-gradient(135deg,rgba(70,93,176,.10),rgba(255,255,255,.025));box-shadow:inset 3px 0 0 rgba(102,227,255,.40)}
-.achievement-icon{filter:drop-shadow(0 0 10px rgba(102,227,255,.18))}
-.master-progress{justify-content:flex-start}.master-dot{height:4px;border-radius:0}.master-dot.done{background:linear-gradient(90deg,var(--nexus-blue),var(--nexus-cyan));box-shadow:0 0 10px rgba(102,227,255,.35)}
-.master-banner{border-radius:9px;background:linear-gradient(100deg,rgba(84,42,140,.9),rgba(159,99,29,.82));border:1px solid rgba(255,214,131,.20);box-shadow:0 14px 42px rgba(0,0,0,.28)}
+/* Profil résumé : barre d'identité, pas une "carte web" */
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .ultimate-hero{
+  margin:0 0 13px;
+  padding:13px 15px 12px;
+  border:1px solid var(--ui-line-soft);
+  border-left:3px solid var(--ui-accent);
+  border-radius:4px;
+  background:linear-gradient(90deg,rgba(20,24,31,.96),rgba(12,15,20,.88));
+  box-shadow:0 15px 45px rgba(0,0,0,.24);
+  color:#fff;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .ultimate-name{
+  font-family:'Chakra Petch',sans-serif;
+  font-size:20px;
+  font-weight:700;
+  letter-spacing:.02em;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .ultimate-title{
+  color:#8e96a4;
+  font-size:11px;
+  margin-top:1px;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .ultimate-level{
+  padding:6px 9px;
+  border:1px solid rgba(244,166,42,.34);
+  border-radius:3px;
+  background:var(--ui-accent-soft);
+  color:#ffd491;
+  font-size:11px;
+  font-weight:800;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .xpbar{
+  height:3px;
+  margin-top:11px;
+  border:0;
+  background:#252a33;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .xpfill{
+  background:var(--ui-accent);
+  box-shadow:0 0 10px rgba(244,166,42,.25);
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .xpcaption{
+  margin-top:6px;
+  color:#666e7a;
+  font-size:10px;
+}
 
-/* Online */
-.online-box{max-width:820px;padding:18px}.online-inputs{margin:0}.online-status{color:#7edfff;font-size:12px;letter-spacing:.03em}.online-vs{border-radius:9px}.online-stats{border-radius:9px;background:rgba(255,255,255,.025);border-color:rgba(255,255,255,.055)}
+/* Sélection des modes : trois zones fixes, tout est visible */
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .mode-group{
+  border:1px solid var(--ui-line-soft);
+  background:rgba(12,15,20,.78);
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .mode-group-title{
+  color:#606876;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .mode{
+  border:1px solid transparent;
+  background:#141820;
+  color:#a3aab6;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:12px;
+  letter-spacing:.01em;
+  text-transform:none;
+  box-shadow:none;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .mode:hover:not(.active){
+  transform:none;
+  background:#1a1f28;
+  color:#f1f4f8;
+  border-color:rgba(255,255,255,.08);
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .mode.active{
+  background:linear-gradient(90deg,#3a2810,#201b13);
+  border-color:rgba(244,166,42,.36);
+  color:#fff;
+  box-shadow:inset 3px 0 0 var(--ui-accent);
+}
 
-/* Fin de partie plus cinématique */
-.game-end-overlay{backdrop-filter:blur(12px) saturate(.85);background:rgba(1,4,10,.72)}
-.game-end-card{width:min(430px,86%);padding:30px 24px;border-radius:16px;border:1px solid rgba(141,193,255,.18);background:linear-gradient(145deg,rgba(16,25,42,.98),rgba(7,11,20,.98));box-shadow:0 34px 100px rgba(0,0,0,.70),0 0 60px rgba(64,112,255,.13)}
-.game-end-title{font-family:'Chakra Petch';font-size:30px;letter-spacing:.06em;text-transform:uppercase}
-.game-end-subtitle{color:#7d8ba0}.game-end-new{margin-top:18px;min-width:180px}
+/* Jeu : l'arène domine, le reste s'efface */
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .panel{
+  padding:14px 0 0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .status{
+  margin:0 0 10px;
+  color:#f3f5f8;
+  font-family:'Chakra Petch',sans-serif;
+  font-size:19px;
+  letter-spacing:.02em;
+  text-align:center;
+  text-transform:uppercase;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .badge{
+  padding:7px 9px;
+  border:1px solid var(--ui-line-soft);
+  border-radius:3px;
+  background:#10141a;
+  color:#777f8b;
+  font-size:11px;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .badge span{
+  color:#f8fafc;
+  font-weight:800;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .board{
+  max-width:590px;
+  height:590px;
+  padding:10px;
+  gap:7px;
+  border-radius:5px;
+  border:1px solid rgba(255,255,255,.14);
+  outline:5px solid rgba(255,255,255,.025);
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.035),transparent 40%),
+    #090c11;
+  box-shadow:0 26px 70px rgba(0,0,0,.52),inset 0 0 36px rgba(0,0,0,.72);
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .cell{
+  border:1px solid rgba(255,255,255,.105);
+  border-radius:3px;
+  background:linear-gradient(145deg,#171c24,#0d1117);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .cell:hover{
+  transform:none;
+  border-color:rgba(244,166,42,.55);
+  background:#1b2028;
+  box-shadow:inset 0 0 0 1px rgba(244,166,42,.08);
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .dot{
+  width:52%;
+  height:52%;
+  box-shadow:inset -5px -7px 10px rgba(0,0,0,.4),inset 3px 3px 8px rgba(255,255,255,.22),0 0 16px currentColor;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .redDot{
+  background:radial-gradient(circle at 30% 24%,#ffc5cc 0 5%,#ff5a6a 25%,#bc2237 73%,#5e101d);
+  color:#ff5366;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .blueDot{
+  background:radial-gradient(circle at 30% 24%,#d8efff 0 5%,#63aaff 25%,#326ecb 73%,#153463);
+  color:#62a7ff;
+}
 
-/* Panneau skins : inventaire moderne */
-.skin-toggle{right:16px;top:16px;width:44px;height:44px;border-radius:10px;background:rgba(10,16,28,.82);border-color:rgba(129,178,255,.18);box-shadow:0 14px 35px rgba(0,0,0,.32);font-size:18px}
-.skin-panel{right:16px;top:68px;width:300px;border-radius:14px;background:rgba(8,13,23,.96);border-color:rgba(125,173,239,.15);box-shadow:0 28px 80px rgba(0,0,0,.55);padding:9px}
-.skin-title{background:rgba(8,13,23,.96);color:#66758c;font-family:'Chakra Petch';letter-spacing:.16em}
-.skin-option{border-radius:9px;background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.04);min-height:58px}.skin-option:hover{background:rgba(255,255,255,.05)}.skin-option.active{background:linear-gradient(90deg,rgba(65,105,223,.16),rgba(255,255,255,.025));border-color:rgba(102,227,255,.22);box-shadow:inset 3px 0 0 var(--nexus-cyan)}
-.skin-preview{border-radius:7px}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) button{
+  font-family:'Space Grotesk',sans-serif;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .controls button{
+  border-radius:4px;
+  font-size:12px;
+  font-weight:800;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .primary{
+  border:1px solid #f1b14b;
+  background:#e89a20;
+  color:#15110b;
+  box-shadow:none;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .primary:hover:not(:disabled){
+  transform:none;
+  background:#f3aa38;
+  box-shadow:0 0 0 2px rgba(244,166,42,.10);
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .secondary{
+  border:1px solid var(--ui-line);
+  border-radius:4px;
+  background:#151922;
+  color:#c1c6ce;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .secondary:hover:not(:disabled){
+  background:#1b2029;
+  color:#fff;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .choice{
+  margin-top:13px;
+  color:#767e8a;
+  font-size:12px;
+  text-align:center;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .panel>label{
+  display:block;
+  max-width:590px;
+  margin:8px auto 0;
+  color:#808793;
+  font-size:11px;
+  text-align:center;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .rules,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .save-box{
+  max-width:760px;
+  margin:15px auto 0;
+  padding:13px;
+  border:1px solid var(--ui-line-soft);
+  border-radius:4px;
+  background:#0e1218;
+  color:#7e8692;
+  font-size:11px;
+}
 
+/* Meta écrans : sections plates et très lisibles */
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .ranking-hero,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .profile-card,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .ultimate-card,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .online-box,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .difficulty{
+  padding:18px;
+  border:1px solid var(--ui-line-soft);
+  border-radius:5px;
+  background:#10141a;
+  color:#eef1f5;
+  box-shadow:0 18px 50px rgba(0,0,0,.24);
+  backdrop-filter:none;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .ranking-title,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .profile-title,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .ultimate-heading{
+  color:#fff;
+  font-family:'Chakra Petch',sans-serif;
+  font-size:25px;
+  text-align:left;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .profile-sub,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .ultimate-sub,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .ranking-season{
+  color:#777f8b;
+  text-align:left;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .profile-stat,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .u-stat,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .achievement,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .master-stage,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .rank-row{
+  border:1px solid var(--ui-line-soft);
+  border-radius:4px;
+  background:#151922;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .profile-stat small,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .u-stat small{
+  color:#727a87;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .profile-stat b,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .u-stat b{
+  color:#fff;
+}
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .achievement.unlocked,
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .master-stage:not(.locked),
+body:not(.skin-paper):not(.skin-competition):not(.skin-crystal):not(.skin-gold):not(.skin-diamond):not(.skin-void):not(.skin-chess):not(.skin-divine) .rank-row.active{
+  border-color:rgba(244,166,42,.32);
+  background:#1c1914;
+  box-shadow:inset 3px 0 0 var(--ui-accent);
+}
+
+/* ---------- Protection de lisibilité des skins ---------- */
+/* Le skin continue de gérer son fond, son plateau et ses ronds.
+   On sécurise uniquement les zones de texte/interface qui pouvaient devenir illisibles. */
+body.skin-gold .mode-group,
+body.skin-diamond .mode-group,
+body.skin-void .mode-group,
+body.skin-chess .mode-group,
+body.skin-divine .mode-group,
+body.skin-competition .mode-group{
+  background:rgba(7,9,13,.82);
+  border:1px solid rgba(255,255,255,.13);
+}
+body.skin-gold .mode-group-title,
+body.skin-diamond .mode-group-title,
+body.skin-void .mode-group-title,
+body.skin-chess .mode-group-title,
+body.skin-divine .mode-group-title,
+body.skin-competition .mode-group-title{color:#c9cfda}
+body.skin-gold .ultimate-hero,
+body.skin-diamond .ultimate-hero,
+body.skin-void .ultimate-hero,
+body.skin-chess .ultimate-hero,
+body.skin-divine .ultimate-hero,
+body.skin-competition .ultimate-hero,
+body.skin-gold .ultimate-card,
+body.skin-diamond .ultimate-card,
+body.skin-void .ultimate-card,
+body.skin-chess .ultimate-card,
+body.skin-divine .ultimate-card,
+body.skin-competition .ultimate-card{
+  color:#f7f8fb !important;
+  background:rgba(8,10,14,.88) !important;
+  border-color:rgba(255,255,255,.14) !important;
+}
+body.skin-gold .ultimate-title,body.skin-gold .ultimate-sub,body.skin-gold .u-stat small,
+body.skin-diamond .ultimate-title,body.skin-diamond .ultimate-sub,body.skin-diamond .u-stat small,
+body.skin-void .ultimate-title,body.skin-void .ultimate-sub,body.skin-void .u-stat small,
+body.skin-chess .ultimate-title,body.skin-chess .ultimate-sub,body.skin-chess .u-stat small,
+body.skin-divine .ultimate-title,body.skin-divine .ultimate-sub,body.skin-divine .u-stat small,
+body.skin-competition .ultimate-title,body.skin-competition .ultimate-sub,body.skin-competition .u-stat small{
+  color:#aeb5c1 !important;
+}
+body.skin-gold .u-stat,body.skin-gold .achievement,body.skin-gold .master-stage,
+body.skin-diamond .u-stat,body.skin-diamond .achievement,body.skin-diamond .master-stage,
+body.skin-void .u-stat,body.skin-void .achievement,body.skin-void .master-stage,
+body.skin-chess .u-stat,body.skin-chess .achievement,body.skin-chess .master-stage,
+body.skin-divine .u-stat,body.skin-divine .achievement,body.skin-divine .master-stage,
+body.skin-competition .u-stat,body.skin-competition .achievement,body.skin-competition .master-stage{
+  background:rgba(255,255,255,.055) !important;
+  border-color:rgba(255,255,255,.12) !important;
+}
+
+/* Skins clairs : interface claire protégée */
+body.skin-paper .mode-group,
+body.skin-crystal .mode-group{
+  background:rgba(255,255,255,.64);
+  border:1px solid rgba(61,48,76,.18);
+}
+body.skin-paper .mode-group-title,
+body.skin-crystal .mode-group-title{color:#5d5265}
+body.skin-paper .ultimate-hero,
+body.skin-crystal .ultimate-hero,
+body.skin-paper .ultimate-card,
+body.skin-crystal .ultimate-card{
+  color:#312b36 !important;
+  background:rgba(255,255,255,.76) !important;
+  border-color:rgba(67,52,76,.24) !important;
+}
+body.skin-paper .ultimate-name,body.skin-paper .ultimate-level,body.skin-paper .u-stat b,
+body.skin-crystal .ultimate-name,body.skin-crystal .ultimate-level,body.skin-crystal .u-stat b{
+  color:#2f2835 !important;
+}
+body.skin-paper .ultimate-title,body.skin-paper .ultimate-sub,body.skin-paper .u-stat small,
+body.skin-crystal .ultimate-title,body.skin-crystal .ultimate-sub,body.skin-crystal .u-stat small{
+  color:#655a6d !important;
+}
+
+/* Fin de partie : contraste garanti */
+.game-end-card{max-width:440px}
+body:not(.skin-paper):not(.skin-crystal) .game-end-card{
+  color:#fff;
+  background:rgba(9,11,15,.96);
+  border-color:rgba(255,255,255,.15);
+}
+body:not(.skin-paper):not(.skin-crystal) .game-end-subtitle{color:#aeb5c1}
+
+/* Mobile : tout est visible, aucun menu horizontal */
 @media(max-width:760px){
-  .app{width:100%;padding:17px 10px 34px}
-  .logo{font-size:27px;letter-spacing:.055em;padding-right:46px}
-  .subtitle{font-size:9px}.creator{font-size:9px;margin-bottom:12px}
-  .ultimate-hero{padding:14px 14px 13px;border-radius:14px}.ultimate-name{font-size:18px}.ultimate-level{font-size:10px;padding:6px 8px}.ultimate-hero:after{display:none}
-  .modebar{display:flex;overflow-x:auto;justify-content:flex-start;flex-wrap:nowrap;scroll-snap-type:x proximity;scrollbar-width:none;padding:6px;border-radius:13px;margin-left:0;margin-right:0}.modebar::-webkit-scrollbar{display:none}
-  .mode{flex:0 0 112px;min-height:48px;font-size:10px;scroll-snap-align:start;padding:10px 5px}
-  .panel{padding:10px;border-radius:15px}
-  .status{font-size:17px;margin:4px 0 9px}.info{margin-bottom:8px}.badge{font-size:9px;padding:6px 7px}.badge span{font-size:11px}
-  .board{width:100%;height:calc(100vw - 40px);max-height:calc(100vh - 285px);min-height:300px;padding:7px;gap:5px;border-radius:13px;box-shadow:0 0 0 3px rgba(255,255,255,.015),0 20px 50px rgba(0,0,0,.46),inset 0 0 34px rgba(0,0,0,.55)}
-  .cell{border-radius:7px}.dot{width:50%;height:50%}
-  .choice{font-size:11px;margin-top:10px}.controls{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:5px;margin:10px 0 7px}.controls button{padding:8px 5px;min-height:41px;font-size:10px}.panel>label{font-size:10px;padding:8px}.rules,.save-box{font-size:10px;padding:11px;margin-top:10px}
-  .ranking-hero,.profile-card,.ultimate-card{padding:15px;border-radius:15px}.ranking-title,.profile-title,.ultimate-heading{font-size:21px}.ranking-current{font-size:26px}.profile-grid,.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.profile-stat,.u-stat{min-height:72px;padding:10px}.profile-stat b,.u-stat b{font-size:16px}
-  .skin-toggle{right:9px;top:9px;width:40px;height:40px}.skin-panel{right:9px;top:57px;width:min(300px,calc(100vw - 18px))}
-  .game-end-title{font-size:24px}
+  .app{width:100%;padding:18px 10px 34px}
+  .modebar{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+  .mode-group{padding:9px}
+  .mode-group-play .mode-group-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mode-group-competition .mode-group-buttons,
+  .mode-group-progression .mode-group-buttons{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mode-group-progression .mode:last-child{grid-column:1/-1}
+  .mode{min-height:45px;padding:9px 10px;font-size:11px}
+  .ultimate-hero{padding:12px}
+  .ultimate-name{font-size:18px}
+  .info{grid-template-columns:1fr 1.25fr 1fr;gap:5px}
+  .badge{padding:6px 4px;font-size:10px}
+  .panel{padding-left:0;padding-right:0}
+  .board{
+    width:100%;
+    height:calc(100vw - 38px);
+    max-height:none;
+    min-height:0;
+  }
+  .controls{grid-template-columns:1.35fr 1fr 1fr;gap:5px}
+  .controls button{padding:9px 5px;font-size:10px}
+  .profile-grid,.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .skin-toggle{right:10px;top:10px}
 }
-
 @media(max-width:390px){
-  .mode{flex-basis:102px}.board{min-height:286px}.controls button{font-size:9px}.profile-stat small,.u-stat small{font-size:9px}
+  .mode-group-play .mode-group-buttons,
+  .mode-group-competition .mode-group-buttons,
+  .mode-group-progression .mode-group-buttons{grid-template-columns:1fr 1fr}
+  .mode{font-size:10px}
 }
 
 </style>
@@ -1440,17 +1728,32 @@ button{font-family:'Chakra Petch','Space Grotesk',sans-serif;letter-spacing:.025
   <div class="xpbar"><div class="xpfill" id="heroXpFill"></div></div>
   <div class="xpcaption"><span id="heroXpText">0 / 100 XP</span><span id="heroRecord">0 victoire</span></div>
 </div>
-<div class="modebar">
-<button class="mode active" data-mode="local">VERSUS LOCAL</button>
-<button class="mode" data-mode="bot-easy">BOT · INITIATION</button>
-<button class="mode" data-mode="bot-medium">BOT · TACTIQUE</button>
-<button class="mode" data-mode="bot-hard">BOT · ÉLITE</button>
-<button class="mode" data-mode="online">ONLINE</button>
-<button class="mode" data-mode="ranking">SAISON</button>
-<button class="mode" data-mode="profile">PROFIL</button>
-<button class="mode" data-mode="career">CARRIÈRE</button>
-<button class="mode" data-mode="achievements">EXPLOITS</button>
-<button class="mode" data-mode="master">DÉFI MAÎTRE</button>
+<div class="modebar" aria-label="Navigation principale">
+  <section class="mode-group mode-group-play">
+    <div class="mode-group-title">Jouer</div>
+    <div class="mode-group-buttons">
+      <button class="mode active" data-mode="local">Versus local</button>
+      <button class="mode" data-mode="online">En ligne</button>
+      <button class="mode" data-mode="bot-easy">Bot — Initiation</button>
+      <button class="mode" data-mode="bot-medium">Bot — Tactique</button>
+      <button class="mode" data-mode="bot-hard">Bot — Élite</button>
+    </div>
+  </section>
+  <section class="mode-group mode-group-competition">
+    <div class="mode-group-title">Compétition</div>
+    <div class="mode-group-buttons">
+      <button class="mode" data-mode="ranking">Saison classée</button>
+      <button class="mode" data-mode="master">Défi Maître</button>
+    </div>
+  </section>
+  <section class="mode-group mode-group-progression">
+    <div class="mode-group-title">Progression</div>
+    <div class="mode-group-buttons">
+      <button class="mode" data-mode="profile">Profil</button>
+      <button class="mode" data-mode="career">Carrière</button>
+      <button class="mode" data-mode="achievements">Exploits</button>
+    </div>
+  </section>
 </div>
 
 <div id="difficultyBox" class="difficulty">
