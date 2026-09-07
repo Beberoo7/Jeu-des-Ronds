@@ -1184,6 +1184,22 @@ body.skin-crystal .game-end-subtitle{color:#7a6790 !important;}
   }
 }
 
+
+
+/* === ULTIMATE — CARRIÈRE, EXPLOITS, DÉFI MAÎTRE === */
+.ultimate-hero{max-width:620px;margin:0 auto 16px;padding:16px 18px;border-radius:20px;background:linear-gradient(145deg,#111a34e8,#0b1024f0);border:1px solid #ffffff20;box-shadow:0 14px 42px #0006;text-align:left;position:relative;overflow:hidden}
+.ultimate-hero:before{content:"";position:absolute;inset:-50% 35% auto -15%;height:210px;background:radial-gradient(circle,#7c5cff35,transparent 65%);pointer-events:none}
+.ultimate-top{display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative}.ultimate-name{font-size:21px;font-weight:900}.ultimate-title{color:#b9c4e7;font-size:14px;margin-top:2px}.ultimate-level{font-size:15px;font-weight:900;color:#e9e3ff;background:#7b5cff22;border:1px solid #907aff55;border-radius:999px;padding:7px 11px;white-space:nowrap}
+.xpbar{height:9px;border-radius:999px;background:#ffffff12;border:1px solid #ffffff16;overflow:hidden;margin-top:12px}.xpfill{height:100%;width:0;background:linear-gradient(90deg,#7258ff,#00d7ff);transition:width .3s ease}.xpcaption{display:flex;justify-content:space-between;gap:10px;color:#9faccd;font-size:12px;margin-top:5px}
+.career-box,.achievements-box,.master-box{display:none;max-width:650px;margin:0 auto 15px;text-align:left}.career-box.show,.achievements-box.show,.master-box.show{display:block}.ultimate-card{background:#10162af2;border:1px solid #ffffff1c;border-radius:22px;padding:18px;box-shadow:0 18px 50px #0007}.ultimate-heading{text-align:center;font-size:27px;font-weight:900;margin:0 0 4px}.ultimate-sub{text-align:center;color:#aeb9d8;font-size:14px;margin-bottom:15px}.stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.u-stat{background:#ffffff08;border:1px solid #ffffff12;border-radius:13px;padding:12px}.u-stat small{display:block;color:#aeb9d8;font-size:12px;margin-bottom:3px}.u-stat b{font-size:18px}.u-section{margin:17px 0 9px;font-weight:900;color:#dce3ff}.title-select{width:100%;padding:11px;border-radius:12px;background:#090e1d;color:#fff;border:1px solid #ffffff22;font:inherit;font-weight:800}
+.heatmap{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:330px;margin:8px auto}.heatcell{aspect-ratio:1;border-radius:9px;border:1px solid #ffffff12;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#ffffffcc;background:#725cff12}
+.move-bars{display:grid;gap:7px}.move-row{display:grid;grid-template-columns:72px 1fr 44px;gap:8px;align-items:center;font-size:13px}.move-track{height:8px;background:#ffffff10;border-radius:999px;overflow:hidden}.move-fill{height:100%;background:linear-gradient(90deg,#7d61ff,#22cfee);border-radius:999px}
+.achievement-summary{text-align:center;margin:8px 0 14px;font-weight:900}.achievement-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.achievement{padding:12px;border-radius:14px;background:#ffffff07;border:1px solid #ffffff12;min-height:98px}.achievement.done{background:#6f4cff17;border-color:#8c77ff66;box-shadow:0 0 18px #6f4cff15}.achievement-icon{font-size:22px}.achievement-name{font-weight:900;margin-top:3px}.achievement-desc{color:#aeb9d8;font-size:12px;margin-top:3px;line-height:1.35}.achievement-state{font-size:11px;margin-top:7px;color:#8996b8}.achievement.done .achievement-state{color:#79efb0;font-weight:900}
+.master-progress{display:flex;justify-content:center;gap:6px;margin:13px 0}.master-dot{width:30px;height:8px;border-radius:999px;background:#ffffff12}.master-dot.done{background:#8b70ff}.master-stages{display:grid;gap:9px}.master-stage{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px;border-radius:14px;background:#ffffff07;border:1px solid #ffffff12}.master-stage.locked{opacity:.48}.master-stage b{display:block}.master-stage small{display:block;color:#aeb9d8;margin-top:2px}.master-stage button{font-size:14px;padding:8px 11px}.master-banner{display:none;margin:0 auto 13px;max-width:520px;padding:10px 13px;border-radius:12px;background:linear-gradient(135deg,#5f2b99,#b56c19);border:1px solid #ffd88966;font-weight:900}.master-banner.show{display:block}
+.celebration{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:#040611bb;backdrop-filter:blur(8px)}.celebration.show{display:flex}.celebration-card{max-width:440px;width:100%;padding:25px;text-align:center;border-radius:24px;background:linear-gradient(145deg,#151d39,#0b1022);border:1px solid #ffffff2a;box-shadow:0 24px 80px #000c,0 0 55px #725cff44;animation:celebrateIn .28s ease-out}.celebration-icon{font-size:46px}.celebration-title{font-size:28px;font-weight:900;margin-top:6px}.celebration-text{color:#c5cee8;margin:7px 0 17px;line-height:1.45}@keyframes celebrateIn{from{opacity:0;transform:scale(.88) translateY(15px)}to{opacity:1;transform:none}}
+@media(max-width:600px){.ultimate-hero{margin:0 4px 12px;padding:13px}.ultimate-name{font-size:18px}.ultimate-level{font-size:13px}.ultimate-card{padding:14px;border-radius:18px}.achievement-grid{grid-template-columns:1fr}.stat-grid{grid-template-columns:1fr 1fr}.achievement{min-height:0}}
+body.skin-paper .ultimate-hero,body.skin-paper .ultimate-card{background:#f8f2e2f2 !important;color:#322d28 !important;border:2px solid #4a433b !important;box-shadow:5px 7px 0 #00000015 !important}body.skin-paper .ultimate-title,body.skin-paper .ultimate-sub,body.skin-paper .u-stat small,body.skin-paper .achievement-desc,body.skin-paper .achievement-state,body.skin-paper .master-stage small{color:#6d6459 !important}body.skin-paper .u-stat,body.skin-paper .achievement,body.skin-paper .master-stage{background:#fffaf04f !important;border:1.8px dashed #5d554b !important}body.skin-paper .title-select{background:#fffaf0 !important;color:#29251f !important;border:2px solid #4a433b !important}
+
 </style>
 </head>
 <body>
@@ -1206,6 +1222,15 @@ body.skin-crystal .game-end-subtitle{color:#7a6790 !important;}
 <h1 class="logo">⭕ JEU DES RONDS</h1>
 <p class="subtitle">Je me fais tout seul, je profite tout seul.</p>
 <div class="creator">Créé par <b>André Orine Beberoo</b></div>
+
+<div class="ultimate-hero" id="ultimateHero">
+  <div class="ultimate-top">
+    <div><div class="ultimate-name" id="heroName">Joueur</div><div class="ultimate-title" id="heroTitle">Novice des Ronds</div></div>
+    <div class="ultimate-level" id="heroLevel">Niveau 1</div>
+  </div>
+  <div class="xpbar"><div class="xpfill" id="heroXpFill"></div></div>
+  <div class="xpcaption"><span id="heroXpText">0 / 100 XP</span><span id="heroRecord">0 victoire</span></div>
+</div>
 <div class="modebar">
 <button class="mode active" data-mode="local">👥 2 joueurs</button>
 <button class="mode" data-mode="bot-easy">🤖 Bot Facile</button>
@@ -1214,6 +1239,9 @@ body.skin-crystal .game-end-subtitle{color:#7a6790 !important;}
 <button class="mode" data-mode="online">🌐 En Ligne</button>
 <button class="mode" data-mode="ranking">🏆 Classement</button>
 <button class="mode" data-mode="profile">👤 Profil</button>
+<button class="mode" data-mode="career">✨ Carrière</button>
+<button class="mode" data-mode="achievements">🏅 Exploits</button>
+<button class="mode" data-mode="master">👑 Défi Maître</button>
 </div>
 
 <div id="difficultyBox" class="difficulty">
@@ -1290,6 +1318,57 @@ body.skin-crystal .game-end-subtitle{color:#7a6790 !important;}
   </div>
 </div>
 
+
+
+<div id="careerBox" class="career-box">
+  <div class="ultimate-card">
+    <div class="ultimate-heading">✨ Carrière</div>
+    <div class="ultimate-sub">Ta progression ne donne aucun avantage en partie : elle raconte uniquement ce que tu as accompli.</div>
+    <div class="stat-grid">
+      <div class="u-stat"><small>Niveau de prestige</small><b id="careerLevel">1</b></div>
+      <div class="u-stat"><small>XP totale</small><b id="careerXp">0</b></div>
+      <div class="u-stat"><small>Victoires / Défaites</small><b id="careerWL">0 / 0</b></div>
+      <div class="u-stat"><small>Winrate carrière</small><b id="careerRate">0.0%</b></div>
+      <div class="u-stat"><small>Série actuelle</small><b id="careerStreak">0</b></div>
+      <div class="u-stat"><small>Meilleure série</small><b id="careerBestStreak">0</b></div>
+      <div class="u-stat"><small>Temps de jeu</small><b id="careerTime">0 min</b></div>
+      <div class="u-stat"><small>Coups joués</small><b id="careerMoves">0</b></div>
+    </div>
+    <div class="u-section">🏷️ Titre affiché</div>
+    <select id="careerTitleSelect" class="title-select"></select>
+    <div class="u-section">🤖 Résultats contre les bots</div>
+    <div class="stat-grid">
+      <div class="u-stat"><small>Bot Facile</small><b id="careerEasy">0 V • 0 D</b></div>
+      <div class="u-stat"><small>Bot Moyen</small><b id="careerMedium">0 V • 0 D</b></div>
+      <div class="u-stat"><small>Bot Difficile</small><b id="careerHard">0 V • 0 D</b></div>
+      <div class="u-stat"><small>En ligne</small><b id="careerOnline">0 V • 0 D</b></div>
+    </div>
+    <div class="u-section">🎯 Ta façon de jouer</div>
+    <div id="moveBars" class="move-bars"></div>
+    <div class="u-section">🗺️ Cases les plus utilisées</div>
+    <div id="careerHeatmap" class="heatmap"></div>
+  </div>
+</div>
+
+<div id="achievementsBox" class="achievements-box">
+  <div class="ultimate-card">
+    <div class="ultimate-heading">🏅 Exploits</div>
+    <div class="ultimate-sub">Aucune monnaie, aucun bonus de puissance. Chaque exploit est une preuve de progression.</div>
+    <div class="achievement-summary" id="achievementSummary">0 / 30 accomplis</div>
+    <div class="achievement-grid" id="achievementGrid"></div>
+  </div>
+</div>
+
+<div id="masterBox" class="master-box">
+  <div class="ultimate-card">
+    <div class="ultimate-heading">👑 Défi Maître</div>
+    <div class="ultimate-sub">Six épreuves successives contre l'IA la plus dangereuse du jeu. Une seule règle : gagner.</div>
+    <div class="master-progress" id="masterProgress"></div>
+    <div class="master-stages" id="masterStages"></div>
+  </div>
+</div>
+
+<div class="master-banner" id="masterBanner"></div>
 <div class="panel" id="gamePanel">
 <div class="status" id="status"></div>
 <div class="info">
@@ -1334,9 +1413,9 @@ Choisis directement <b>1 à 4 cases</b>, puis appuie sur « J'ai fini ».
 
 <div class="save-box" id="saveBox">
   <div class="save-title">💾 Sauvegarde de progression</div>
-  <div class="save-help">Exporte ce code pour récupérer ta progression sur un autre appareil. Il sauvegarde tes statistiques en ligne, ton classement, tes victoires contre le Bot Difficile et tes déblocages importants.</div>
+  <div class="save-help">Exporte ce code pour récupérer ta progression sur un autre appareil. Il sauvegarde aussi la carrière Ultimate : niveau, XP, séries, statistiques, Défi Maître et déblocages importants.</div>
   <div class="save-row">
-    <input id="saveCode" class="save-code" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Exemple : JDR3-....">
+    <input id="saveCode" class="save-code" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Exemple : JDR4-....">
     <div class="save-actions">
       <button class="primary" id="exportSaveBtn" type="button">Exporter</button>
       <button class="secondary" id="copySaveBtn" type="button">Copier</button>
@@ -1347,6 +1426,15 @@ Choisis directement <b>1 à 4 cases</b>, puis appuie sur « J'ai fini ».
 </div>
 
 </div>
+</div>
+
+<div class="celebration" id="celebrationOverlay">
+  <div class="celebration-card">
+    <div class="celebration-icon" id="celebrationIcon">🏆</div>
+    <div class="celebration-title" id="celebrationTitle">Accomplissement</div>
+    <div class="celebration-text" id="celebrationText"></div>
+    <button class="primary" id="celebrationClose" type="button">Continuer</button>
+  </div>
 </div>
 
 <script>
@@ -1376,6 +1464,108 @@ const onlineVs=document.getElementById("onlineVs");
 const onlineMeName=document.getElementById("onlineMeName");
 const onlineOpponentNameEl=document.getElementById("onlineOpponentName");
 
+const careerBox=document.getElementById("careerBox"), achievementsBox=document.getElementById("achievementsBox"), masterBox=document.getElementById("masterBox");
+const masterBanner=document.getElementById("masterBanner");
+const celebrationOverlay=document.getElementById("celebrationOverlay"), celebrationIcon=document.getElementById("celebrationIcon"), celebrationTitle=document.getElementById("celebrationTitle"), celebrationText=document.getElementById("celebrationText"), celebrationClose=document.getElementById("celebrationClose");
+
+
+
+
+// === ULTIMATE : CARRIÈRE / PRESTIGE / EXPLOITS / DÉFI MAÎTRE ===
+const CAREER_KEY="jeuDesRondsCareerUltimateV1";
+const CAREER_TITLE_KEY="jeuDesRondsCareerTitleV1";
+const CAREER_ONLINE_IDS_KEY="jeuDesRondsCareerOnlineIdsV1";
+function freshCareer(){return {xp:0,wins:0,losses:0,currentStreak:0,bestStreak:0,totalSeconds:0,totalMoves:0,moveCounts:[0,0,0,0,0],cellCounts:Array(16).fill(0),easyW:0,easyL:0,mediumW:0,mediumL:0,hardW:0,hardL:0,onlineW:0,onlineL:0,masterCleared:0};}
+function loadCareer(){
+  try{const d=JSON.parse(localStorage.getItem(CAREER_KEY)||"null");const c=freshCareer();if(!d)return c;Object.keys(c).forEach(k=>{if(Array.isArray(c[k])){if(Array.isArray(d[k]))c[k]=c[k].map((_,i)=>Math.max(0,Number(d[k][i])||0));}else c[k]=Math.max(0,Number(d[k])||0)});return c;}catch(e){return freshCareer();}
+}
+let career=loadCareer();
+let careerMatchStartedAt=Date.now(), careerResultCounted=false, masterChallengeActive=0;
+let careerOnlineIds=new Set();
+try{const ids=JSON.parse(localStorage.getItem(CAREER_ONLINE_IDS_KEY)||"[]");if(Array.isArray(ids))careerOnlineIds=new Set(ids.slice(-80));}catch(e){}
+function saveCareer(){localStorage.setItem(CAREER_KEY,JSON.stringify(career));}
+function rememberCareerOnlineId(id){if(!id)return;careerOnlineIds.add(id);const a=Array.from(careerOnlineIds).slice(-80);careerOnlineIds=new Set(a);localStorage.setItem(CAREER_ONLINE_IDS_KEY,JSON.stringify(a));}
+function prestigeLevelFromXp(xp){return Math.floor(Math.sqrt(Math.max(0,xp)/55))+1;}
+function prestigeLevelStart(level){return Math.pow(Math.max(0,level-1),2)*55;}
+function prestigeLevelEnd(level){return Math.pow(level,2)*55;}
+function careerWinrate(){const t=career.wins+career.losses;return t?career.wins/t*100:0;}
+function formatPlayTime(sec){sec=Math.max(0,Math.floor(sec));if(sec<3600)return Math.floor(sec/60)+" min";const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60);return h+" h "+m+" min";}
+const CAREER_TITLES=[
+  ["Novice des Ronds",()=>true],["Premier Sang",()=>career.wins>=1],["Stratège",()=>career.wins>=10],["Vétéran",()=>career.wins>=50],["Centurion",()=>career.wins>=100],["Invaincu",()=>career.bestStreak>=10],["Dominateur des Bots",()=>hardWins>=20],["Terreur du Difficile",()=>hardWins>=100],["Maître des Ronds",()=>career.masterCleared>=6],["Grand Maître",()=>isGrandMasterOrHigherRank(getOnlineRank(getOnlineWinrate(),onlineWins+onlineLosses))],["Challenger",()=>getOnlineRank(getOnlineWinrate(),onlineWins+onlineLosses).includes("Challenger")]
+];
+let selectedCareerTitle=localStorage.getItem(CAREER_TITLE_KEY)||"Novice des Ronds";
+function unlockedTitles(){return CAREER_TITLES.filter(x=>x[1]()).map(x=>x[0]);}
+function ensureCareerTitle(){const u=unlockedTitles();if(!u.includes(selectedCareerTitle)){selectedCareerTitle=u[u.length-1]||"Novice des Ronds";localStorage.setItem(CAREER_TITLE_KEY,selectedCareerTitle);}}
+
+const ACHIEVEMENTS=[
+["first","🏁","Premier pas","Gagner ta première partie.",()=>career.wins>=1],
+["w5","⚔️","Prise en main","Remporter 5 parties.",()=>career.wins>=5],
+["w25","🥉","Habitué","Remporter 25 parties.",()=>career.wins>=25],
+["w50","🥈","Vétéran","Remporter 50 parties.",()=>career.wins>=50],
+["w100","🥇","Centurion","Remporter 100 parties.",()=>career.wins>=100],
+["w250","👑","Légende","Remporter 250 parties.",()=>career.wins>=250],
+["easy","🤖","Premier bot","Battre le Bot Facile.",()=>career.easyW>=1],
+["medium","🧠","Plus si facile","Battre le Bot Moyen.",()=>career.mediumW>=1],
+["hard","💀","Le mur tombe","Battre le Bot Difficile.",()=>hardWins>=1],
+["hard20","🥇","Doré","20 victoires contre le Bot Difficile.",()=>hardWins>=20],
+["hard50","💎","Diamant","50 victoires contre le Bot Difficile.",()=>hardWins>=50],
+["hard100","🌌","Voilacté","100 victoires contre le Bot Difficile.",()=>hardWins>=100],
+["hard200","👑","Maître Absolu","200 victoires contre le Bot Difficile.",()=>hardWins>=200],
+["streak3","🔥","En rythme","3 victoires consécutives.",()=>career.bestStreak>=3],
+["streak5","🔥","Implacable","5 victoires consécutives.",()=>career.bestStreak>=5],
+["streak10","⚡","Invaincu","10 victoires consécutives.",()=>career.bestStreak>=10],
+["online1","🌐","Connexion établie","Gagner ta première partie en ligne.",()=>onlineWins>=1],
+["online10","📡","Compétiteur","10 victoires en ligne.",()=>onlineWins>=10],
+["online25","🏟️","Régulier","25 victoires en ligne.",()=>onlineWins>=25],
+["online50","🌍","Prédateur en ligne","50 victoires en ligne.",()=>onlineWins>=50],
+["goldrank","🥇","Rang Gold","Atteindre Gold ou mieux.",()=>onlineWins+onlineLosses>=5&&getOnlineWinrate()>=30],
+["diamondrank","💎","Rang Diamant","Atteindre Diamant ou mieux.",()=>onlineWins+onlineLosses>=5&&getOnlineWinrate()>=60],
+["masterrank","👑","Rang Maître","Atteindre Maître ou mieux.",()=>onlineWins+onlineLosses>=5&&getOnlineWinrate()>=70],
+["gmrank","🌟","Grand Maître","Atteindre Grand Maître ou mieux.",()=>isGrandMasterOrHigherRank(getOnlineRank(getOnlineWinrate(),onlineWins+onlineLosses))],
+["moves100","⭕","Cent coups","Jouer 100 coups comptabilisés.",()=>career.totalMoves>=100],
+["moves500","⭕","Main sûre","Jouer 500 coups comptabilisés.",()=>career.totalMoves>=500],
+["moves1000","♾️","Mille décisions","Jouer 1 000 coups comptabilisés.",()=>career.totalMoves>=1000],
+["master1","🛡️","Épreuve I","Réussir la première épreuve du Défi Maître.",()=>career.masterCleared>=1],
+["master3","⚔️","Épreuve III","Réussir les trois premières épreuves.",()=>career.masterCleared>=3],
+["master6","👑","Maître des Ronds","Terminer les six épreuves du Défi Maître.",()=>career.masterCleared>=6]
+];
+let previousAchievementIds=new Set();
+const celebrationQueue=[];let celebrationBusy=false;
+function queueCelebration(icon,title,text){celebrationQueue.push({icon,title,text});showNextCelebration();}
+function showNextCelebration(){if(celebrationBusy||!celebrationQueue.length)return;celebrationBusy=true;const c=celebrationQueue.shift();celebrationIcon.textContent=c.icon;celebrationTitle.textContent=c.title;celebrationText.textContent=c.text;celebrationOverlay.classList.add("show");}
+celebrationClose.addEventListener("click",()=>{celebrationOverlay.classList.remove("show");celebrationBusy=false;setTimeout(showNextCelebration,80);});
+function checkNewAchievements(){const now=new Set(ACHIEVEMENTS.filter(a=>a[4]()).map(a=>a[0]));ACHIEVEMENTS.forEach(a=>{if(now.has(a[0])&&!previousAchievementIds.has(a[0]))queueCelebration(a[1],"Exploit débloqué",a[2]+" — "+a[3]);});previousAchievementIds=now;}
+function xpForResult(didWin){if(mode==="online")return didWin?140:55;if(mode==="bot-hard")return didWin?110:35;if(mode==="bot-medium")return didWin?75:25;if(mode==="bot-easy")return didWin?50:20;return 0;}
+function recordCareerMove(a){if(!(isBotMode()||mode==="online")||!Array.isArray(a)||!a.length)return;career.totalMoves++;career.moveCounts[a.length]=(career.moveCounts[a.length]||0)+1;a.forEach(i=>{if(i>=0&&i<16)career.cellCounts[i]=(career.cellCounts[i]||0)+1;});saveCareer();}
+function registerCareerResult(winner){
+  if(!(isBotMode()||mode==="online")||!winner)return;
+  if(mode==="online"){const id=onlineMatchId;if(id&&careerOnlineIds.has(id))return;if(id)rememberCareerOnlineId(id);}else if(careerResultCounted)return;
+  careerResultCounted=true;
+  const didWin=isBotMode()?winner!==botColor:winner===myRole;
+  const oldLevel=prestigeLevelFromXp(career.xp);
+  career.xp+=xpForResult(didWin);career.totalSeconds+=Math.max(0,Math.min(3600,Math.round((Date.now()-careerMatchStartedAt)/1000)));
+  if(didWin){career.wins++;career.currentStreak++;career.bestStreak=Math.max(career.bestStreak,career.currentStreak);}else{career.losses++;career.currentStreak=0;}
+  if(mode==="bot-easy"){if(didWin)career.easyW++;else career.easyL++;}
+  if(mode==="bot-medium"){if(didWin)career.mediumW++;else career.mediumL++;}
+  if(mode==="bot-hard"){if(didWin)career.hardW++;else career.hardL++;if(masterChallengeActive&&didWin&&masterChallengeActive===career.masterCleared+1){career.masterCleared=Math.max(career.masterCleared,masterChallengeActive);queueCelebration("👑","Épreuve réussie","Défi Maître — Épreuve "+masterChallengeActive+" terminée."+(masterChallengeActive===6?" Tu es désormais Maître des Ronds.":""));}}
+  if(mode==="online"){if(didWin)career.onlineW++;else career.onlineL++;}
+  saveCareer();ensureCareerTitle();const newLevel=prestigeLevelFromXp(career.xp);if(newLevel>oldLevel)queueCelebration("✨","Niveau "+newLevel,"Ton niveau de prestige vient d'augmenter.");checkNewAchievements();updateUltimateUI();
+}
+function updateUltimateUI(){
+  ensureCareerTitle();const level=prestigeLevelFromXp(career.xp),start=prestigeLevelStart(level),end=prestigeLevelEnd(level),pct=Math.max(0,Math.min(100,(career.xp-start)/(end-start)*100));
+  const hn=document.getElementById("heroName");if(hn)hn.textContent=playerProfileName||"Joueur";document.getElementById("heroTitle").textContent=selectedCareerTitle;document.getElementById("heroLevel").textContent="Niveau "+level;document.getElementById("heroXpFill").style.width=pct+"%";document.getElementById("heroXpText").textContent=(career.xp-start)+" / "+(end-start)+" XP";document.getElementById("heroRecord").textContent=career.wins+" victoire"+(career.wins!==1?"s":"");
+  document.getElementById("careerLevel").textContent=level;document.getElementById("careerXp").textContent=career.xp.toLocaleString("fr-FR");document.getElementById("careerWL").textContent=career.wins+" / "+career.losses;document.getElementById("careerRate").textContent=careerWinrate().toFixed(1)+"%";document.getElementById("careerStreak").textContent=career.currentStreak;document.getElementById("careerBestStreak").textContent=career.bestStreak;document.getElementById("careerTime").textContent=formatPlayTime(career.totalSeconds);document.getElementById("careerMoves").textContent=career.totalMoves.toLocaleString("fr-FR");document.getElementById("careerEasy").textContent=career.easyW+" V • "+career.easyL+" D";document.getElementById("careerMedium").textContent=career.mediumW+" V • "+career.mediumL+" D";document.getElementById("careerHard").textContent=hardWins+" V • "+career.hardL+" D";document.getElementById("careerOnline").textContent=onlineWins+" V • "+onlineLosses+" D";
+  const sel=document.getElementById("careerTitleSelect"),titles=unlockedTitles();sel.innerHTML="";titles.forEach(t=>{const o=document.createElement("option");o.value=t;o.textContent=t;o.selected=t===selectedCareerTitle;sel.appendChild(o);});
+  const maxMove=Math.max(1,...career.moveCounts.slice(1));document.getElementById("moveBars").innerHTML=[1,2,3,4].map(n=>`<div class="move-row"><span>${n} rond${n>1?"s":""}</span><div class="move-track"><div class="move-fill" style="width:${(career.moveCounts[n]/maxMove*100).toFixed(1)}%"></div></div><b>${career.moveCounts[n]}</b></div>`).join("");
+  const maxCell=Math.max(1,...career.cellCounts);document.getElementById("careerHeatmap").innerHTML=career.cellCounts.map((v,i)=>`<div class="heatcell" style="background:rgba(114,92,255,${(0.08+0.72*v/maxCell).toFixed(2)})" title="Case ${i+1} : ${v} fois">${v}</div>`).join("");
+  const done=ACHIEVEMENTS.filter(a=>a[4]()).length;document.getElementById("achievementSummary").textContent=done+" / "+ACHIEVEMENTS.length+" accomplis";document.getElementById("achievementGrid").innerHTML=ACHIEVEMENTS.map(a=>{const ok=a[4]();return `<div class="achievement ${ok?"done":""}"><div class="achievement-icon">${a[1]}</div><div class="achievement-name">${a[2]}</div><div class="achievement-desc">${a[3]}</div><div class="achievement-state">${ok?"✓ ACCOMPLI":"À accomplir"}</div></div>`}).join("");
+  renderMasterScreen();
+}
+document.getElementById("careerTitleSelect").addEventListener("change",e=>{selectedCareerTitle=e.target.value;localStorage.setItem(CAREER_TITLE_KEY,selectedCareerTitle);updateUltimateUI();});
+const MASTER_SOLVER_RATE={1:.65,2:.75,3:.84,4:.90,5:.96,6:1};
+const MASTER_NAMES=["Initiation","Lecture du jeu","Stratège","Sans répétition","Presque parfait","Le Maître"];
+function renderMasterScreen(){const prog=document.getElementById("masterProgress");prog.innerHTML=Array.from({length:6},(_,i)=>`<div class="master-dot ${career.masterCleared>i?"done":""}"></div>`).join("");const wrap=document.getElementById("masterStages");wrap.innerHTML="";for(let i=1;i<=6;i++){const unlocked=i<=career.masterCleared+1,done=i<=career.masterCleared;const row=document.createElement("div");row.className="master-stage "+(!unlocked?"locked":"");row.innerHTML=`<div><b>${done?"✓ ":""}Épreuve ${i} — ${MASTER_NAMES[i-1]}</b><small>${i<=3?"IA renforcée":"IA renforcée + règle difficile"}${i===6?" • solveur à 100 %":""}</small></div><button class="${done?"secondary":"primary"}" ${unlocked?"":"disabled"}>${done?"Rejouer":"Affronter"}</button>`;row.querySelector("button").onclick=()=>startMasterChallenge(i);wrap.appendChild(row);}}
+function startMasterChallenge(stage){if(stage>career.masterCleared+1)return;masterChallengeActive=stage;mode="bot-hard";botDifficulty="hard";document.querySelectorAll(".mode").forEach(y=>y.classList.toggle("active",y.dataset.mode==="bot-hard"));diffBox.classList.add("show");onlineBox.classList.remove("show");rankingBox.classList.remove("show");profileBox.classList.remove("show");careerBox.classList.remove("show");achievementsBox.classList.remove("show");masterBox.classList.remove("show");gamePanel.style.display="";hardCheckbox.checked=stage>=4;masterBanner.textContent="👑 Défi Maître — Épreuve "+stage+" : "+MASTER_NAMES[stage-1];masterBanner.classList.add("show");reset();}
 
 const PLAYER_PROFILE_NAME_KEY="jeuDesRondsPlayerNameV1";
 function cleanPlayerName(value){
@@ -1412,6 +1602,7 @@ function updateProfileScreen(){
   onlineMeName.textContent=playerProfileName;
   onlineOpponentNameEl.textContent=onlineOpponentProfileName;
   onlineVs.classList.toggle("show",mode==="online" && onlineConnected);
+  if(typeof updateUltimateUI==="function")updateUltimateUI();
 }
 function savePlayerProfileName(){
   playerProfileName=cleanPlayerName(profileNameInput.value);
@@ -1441,9 +1632,10 @@ function showGameEndOverlay(winner){
   let didWin;
   if(isBotMode())didWin=winner!==botColor;
   else didWin=winner===myRole;
+  registerCareerResult(winner);
   gameEndTitle.textContent=didWin?"🏆 VOUS AVEZ GAGNÉ !":"❌ VOUS AVEZ PERDU !";
   gameEndTitle.className="game-end-title "+(didWin?"win":"lose");
-  gameEndSubtitle.textContent=resultContextText(didWin);
+  gameEndSubtitle.textContent=resultContextText(didWin)+` • +${xpForResult(didWin)} XP`;
   gameEndOverlay.classList.add("show");
 }
 gameEndNew.addEventListener("click",()=>reset(false));
@@ -1632,6 +1824,13 @@ if(Number(localStorage.getItem(ONLINE_SEASON_KEY)||0)!==ONLINE_SEASON){
 }
 let onlineWins=Number(localStorage.getItem("jeuDesRondsOnlineWins")||0);
 let onlineLosses=Number(localStorage.getItem("jeuDesRondsOnlineLosses")||0);
+const CAREER_MIGRATION_KEY="jeuDesRondsCareerUltimateMigratedV1";
+if(localStorage.getItem(CAREER_MIGRATION_KEY)!=="1"){
+  if(career.xp===0 && career.wins===0 && career.losses===0 && (hardWins>0 || onlineWins>0 || onlineLosses>0)){
+    career.hardW=hardWins;career.onlineW=onlineWins;career.onlineL=onlineLosses;career.wins=hardWins+onlineWins;career.losses=onlineLosses;career.currentStreak=hardStreak;career.bestStreak=Math.max(hardStreak,hardStreakAchieved?5:0);career.xp=hardWins*110+onlineWins*140+onlineLosses*55;saveCareer();
+  }
+  localStorage.setItem(CAREER_MIGRATION_KEY,"1");
+}
 let onlineMatchCounted=false, onlineMatchId=null;
 let onlineWinner=null; // résultat autoritaire de la manche en ligne courante
 let onlineTurnSeq=0, onlineResetAt=0, onlineSyncWatchdog=null, onlineLastPacketAt=Date.now();
@@ -1826,6 +2025,8 @@ function registerHardResult(winner){
 
 function reset(isOnlineSync=false){
  hideGameEndOverlay();
+ careerResultCounted=false;careerMatchStartedAt=Date.now();
+ if(!masterChallengeActive)masterBanner.classList.remove("show");
  // En ligne, le rouge reste l'autorité même pour « Nouvelle partie ».
  // Le bleu demande le reset au rouge au lieu de créer un second état concurrent.
  if(mode==="online" && !isOnlineSync && onlineConnected && myRole==="blue"){
@@ -2029,6 +2230,7 @@ function finish(){
    W.textContent=`❌ En mode difficile, le nombre de ronds doit être différent du tour précédent (${lastAmount}).`;
    return;
  }
+ recordCareerMove(selected.slice());
  if(mode==="online" && onlineConnected && myRole==="blue"){
    // Le bleu ne modifie plus son plateau tout seul : il demande au rouge de valider.
    // Ça empêche les deux appareils de se désynchroniser sur le joueur courant.
@@ -2168,7 +2370,7 @@ function botTurn(){
   }
 
   const level=botDifficulty;
-  const solverRate=BOT_SOLVER_RATE[level] ?? BOT_SOLVER_RATE.easy;
+  const solverRate=(masterChallengeActive&&level==="hard") ? (MASTER_SOLVER_RATE[masterChallengeActive]||BOT_SOLVER_RATE.hard) : (BOT_SOLVER_RATE[level] ?? BOT_SOLVER_RATE.easy);
   let a;
 
   if(level==="hard"){
@@ -2537,6 +2739,7 @@ joinBtn.onclick=()=>{
 };
 
 document.querySelectorAll(".mode").forEach(x=>x.onclick=()=>{
+  if(masterChallengeActive){masterChallengeActive=0;masterBanner.classList.remove("show");}
   mode=x.dataset.mode;
   document.querySelectorAll(".mode").forEach(y=>y.classList.toggle("active",y===x));
 
@@ -2545,7 +2748,12 @@ document.querySelectorAll(".mode").forEach(x=>x.onclick=()=>{
   onlineBox.classList.toggle("show",mode==="online");
   rankingBox.classList.toggle("show",mode==="ranking");
   profileBox.classList.toggle("show",mode==="profile");
-  gamePanel.style.display=(mode==="ranking"||mode==="profile")?"none":"";
+  careerBox.classList.toggle("show",mode==="career");
+  achievementsBox.classList.toggle("show",mode==="achievements");
+  masterBox.classList.toggle("show",mode==="master");
+  gamePanel.style.display=(mode==="ranking"||mode==="profile"||mode==="career"||mode==="achievements"||mode==="master")?"none":"";
+  if(mode!=="bot-hard")masterChallengeActive=0;
+  if(mode!=="bot-hard")masterBanner.classList.remove("show");
 
   if(mode!=="online" && onlineSource){
     destroyOnlineConnection();
@@ -2556,10 +2764,10 @@ document.querySelectorAll(".mode").forEach(x=>x.onclick=()=>{
     updateRankingScreen();
     return;
   }
-  if(mode==="profile"){
-    updateProfileScreen();
-    return;
-  }
+  if(mode==="profile"){updateProfileScreen();return;}
+  if(mode==="career"){updateUltimateUI();return;}
+  if(mode==="achievements"){updateUltimateUI();return;}
+  if(mode==="master"){updateUltimateUI();return;}
 
   if(isBotMode()){
     botDifficulty=difficultyForMode();
@@ -2663,13 +2871,13 @@ window.addEventListener("load", ()=>{
 });
 
 
-// === SAUVEGARDE PORTABLE JDR3 ===
+// === SAUVEGARDE PORTABLE JDR4 ULTIMATE (import JDR3 compatible) ===
 // Format fixe, uniquement hexadécimal, insensible à la casse.
 // Les tirets sont purement décoratifs et sont ignorés à l'import.
-const SAVE_PREFIX="JDR3";
-const SAVE_PAYLOAD_BYTES=15;
-const SAVE_HEX_LEN=SAVE_PAYLOAD_BYTES*2; // 30 caractères
-const SAVE_CHECK_HEX_LEN=8;              // checksum 32 bits
+const SAVE_PREFIX="JDR4";
+const SAVE_PAYLOAD_BYTES=99;
+const SAVE_HEX_LEN=SAVE_PAYLOAD_BYTES*2;
+const SAVE_CHECK_HEX_LEN=8;
 
 function saveChecksumBytes(bytes){
   // FNV-1a 32 bits sur les octets bruts.
@@ -2691,6 +2899,8 @@ function writeUint32(arr,n){
 function readUint32(b,o){
   return (b[o]|(b[o+1]<<8)|(b[o+2]<<16)|(b[o+3]<<24))>>>0;
 }
+function writeUint16(arr,n){n=Math.max(0,Math.min(65535,Number(n)||0))|0;arr.push(n&255,(n>>>8)&255);}
+function readUint16(b,o){return (b[o]|(b[o+1]<<8))>>>0;}
 
 function bytesToHex(bytes){
   let s="";
@@ -2728,61 +2938,23 @@ function normalizeSaveCode(code){
 
 function buildSaveCode(){
   const p=[];
-
-  // 4 octets : victoires online
-  writeUint32(p,onlineWins);
-  // 4 octets : défaites online
-  writeUint32(p,onlineLosses);
-  // 4 octets : victoires Bot Difficile
-  writeUint32(p,hardWins);
-  // 1 octet : série actuelle
-  p.push(Math.max(0,Math.min(255,hardStreak))&255);
-  // 1 octet : série de 5 déjà accomplie
-  p.push(hardStreakAchieved?1:0);
-  // 1 octet de drapeaux saisonniers (bit 0 = Crystal Saison 1)
-  p.push(crystalS1Unlocked?1:0);
-
-  const payload=Uint8Array.from(p);
-  if(payload.length!==SAVE_PAYLOAD_BYTES)throw new Error("payload-size");
-
-  const body=bytesToHex(payload);
-  const check=saveChecksumBytes(payload).toString(16).toUpperCase().padStart(8,"0");
-
-  return SAVE_PREFIX+body+check;
+  writeUint32(p,onlineWins);writeUint32(p,onlineLosses);writeUint32(p,hardWins);
+  p.push(Math.max(0,Math.min(255,hardStreak))&255);p.push(hardStreakAchieved?1:0);p.push(crystalS1Unlocked?1:0);
+  writeUint32(p,career.xp);writeUint32(p,career.wins);writeUint32(p,career.losses);writeUint16(p,career.currentStreak);writeUint16(p,career.bestStreak);writeUint32(p,career.totalSeconds);writeUint32(p,career.totalMoves);
+  for(let n=1;n<=4;n++)writeUint32(p,career.moveCounts[n]||0);
+  for(let i=0;i<16;i++)writeUint16(p,career.cellCounts[i]||0);
+  writeUint16(p,career.easyW);writeUint16(p,career.easyL);writeUint16(p,career.mediumW);writeUint16(p,career.mediumL);writeUint16(p,career.hardL);p.push(Math.min(6,career.masterCleared)&255);
+  const titleIndex=Math.max(0,CAREER_TITLES.findIndex(t=>t[0]===selectedCareerTitle));p.push(titleIndex&255);
+  const payload=Uint8Array.from(p);if(payload.length!==SAVE_PAYLOAD_BYTES)throw new Error("payload-size:"+payload.length);
+  const body=bytesToHex(payload),check=saveChecksumBytes(payload).toString(16).toUpperCase().padStart(8,"0");return SAVE_PREFIX+body+check;
 }
-
+function parseLegacyJDR3(raw){
+  const compact=raw.slice(4);if(compact.length!==38)throw new Error("length");const body=compact.slice(0,30),check=compact.slice(30);if(!/^[0-9A-F]{30}$/.test(body))throw new Error("body");const payload=hexToBytes(body);const expected=saveChecksumBytes(payload).toString(16).toUpperCase().padStart(8,"0");if(check!==expected)throw new Error("checksum");return {legacy:true,onlineWins:readUint32(payload,0),onlineLosses:readUint32(payload,4),hardWins:readUint32(payload,8),hardStreak:payload[12],hardStreakAchieved:!!(payload[13]&1),crystalS1Unlocked:!!(payload[14]&1)};
+}
 function parseSaveCode(input){
-  const raw=normalizeSaveCode(input);
-
-  if(!raw.startsWith(SAVE_PREFIX)){
-    if(raw.startsWith("JDR2"))throw new Error("old-version");
-    throw new Error("prefix");
-  }
-
-  const compact=raw.slice(SAVE_PREFIX.length);
-  const expectedLen=SAVE_HEX_LEN+SAVE_CHECK_HEX_LEN;
-  if(compact.length!==expectedLen)throw new Error("length");
-
-  const body=compact.slice(0,SAVE_HEX_LEN);
-  const check=compact.slice(SAVE_HEX_LEN);
-
-  if(!/^[0-9A-F]{30}$/.test(body))throw new Error("body");
-  if(!/^[0-9A-F]{8}$/.test(check))throw new Error("check");
-
-  const payload=hexToBytes(body);
-  if(payload.length!==SAVE_PAYLOAD_BYTES)throw new Error("payload");
-
-  const expected=saveChecksumBytes(payload).toString(16).toUpperCase().padStart(8,"0");
-  if(check!==expected)throw new Error("checksum");
-
-  return {
-    onlineWins:readUint32(payload,0),
-    onlineLosses:readUint32(payload,4),
-    hardWins:readUint32(payload,8),
-    hardStreak:payload[12],
-    hardStreakAchieved:!!(payload[13]&1),
-    crystalS1Unlocked:!!(payload[14]&1)
-  };
+  const raw=normalizeSaveCode(input);if(raw.startsWith("JDR3"))return parseLegacyJDR3(raw);if(raw.startsWith("JDR2"))throw new Error("old-version");if(!raw.startsWith(SAVE_PREFIX))throw new Error("prefix");const compact=raw.slice(SAVE_PREFIX.length),expectedLen=SAVE_HEX_LEN+SAVE_CHECK_HEX_LEN;if(compact.length!==expectedLen)throw new Error("length");const body=compact.slice(0,SAVE_HEX_LEN),check=compact.slice(SAVE_HEX_LEN);if(!/^[0-9A-F]+$/.test(body)||!/^[0-9A-F]{8}$/.test(check))throw new Error("body");const payload=hexToBytes(body);if(payload.length!==SAVE_PAYLOAD_BYTES)throw new Error("payload");const expected=saveChecksumBytes(payload).toString(16).toUpperCase().padStart(8,"0");if(check!==expected)throw new Error("checksum");
+  let o=0;const ru32=()=>{const v=readUint32(payload,o);o+=4;return v},ru16=()=>{const v=readUint16(payload,o);o+=2;return v},ru8=()=>payload[o++];
+  const d={legacy:false};d.onlineWins=ru32();d.onlineLosses=ru32();d.hardWins=ru32();d.hardStreak=ru8();d.hardStreakAchieved=!!ru8();d.crystalS1Unlocked=!!ru8();d.career=freshCareer();d.career.xp=ru32();d.career.wins=ru32();d.career.losses=ru32();d.career.currentStreak=ru16();d.career.bestStreak=ru16();d.career.totalSeconds=ru32();d.career.totalMoves=ru32();for(let n=1;n<=4;n++)d.career.moveCounts[n]=ru32();for(let i=0;i<16;i++)d.career.cellCounts[i]=ru16();d.career.easyW=ru16();d.career.easyL=ru16();d.career.mediumW=ru16();d.career.mediumL=ru16();d.career.hardW=d.hardWins;d.career.hardL=ru16();d.career.onlineW=d.onlineWins;d.career.onlineL=d.onlineLosses;d.career.masterCleared=Math.min(6,ru8());d.titleIndex=ru8();return d;
 }
 
 function setSaveMessage(msg,ok=false){
@@ -2797,21 +2969,12 @@ function exportProgress(){
 
     // AUTO-TEST : le jeu vérifie son propre code AVANT de l'afficher.
     const selfTest=parseSaveCode(raw);
-    if(
-      selfTest.onlineWins!==onlineWins ||
-      selfTest.onlineLosses!==onlineLosses ||
-      selfTest.hardWins!==hardWins ||
-      selfTest.hardStreak!==Math.max(0,Math.min(255,hardStreak)) ||
-      selfTest.hardStreakAchieved!==!!hardStreakAchieved ||
-      selfTest.crystalS1Unlocked!==!!crystalS1Unlocked
-    ){
-      throw new Error("self-test");
-    }
+    if(selfTest.onlineWins!==onlineWins || selfTest.onlineLosses!==onlineLosses || selfTest.hardWins!==hardWins || !selfTest.career || selfTest.career.xp!==career.xp){throw new Error("self-test");}
 
     saveCodeInput.value=formatSaveCode(raw);
     saveCodeInput.focus();
     saveCodeInput.select();
-    setSaveMessage("✅ Code V3 généré et vérifié. Tu peux le copier.",true);
+    setSaveMessage("✅ Code V4 Ultimate généré et vérifié. Tu peux le copier.",true);
   }catch(e){
     setSaveMessage("❌ Erreur interne pendant la génération du code.");
   }
@@ -2866,7 +3029,7 @@ function importProgress(){
     d=parseSaveCode(entered);
   }catch(e){
     if(e && e.message==="old-version"){
-      setSaveMessage("❌ Ancien code JDR2 détecté. Génère un nouveau code JDR3 avec cette version.");
+      setSaveMessage("❌ Ancien code JDR2 détecté. Les codes JDR3 et JDR4 sont acceptés.");
     }else if(e && e.message==="length"){
       setSaveMessage("❌ Code incomplet : vérifie que tu l'as copié en entier.");
     }else if(e && e.message==="checksum"){
@@ -2891,6 +3054,7 @@ function importProgress(){
     "• Série actuelle : "+d.hardStreak+"\n"+
     "• Série de 5 déjà réalisée : "+(d.hardStreakAchieved?"Oui":"Non")+"\n"+
     "• Crystal Saison 1 : "+(d.crystalS1Unlocked?"Débloqué":"Non débloqué")+
+    (d.legacy?"\n• Ancienne sauvegarde JDR3 : la carrière sera reconstruite à partir des statistiques disponibles.":"\n• Niveau de prestige : "+prestigeLevelFromXp(d.career.xp)+" • "+d.career.xp+" XP")+
     "\n\nRemplacer la progression actuelle par celle-ci ?";
 
   if(!window.confirm(summary))return;
@@ -2901,6 +3065,8 @@ function importProgress(){
   hardStreak=d.hardStreak;
   hardStreakAchieved=d.hardStreakAchieved || hardStreak>=5;
   crystalS1Unlocked=!!d.crystalS1Unlocked;
+  if(d.legacy){career=freshCareer();career.hardW=hardWins;career.onlineW=onlineWins;career.onlineL=onlineLosses;career.wins=hardWins+onlineWins;career.losses=onlineLosses;career.xp=hardWins*110+onlineWins*140+onlineLosses*55;career.bestStreak=Math.max(hardStreak,hardStreakAchieved?5:0);career.currentStreak=hardStreak;}else{career=d.career;selectedCareerTitle=(CAREER_TITLES[d.titleIndex]||CAREER_TITLES[0])[0];localStorage.setItem(CAREER_TITLE_KEY,selectedCareerTitle);}
+  saveCareer();
   if(!crystalS1Unlocked && ONLINE_SEASON===1){
     const importedRank=getOnlineRank(rate,d.onlineWins+d.onlineLosses);
     if(isGrandMasterOrHigherRank(importedRank))crystalS1Unlocked=true;
@@ -2928,6 +3094,7 @@ copySaveBtn.addEventListener("click",copyProgressCode);
 importSaveBtn.addEventListener("click",importProgress);
 
 
+previousAchievementIds=new Set(ACHIEVEMENTS.filter(a=>a[4]()).map(a=>a[0]));
 updateHardStats();
 checkCrystalSeasonUnlock();
 updateOnlineStats();
@@ -2936,5 +3103,6 @@ updateProfileScreen();
 applySkin(isSkinUnlocked(savedSkin)?savedSkin:"arcade",true);
 
 </script>
+
 </body>
 </html>
