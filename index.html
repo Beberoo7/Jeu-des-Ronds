@@ -2392,6 +2392,20 @@ if(localStorage.getItem(CAREER_MIGRATION_KEY)!=="1"){
 let onlineMatchCounted=false, onlineMatchId=null;
 let onlineWinner=null; // résultat autoritaire de la manche en ligne courante
 let onlineTurnSeq=0, onlineResetAt=0, onlineSyncWatchdog=null, onlineLastPacketAt=Date.now();
+let onlinePendingActionId=null, onlinePendingSeq=null, onlinePendingSince=0, onlineLastStateSentAt=0;
+const onlineProcessedPacketIds=new Set();
+function rememberOnlinePacketId(id){
+  if(!id)return false;
+  if(onlineProcessedPacketIds.has(id))return true;
+  onlineProcessedPacketIds.add(id);
+  if(onlineProcessedPacketIds.size>240){
+    const keep=Array.from(onlineProcessedPacketIds).slice(-160);
+    onlineProcessedPacketIds.clear();keep.forEach(x=>onlineProcessedPacketIds.add(x));
+  }
+  return false;
+}
+function createOnlineActionId(prefix="a"){return prefix+"-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8);}
+function clearOnlinePending(){onlinePendingActionId=null;onlinePendingSeq=null;onlinePendingSince=0;}
 const ONLINE_COUNTED_MATCHES_KEY="jeuDesRondsCountedOnlineMatchesS1";
 let onlineCountedMatchIds=new Set();
 try{
@@ -2589,7 +2603,7 @@ function reset(isOnlineSync=false){
  // Le bleu demande le reset au rouge au lieu de créer un second état concurrent.
  if(mode==="online" && !isOnlineSync && onlineConnected && myRole==="blue"){
    selected=[];W.textContent="⏳ Nouvelle partie demandée…";
-   sendOnlineDataReliable({type:"RESET_REQUEST",matchId:onlineMatchId,seq:onlineTurnSeq});
+   sendOnlineDataReliable({type:"RESET_REQUEST",matchId:onlineMatchId,seq:onlineTurnSeq,actionId:createOnlineActionId("reset")});
    render();
    return;
  }
@@ -2609,8 +2623,9 @@ function reset(isOnlineSync=false){
    if(!isOnlineSync && onlineConnected){
      // Les deux joueurs peuvent lancer une nouvelle partie.
      player = Math.random() < 0.5 ? "red" : "blue";
-     onlineResetAt=Date.now();
+     onlineResetAt=Math.max(Date.now(),onlineResetAt+1);
      onlineMatchId=createOnlineMatchId();
+     clearOnlinePending();
      onlineMatchCounted=false;
     sendOnlineDataReliable({type:"RESET", player:player, hardMode:hardMode, skin:activeSkin, matchId:onlineMatchId, seq:0, resetAt:onlineResetAt});
    }
@@ -2711,7 +2726,7 @@ function render(){
  const isInvalidSameAmount = hardMode && selected.length === lastAmount && !allowSameAmount;
  const isValidSelection = selected.length > 0 && !isInvalidSameAmount;
  
- const canControl = !gameOver && !thinking && !botIsTurn() && !onlineIsNotMyTurn();
+ const canControl = !gameOver && !thinking && !botIsTurn() && !onlineIsNotMyTurn() && !(mode==="online" && myRole==="blue" && onlinePendingActionId);
  finishBtn.disabled = !canControl || !isValidSelection;
  undoBtn.disabled = !canControl || selected.length === 0;
 }
@@ -2753,7 +2768,7 @@ function pick(i){
  render();
 }
 
-function play(a, isOnlineAction=false){
+function play(a, isOnlineAction=false, ackActionId=null, ackTarget=null){
  if(!legal(a)){return false}
 
  // Le Bot Difficile observe uniquement les coups du joueur humain local.
@@ -2774,7 +2789,7 @@ function play(a, isOnlineAction=false){
      if(terminalWinner){
        finishOnlineMatch(terminalWinner);
      }else{
-       sendAuthoritativeState();
+       sendAuthoritativeState(ackTarget,ackActionId);
      }
    }
  }
@@ -2790,12 +2805,15 @@ function finish(){
  }
  recordCareerMove(selected.slice());
  if(mode==="online" && onlineConnected && myRole==="blue"){
-   // Le bleu ne modifie plus son plateau tout seul : il demande au rouge de valider.
-   // Ça empêche les deux appareils de se désynchroniser sur le joueur courant.
+   // Le bleu propose un coup, mais ne touche jamais lui-même au plateau officiel.
+   // Il reste verrouillé jusqu'à l'accusé de réception contenu dans le STATE du rouge.
+   if(onlinePendingActionId){W.textContent="⏳ Ton coup précédent est encore en validation…";render();return;}
    const move=selected.slice();
+   const actionId=createOnlineActionId("move");
+   onlinePendingActionId=actionId;onlinePendingSeq=onlineTurnSeq;onlinePendingSince=Date.now();
    selected=[];
-   sendOnlineDataReliable({type:"MOVE_REQUEST",move,matchId:onlineMatchId,seq:onlineTurnSeq});
-   W.textContent="⏳ Coup envoyé…";
+   sendOnlineDataReliable({type:"MOVE_REQUEST",move,matchId:onlineMatchId,seq:onlineTurnSeq,actionId});
+   W.textContent="⏳ Coup envoyé — validation en cours…";
    render();
    return;
  }
@@ -2987,7 +3005,7 @@ function destroyOnlineConnection(){
   onlineConnected=false;
   onlineOpponentId=null;
   onlineHostId=null;
-  onlineOpponentProfileName="Adversaire";
+  onlineOpponentProfileName="Adversaire";clearOnlinePending();onlineProcessedPacketIds.clear();
   if(typeof updateProfileScreen==="function")updateProfileScreen();
   if(onlineSource){
     try{onlineSource.close();}catch(e){}
@@ -3022,24 +3040,26 @@ function sendOnlineData(data){
 }
 
 function sendOnlineDataReliable(data){
-  // Les paquets critiques sont répétés. Tous sont idempotents grâce à matchId + seq :
-  // une copie retardée ne peut donc pas rejouer un coup déjà validé.
-  const delays=[0,320,1050];
+  // Chaque action logique garde le même packetId pendant toutes ses tentatives.
+  // Ainsi un paquet reçu 2 ou 3 fois ne peut jamais être exécuté 2 ou 3 fois.
+  const payload={...data,packetId:data.packetId||createOnlineActionId("pkt")};
+  const delays=[0,260,850,1800];
   delays.forEach(ms=>setTimeout(()=>{
     if(mode!=="online" || !onlineTopic || !onlineClientId)return;
-    publishOnline(data).then(ok=>{
+    publishOnline(payload).then(ok=>{
       if(!ok && mode==="online") onlineStatus.innerHTML="🟠 Réseau instable — resynchronisation automatique…";
     });
   },ms));
-  return true;
+  return payload.packetId;
 }
 
-function sendAuthoritativeState(target=null){
+function sendAuthoritativeState(target=null,ackActionId=null){
   if(mode!=="online" || !onlineConnected || myRole!=="red")return;
+  onlineLastStateSentAt=Date.now();
   sendOnlineDataReliable({
     type:"STATE",target:target||undefined,matchId:onlineMatchId,seq:onlineTurnSeq,
     board:board.slice(),player,lastAmount,lastPlayer,hardMode,skin:activeSkin,resetAt:onlineResetAt,
-    gameOver:!!gameOver,winner:onlineWinner||undefined
+    gameOver:!!gameOver,winner:onlineWinner||undefined,ackActionId:ackActionId||undefined
   });
 }
 
@@ -3057,6 +3077,7 @@ function handleOnlinePacket(data){
   // Ignore les vieux messages éventuellement conservés par le relais.
   if(data.ts && data.ts < onlineStartedAt-3000)return;
   if(data.target && data.target!==onlineClientId)return;
+  if(data.packetId && rememberOnlinePacketId(data.packetId))return;
   onlineLastPacketAt=Date.now();
 
   // L'hôte accepte le premier adversaire qui rejoint ce code.
@@ -3069,10 +3090,12 @@ function handleOnlinePacket(data){
     onlineOpponentProfileName=cleanPlayerName(data.profileName||"Adversaire");
     onlineConnected=true;
     myRole="red";
+    board=Array(16).fill(null);selected=[];lastAmount=null;lastPlayer=null;gameOver=false;
     player=Math.random()<0.5?"red":"blue"; // nouveau tirage du premier joueur
+    onlineTurnSeq=0;onlineResetAt=Math.max(Date.now(),onlineResetAt+1);
     onlineMatchId=createOnlineMatchId();
     onlineMatchCounted=false;
-    onlineWinner=null;
+    onlineWinner=null;clearOnlinePending();
     onlineStatus.innerHTML="🟢 Adversaire connecté ! Partie lancée.";
     publishOnline({
       type:"INIT",target:onlineOpponentId,role:"blue",player,
@@ -3100,7 +3123,7 @@ function handleOnlinePacket(data){
     onlineTurnSeq=Number.isFinite(data.seq)?data.seq:0;
     hardCheckbox.checked=!!data.hardMode;hardMode=!!data.hardMode;
     applySkin(data.skin||"arcade",false,true);
-    onlineConnected=true;selected=[];gameOver=!!data.gameOver;
+    onlineConnected=true;selected=[];clearOnlinePending();gameOver=!!data.gameOver;
     lastAmount=data.lastAmount??null;lastPlayer=data.lastPlayer??null;
     if(gameOver && onlineWinner){registerOnlineWinner(onlineWinner,onlineMatchId);showGameEndOverlay(onlineWinner);}
     clearConnectionTimer();clearJoinTimers();
@@ -3135,9 +3158,9 @@ function handleOnlinePacket(data){
       const sameMatch=!data.matchId || data.matchId===onlineMatchId;
       const sameSeq=Number(data.seq)===onlineTurnSeq;
       if(sameMatch && sameSeq && player==="blue" && legal(data.move)){
-        play(data.move,true);
+        play(data.move,true,data.actionId||null,data.sender);
       }else{
-        sendAuthoritativeState(data.sender);
+        sendAuthoritativeState(data.sender,data.actionId||null);
       }
     }
   }else if(data.type==="STATE"){
@@ -3154,6 +3177,11 @@ function handleOnlinePacket(data){
     lastAmount=data.lastAmount??null;
     lastPlayer=data.lastPlayer??null;
     if(Number.isFinite(seq)) onlineTurnSeq=seq;
+    if(myRole==="blue" && onlinePendingActionId){
+      const acknowledged=data.ackActionId===onlinePendingActionId;
+      const advanced=Number.isFinite(seq) && onlinePendingSeq!==null && seq>onlinePendingSeq;
+      if(acknowledged || advanced){clearOnlinePending();W.textContent="";}
+    }
     if(typeof data.hardMode!=="undefined"){
       hardCheckbox.checked=!!data.hardMode;hardMode=!!data.hardMode;
     }
@@ -3184,12 +3212,13 @@ function handleOnlinePacket(data){
     // Une copie retardée d'un ancien RESET ne doit jamais écraser une partie plus récente.
     const incomingResetAt=Number.isFinite(data.resetAt)?data.resetAt:0;
     if(incomingResetAt && incomingResetAt<onlineResetAt) return;
+    if(data.matchId && data.matchId===onlineMatchId && incomingResetAt && incomingResetAt<=onlineResetAt) return;
     if(data.matchId && data.matchId===onlineMatchId && onlineTurnSeq>0) return;
     player=data.player;
     onlineMatchId=data.matchId||createOnlineMatchId();
     if(incomingResetAt) onlineResetAt=incomingResetAt;
     onlineMatchCounted=false;
-    onlineWinner=null;
+    onlineWinner=null;clearOnlinePending();
     hardCheckbox.checked=!!data.hardMode;hardMode=!!data.hardMode;
     applySkin(data.skin||activeSkin,false,true);
     reset(true);
@@ -3217,12 +3246,24 @@ function connectOnlineRelay(code,role){
   onlineLastPacketAt=Date.now();
   if(onlineSyncWatchdog)clearInterval(onlineSyncWatchdog);
   onlineSyncWatchdog=setInterval(()=>{
-    if(mode!=="online" || !onlineConnected || myRole!=="blue")return;
-    if(Date.now()-onlineLastPacketAt>6500){
-      publishOnline({type:"STATE_REQUEST",matchId:onlineMatchId,seq:onlineTurnSeq});
-      onlineLastPacketAt=Date.now();
+    if(mode!=="online" || !onlineConnected)return;
+    const now=Date.now();
+    if(myRole==="red"){
+      // Heartbeat autoritaire : même sans coup, le bleu reçoit régulièrement la vérité du match.
+      if(now-onlineLastStateSentAt>2400)sendAuthoritativeState();
+      return;
     }
-  },2200);
+    if(myRole==="blue"){
+      // Si un coup attend trop longtemps ou si le flux devient silencieux, on redemande l'état officiel.
+      if((onlinePendingActionId && now-onlinePendingSince>1400) || now-onlineLastPacketAt>4200){
+        sendOnlineDataReliable({type:"STATE_REQUEST",matchId:onlineMatchId,seq:onlineTurnSeq,actionId:onlinePendingActionId||undefined});
+        onlineLastPacketAt=now;
+      }
+      if(onlinePendingActionId && now-onlinePendingSince>9000){
+        clearOnlinePending();W.textContent="🟠 Validation trop longue — état resynchronisé, tu peux rejouer si nécessaire.";render();
+      }
+    }
+  },900);
 
   if(typeof EventSource==="undefined" || typeof fetch==="undefined"){
     onlineStatus.innerHTML="❌ Ce navigateur ne prend pas en charge le mode en ligne.";
