@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Jeu des Ronds</title>
+<title>Jeu des Ronds — Online Verified</title>
 <link rel="icon" href="./favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
@@ -1741,6 +1741,39 @@ body .cell{min-width:0 !important;min-height:0 !important}
   .mode-icon{width:22px;height:22px;flex-basis:22px}
   .mode-icon svg{width:20px;height:20px}
 }
+
+
+/* === FINITION ULTIMATE — stabilité, tactile, accessibilité, format === */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+button,.cell,.skin-toggle,.skin-option{touch-action:manipulation}
+button:focus-visible,.cell:focus-visible,.skin-toggle:focus-visible,.skin-option:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid currentColor;outline-offset:3px}
+.board{aspect-ratio:1/1;height:auto;user-select:none;-webkit-user-select:none}
+.cell{outline:none;will-change:transform,border-color,box-shadow}
+.cell.selected-cell{border-color:#e8e3ff!important;box-shadow:0 0 0 2px #8d72ff88,0 0 22px #765cff55!important;transform:translateY(-2px) scale(1.018)}
+.cell.locked-cell{cursor:default}
+.cell.playable-cell:active{transform:scale(.965)}
+.status{min-height:34px;display:flex;align-items:center;justify-content:center}
+.warning{transition:opacity .15s ease}
+.elite-adaptation{margin-top:10px;padding:11px 12px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff12}
+.elite-adaptation-head{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:900;color:#eef2ff}
+.elite-adaptation-track{height:8px;margin-top:8px;overflow:hidden;border-radius:999px;background:#ffffff12;border:1px solid #ffffff12}
+.elite-adaptation-fill{width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#6f4cff,#00c8ff);transition:width .35s ease}
+.elite-adaptation-note{margin-top:7px;color:#aeb9d8;font-size:13px;line-height:1.35}
+body.skin-paper .elite-adaptation{background:#fffaf04f!important;border:1.8px dashed #5d554b!important}
+body.skin-paper .elite-adaptation-head,body.skin-paper .elite-adaptation-note{color:#322d28!important;font-family:"Comic Sans MS","Bradley Hand",cursive!important}
+body.skin-paper .elite-adaptation-track{background:#ded4ba!important;border-color:#5d554b!important}
+body.skin-competition .elite-adaptation{background:#211b15;border-color:#5c4b39}body.skin-competition .elite-adaptation-head{color:#eee8dc}body.skin-competition .elite-adaptation-note{color:#bdb09c}
+body.skin-crystal .elite-adaptation{background:linear-gradient(145deg,#ffffffba,#f7f0ff80 50%,#dec8f580)!important;border:1px solid #ffffffeb!important}body.skin-crystal .elite-adaptation-head{color:#5c3f7d!important}body.skin-crystal .elite-adaptation-note{color:#816d95!important}
+@media(max-width:600px){
+  .board{width:min(100%,calc(100vh - 245px));height:auto!important;max-height:none!important;min-height:0!important;margin-left:auto;margin-right:auto}
+  .app{padding-bottom:calc(30px + env(safe-area-inset-bottom))}
+  .controls{grid-template-columns:1fr 1fr}.controls .primary{grid-column:1/-1}
+  .elite-adaptation{padding:10px}
+}
+@media(max-width:380px){.board{width:100%}.controls{grid-template-columns:1fr}.controls .primary{grid-column:auto}.info{gap:5px}.badge{padding:7px 8px;font-size:14px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}}
+
 </style>
 </head>
 <body>
@@ -1754,11 +1787,11 @@ body .cell{min-width:0 !important;min-height:0 !important}
   <button class="skin-option" data-skin="paper"><span class="skin-preview paper-preview"></span><span><b>Papier</b><small>Comme dessiné au stylo</small></span></button>
   <button class="skin-option" data-skin="competition"><span class="skin-preview competition-preview"></span><span><b>Compétition</b><small>Sobre &amp; sérieux</small></span></button>
   <button class="skin-option locked" data-skin="crystal"><span class="skin-preview crystal-preview"></span><span><b>Spirit Blossom — Saison 1</b><small>Atteins Grand Maître en Saison 1</small></span><span class="lock" aria-hidden="true"></span></button>
-  <button class="skin-option locked" data-skin="gold"><span class="skin-preview gold-preview"></span><span><b>Plateau doré</b><small>20 victoires contre le Bot Difficile</small></span><span class="lock" aria-hidden="true"></span></button>
-  <button class="skin-option locked" data-skin="diamond"><span class="skin-preview diamond-preview"></span><span><b>Plateau diamant</b><small>50 victoires contre le Bot Difficile</small></span><span class="lock" aria-hidden="true"></span></button>
-  <button class="skin-option locked" data-skin="void"><span class="skin-preview void-preview"></span><span><b>Plateau voilacté</b><small>100 victoires contre le Bot Difficile</small></span><span class="lock" aria-hidden="true"></span></button>
-  <button class="skin-option locked" data-skin="chess"><span class="skin-preview chess-preview"></span><span><b>Échec</b><small>5 victoires d'affilée contre le Bot Difficile</small></span><span class="lock" aria-hidden="true"></span></button>
-  <button class="skin-option locked" data-skin="divine"><span class="skin-preview divine-preview"></span><span><b>Maître Absolu</b><small>200 victoires contre le Bot Difficile</small></span><span class="lock" aria-hidden="true"></span></button>
+  <button class="skin-option locked" data-skin="gold"><span class="skin-preview gold-preview"></span><span><b>Plateau doré</b><small>20 victoires contre le Bot Élite</small></span><span class="lock" aria-hidden="true"></span></button>
+  <button class="skin-option locked" data-skin="diamond"><span class="skin-preview diamond-preview"></span><span><b>Plateau diamant</b><small>50 victoires contre le Bot Élite</small></span><span class="lock" aria-hidden="true"></span></button>
+  <button class="skin-option locked" data-skin="void"><span class="skin-preview void-preview"></span><span><b>Plateau voilacté</b><small>100 victoires contre le Bot Élite</small></span><span class="lock" aria-hidden="true"></span></button>
+  <button class="skin-option locked" data-skin="chess"><span class="skin-preview chess-preview"></span><span><b>Échec</b><small>5 victoires d'affilée contre le Bot Élite</small></span><span class="lock" aria-hidden="true"></span></button>
+  <button class="skin-option locked" data-skin="divine"><span class="skin-preview divine-preview"></span><span><b>Maître Absolu</b><small>200 victoires contre le Bot Élite</small></span><span class="lock" aria-hidden="true"></span></button>
 </div>
 
 <div class="app">
@@ -1805,12 +1838,17 @@ body .cell{min-width:0 !important;min-height:0 !important}
 <div id="difficultyBox" class="difficulty">
   <div class="hardnote">
     <b>BOT · ÉLITE</b><br>
-    Le Bot Difficile utilise l'IA la plus forte du jeu et s'adapte progressivement à ta façon de jouer sur cet appareil.<br>
+    Le Bot Élite utilise l'IA la plus forte du jeu et s'adapte progressivement à ta façon de jouer sur cet appareil.<br>
     Il mémorise localement tes habitudes de placement et de quantité pour varier ses réponses.<br>
     Les victoires contre ce bot comptent pour débloquer les skins spéciaux.<br>
     La case « Mode difficile » sous le plateau reste optionnelle : si tu l'actives, le nombre de ronds joué doit être différent du tour précédent, sauf si aucune autre quantité n'est possible.
   </div>
-  <div class="hardstats" id="hardStats">Victoires contre le Bot Difficile : <b id="hardWins">0</b> • Série : <b id="hardStreak">0</b>/5</div>
+  <div class="hardstats" id="hardStats">Victoires contre le Bot Élite : <b id="hardWins">0</b> • Série : <b id="hardStreak">0</b>/5</div>
+  <div class="elite-adaptation" aria-label="Adaptation du Bot Élite">
+    <div class="elite-adaptation-head"><span>Adaptation à ton jeu</span><b id="eliteAdaptationRate">0%</b></div>
+    <div class="elite-adaptation-track" aria-hidden="true"><div class="elite-adaptation-fill" id="eliteAdaptationFill"></div></div>
+    <div class="elite-adaptation-note" id="eliteAdaptationNote">Observation de ton style en cours…</div>
+  </div>
 </div>
 
 <!-- Interface Mode En Ligne -->
@@ -1867,8 +1905,8 @@ body .cell{min-width:0 !important;min-height:0 !important}
 
     <div class="profile-section">Progression locale</div>
     <div class="profile-grid">
-      <div class="profile-stat"><small>Victoires Bot Difficile</small><b id="profileHardWins">0</b></div>
-      <div class="profile-stat"><small>Série Bot Difficile</small><b id="profileHardStreak">0</b></div>
+      <div class="profile-stat"><small>Victoires Bot Élite</small><b id="profileHardWins">0</b></div>
+      <div class="profile-stat"><small>Série Bot Élite</small><b id="profileHardStreak">0</b></div>
       <div class="profile-stat"><small>Skins débloqués</small><b id="profileSkins">3 / 9</b></div>
       <div class="profile-stat"><small>Pseudo en ligne</small><b id="profileNameDisplay">Joueur</b></div>
     </div>
@@ -1898,7 +1936,7 @@ body .cell{min-width:0 !important;min-height:0 !important}
     <div class="stat-grid">
       <div class="u-stat"><small>Bot Facile</small><b id="careerEasy">0 V • 0 D</b></div>
       <div class="u-stat"><small>Bot Moyen</small><b id="careerMedium">0 V • 0 D</b></div>
-      <div class="u-stat"><small>Bot Difficile</small><b id="careerHard">0 V • 0 D</b></div>
+      <div class="u-stat"><small>Bot Élite</small><b id="careerHard">0 V • 0 D</b></div>
       <div class="u-stat"><small>En ligne</small><b id="careerOnline">0 V • 0 D</b></div>
     </div>
     <div class="u-section">Ta façon de jouer</div>
@@ -1928,14 +1966,14 @@ body .cell{min-width:0 !important;min-height:0 !important}
 
 <div class="master-banner" id="masterBanner"></div>
 <div class="panel" id="gamePanel">
-<div class="status" id="status"></div>
+<div class="status" id="status" role="status" aria-live="polite"></div>
 <div class="info">
 <div class="badge score-badge"><span class="score-dot score-dot-red" aria-hidden="true"></span><span id="redCount">0</span></div>
 <div class="badge">Ronds sélectionnés : <span id="selectedCount">0</span>/4</div>
 <div class="badge score-badge"><span class="score-dot score-dot-blue" aria-hidden="true"></span><span id="blueCount">0</span></div>
 </div>
 
-<div class="board" id="board">
+<div class="board" id="board" role="grid" aria-label="Plateau de jeu 4 par 4">
   <div class="game-end-overlay" id="gameEndOverlay">
     <div class="game-end-card">
       <div class="game-end-title" id="gameEndTitle"></div>
@@ -1944,7 +1982,7 @@ body .cell{min-width:0 !important;min-height:0 !important}
     </div>
   </div>
 </div>
-<div class="warning" id="warning"></div>
+<div class="warning" id="warning" role="status" aria-live="polite"></div>
 
 <div class="choice">
 Choisis directement <b>1 à 4 cases</b>, puis appuie sur « J'ai fini ».
@@ -2064,11 +2102,11 @@ const ACHIEVEMENTS=[
 ["w250","👑","Légende","Remporter 250 parties.",()=>career.wins>=250],
 ["easy","🤖","Premier bot","Battre le Bot Facile.",()=>career.easyW>=1],
 ["medium","🧠","Plus si facile","Battre le Bot Moyen.",()=>career.mediumW>=1],
-["hard","💀","Le mur tombe","Battre le Bot Difficile.",()=>hardWins>=1],
-["hard20","🥇","Doré","20 victoires contre le Bot Difficile.",()=>hardWins>=20],
-["hard50","💎","Diamant","50 victoires contre le Bot Difficile.",()=>hardWins>=50],
-["hard100","🌌","Voilacté","100 victoires contre le Bot Difficile.",()=>hardWins>=100],
-["hard200","👑","Maître Absolu","200 victoires contre le Bot Difficile.",()=>hardWins>=200],
+["hard","💀","Le mur tombe","Battre le Bot Élite.",()=>hardWins>=1],
+["hard20","🥇","Doré","20 victoires contre le Bot Élite.",()=>hardWins>=20],
+["hard50","💎","Diamant","50 victoires contre le Bot Élite.",()=>hardWins>=50],
+["hard100","🌌","Voilacté","100 victoires contre le Bot Élite.",()=>hardWins>=100],
+["hard200","👑","Maître Absolu","200 victoires contre le Bot Élite.",()=>hardWins>=200],
 ["streak3","🔥","En rythme","3 victoires consécutives.",()=>career.bestStreak>=3],
 ["streak5","🔥","Implacable","5 victoires consécutives.",()=>career.bestStreak>=5],
 ["streak10","⚡","Invaincu","10 victoires consécutives.",()=>career.bestStreak>=10],
@@ -2181,7 +2219,7 @@ function hideGameEndOverlay(){
 function resultContextText(didWin){
   if(mode==="bot-easy")return didWin?"Victoire contre le Bot Facile":"Défaite contre le Bot Facile";
   if(mode==="bot-medium")return didWin?"Victoire contre le Bot Moyen":"Défaite contre le Bot Moyen";
-  if(mode==="bot-hard")return didWin?"Bot Difficile vaincu !":"Défaite contre le Bot Difficile";
+  if(mode==="bot-hard")return didWin?"Bot Élite vaincu !":"Défaite contre le Bot Élite";
   if(mode==="online")return didWin?`${playerProfileName} bat ${onlineOpponentProfileName}`:`${onlineOpponentProfileName} bat ${playerProfileName}`;
   return "";
 }
@@ -2205,7 +2243,7 @@ function difficultyForMode(){
   if(mode==="bot-hard")return "hard";
   return "easy";
 }
-// Difficulté réellement utilisée par le bot. Les ratios restent internes et ne sont jamais affichés au joueur.
+// Difficulté réellement utilisée par le bot. La puissance du solveur reste interne ; seule la progression d’adaptation au style du joueur est affichée.
 let botDifficulty="easy";
 const BOT_STRENGTH={easy:0.50, medium:0.70, hard:0.90}; // objectifs de winrate
 // Probabilité calibrée d'utiliser le solveur parfait.
@@ -2214,8 +2252,8 @@ const BOT_STRENGTH={easy:0.50, medium:0.70, hard:0.90}; // objectifs de winrate
 const BOT_SOLVER_RATE={easy:0.08, medium:0.43, hard:0.84};
 let gameResultCounted=false;
 let activeSkin="arcade", previewSkin=false;
-let hardWins=Number(localStorage.getItem("jeuDesRondsHardWins")||0);
-let hardStreak=Number(localStorage.getItem("jeuDesRondsHardStreak")||0);
+let hardWins=Math.max(0,Math.floor(Number(localStorage.getItem("jeuDesRondsHardWins"))||0));
+let hardStreak=Math.max(0,Math.floor(Number(localStorage.getItem("jeuDesRondsHardStreak"))||0));
 let hardStreakAchieved=localStorage.getItem("jeuDesRondsHardStreakAchieved")==="1" || hardStreak>=5;
 if(hardStreakAchieved)localStorage.setItem("jeuDesRondsHardStreakAchieved","1");
 const CRYSTAL_S1_KEY="jeuDesRondsCrystalS1Unlocked";
@@ -2224,7 +2262,7 @@ const solverCache=new Map();
 
 // === MÉMOIRE DU BOT DIFFICILE ===
 // Stockée uniquement sur l'appareil du joueur. Elle survit aux nouvelles parties
-// et permet au Bot Difficile de reconnaître progressivement les habitudes locales.
+// et permet au Bot Élite de reconnaître progressivement les habitudes locales.
 const HUMAN_PROFILE_KEY="jeuDesRondsHumanProfileV1";
 
 function freshHumanProfile(){
@@ -2267,6 +2305,12 @@ function learnHumanMove(a){
   humanProfile.moves++;
   humanMovesThisGame++;
 
+  // Oubli très progressif : les habitudes récentes finissent par peser davantage
+  // sans remettre la jauge d'adaptation à zéro.
+  if(humanProfile.moves>1 && humanProfile.moves%40===0){
+    [humanProfile.lengths,humanProfile.cells,humanProfile.openings,humanProfile.earlyLengths,humanProfile.lateLengths].forEach(arr=>{for(let i=0;i<arr.length;i++)arr[i]=(Number(arr[i])||0)*.88;});
+  }
+
   const n=a.length;
   humanProfile.lengths[n]=(humanProfile.lengths[n]||0)+1;
   a.forEach(i=>humanProfile.cells[i]=(humanProfile.cells[i]||0)+1);
@@ -2280,20 +2324,45 @@ function learnHumanMove(a){
     humanProfile.lateLengths[n]=(humanProfile.lateLengths[n]||0)+1;
   }
   saveHumanProfile();
+  updateHardStats();
 }
 
 function humanPreferenceForCell(i){
   const total=Math.max(1,humanProfile.moves);
-  return (humanProfile.cells[i]||0)/total;
+  return Math.max(0,Number(humanProfile.cells[i])||0)/total;
 }
 
-function preferredHumanLength(){
+function eliteAdaptationRate(){
+  // Le taux mesure la confiance de lecture, pas la puissance brute du solveur.
+  // Les coups comptent majoritairement, les parties complètes stabilisent le profil.
+  const moveConfidence=Math.min(1,Math.max(0,humanProfile.moves)/30);
+  const gameConfidence=Math.min(1,Math.max(0,humanProfile.games)/5);
+  return Math.round((moveConfidence*.85+gameConfidence*.15)*100);
+}
+function eliteAdaptationConfidence(){return eliteAdaptationRate()/100;}
+function humanGamePhase(){
+  const occupied=board.reduce((n,x)=>n+(x?1:0),0);
+  if(occupied<=6)return "early";
+  if(occupied>=11)return "late";
+  return "mid";
+}
+function preferredLengthFrom(bucket){
   let best=1,bestV=-1;
-  for(let n=1;n<=4;n++){
-    const v=humanProfile.lengths[n]||0;
-    if(v>bestV){bestV=v;best=n;}
-  }
+  for(let n=1;n<=4;n++){const v=Number(bucket?.[n])||0;if(v>bestV){bestV=v;best=n;}}
   return best;
+}
+function preferredHumanLength(){
+  const phase=humanGamePhase();
+  if(phase==="early" && humanProfile.earlyLengths.some((v,i)=>i>0&&v>0))return preferredLengthFrom(humanProfile.earlyLengths);
+  if(phase==="late" && humanProfile.lateLengths.some((v,i)=>i>0&&v>0))return preferredLengthFrom(humanProfile.lateLengths);
+  return preferredLengthFrom(humanProfile.lengths);
+}
+function phaseCellPreference(i){
+  if(humanGamePhase()==="early"){
+    const total=Math.max(1,humanProfile.openings.reduce((a,b)=>a+(Number(b)||0),0));
+    return (Number(humanProfile.openings[i])||0)/total;
+  }
+  return humanPreferenceForCell(i);
 }
 
 // Score utilisé UNIQUEMENT pour départager plusieurs coups raisonnables.
@@ -2301,24 +2370,25 @@ function preferredHumanLength(){
 // à perturber sa taille de coup favorite et à varier légèrement pour rester humain.
 function adaptiveHumanCounterScore(a){
   if(!a || !a.length)return -Infinity;
-  let s=Math.random()*1.25;
+  const confidence=eliteAdaptationConfidence();
+  let learned=0;
 
-  // Bloquer progressivement les cases favorites du joueur.
-  for(const i of a)s += humanPreferenceForCell(i)*7.0;
+  // Le bot apprend les zones favorites, avec une lecture spécifique des ouvertures.
+  for(const i of a)learned += phaseCellPreference(i)*7.4;
 
-  // Si le joueur joue souvent une certaine quantité, le bot préfère parfois
-  // modifier la structure du plateau avec une quantité différente.
+  // Il utilise aussi les quantités préférées selon le moment de la partie.
   const fav=preferredHumanLength();
-  if(a.length!==fav)s+=0.55;
-  else s-=0.15;
+  if(a.length!==fav)learned+=0.62;
+  else learned-=0.18;
 
-  // Petit biais central, mais faible pour éviter un comportement robotique fixe.
+  // Biais central léger : utile mais jamais suffisant pour rendre le bot mécanique.
   const center=[5,6,9,10];
-  s+=a.filter(i=>center.includes(i)).length*0.16;
+  learned+=a.filter(i=>center.includes(i)).length*0.14;
 
-  // Avant d'avoir assez observé le joueur, l'adaptation reste discrète.
-  const confidence=Math.min(1,humanProfile.moves/24);
-  return s*confidence + Math.random()*(1-confidence)*2.2;
+  // Au début, le hasard domine. À mesure que la jauge monte, le profil appris
+  // départage réellement les solutions équivalentes sans modifier le solveur.
+  const noise=Math.random()*(2.25-1.55*confidence);
+  return learned*confidence+noise;
 }
 
 function adaptiveChoice(candidates){
@@ -2335,7 +2405,7 @@ function adaptiveChoice(candidates){
 }
 
 // Même logique que exactMove(), mais en cas de plusieurs solutions équivalentes
-// le Bot Difficile utilise ce qu'il a appris du joueur pour choisir.
+// le Bot Élite utilise ce qu'il a appris du joueur pour choisir.
 function adaptiveExactMove(ms){
   const mask=boardMask(),ruleHard=hardMode;
   const winning=[];
@@ -2380,8 +2450,8 @@ if(Number(localStorage.getItem(ONLINE_SEASON_KEY)||0)!==ONLINE_SEASON){
   localStorage.setItem("jeuDesRondsOnlineLosses","0");
   localStorage.setItem(ONLINE_SEASON_KEY,String(ONLINE_SEASON));
 }
-let onlineWins=Number(localStorage.getItem("jeuDesRondsOnlineWins")||0);
-let onlineLosses=Number(localStorage.getItem("jeuDesRondsOnlineLosses")||0);
+let onlineWins=Math.max(0,Math.floor(Number(localStorage.getItem("jeuDesRondsOnlineWins"))||0));
+let onlineLosses=Math.max(0,Math.floor(Number(localStorage.getItem("jeuDesRondsOnlineLosses"))||0));
 const CAREER_MIGRATION_KEY="jeuDesRondsCareerUltimateMigratedV1";
 if(localStorage.getItem(CAREER_MIGRATION_KEY)!=="1"){
   if(career.xp===0 && career.wins===0 && career.losses===0 && (hardWins>0 || onlineWins>0 || onlineLosses>0)){
@@ -2392,7 +2462,11 @@ if(localStorage.getItem(CAREER_MIGRATION_KEY)!=="1"){
 let onlineMatchCounted=false, onlineMatchId=null;
 let onlineWinner=null; // résultat autoritaire de la manche en ligne courante
 let onlineTurnSeq=0, onlineResetAt=0, onlineSyncWatchdog=null, onlineLastPacketAt=Date.now();
-let onlinePendingActionId=null, onlinePendingSeq=null, onlinePendingSince=0, onlineLastStateSentAt=0;
+let onlinePendingActionId=null, onlinePendingSeq=null, onlinePendingSince=0, onlinePendingMove=null, onlineLastStateSentAt=0;
+// Résultats non encore confirmés par le joueur bleu.
+// Le rouge les conserve même si une nouvelle manche démarre afin qu'aucun résultat ne soit perdu.
+const onlinePendingResults=new Map();
+const onlineResultReceipts=new Set();
 const onlineProcessedPacketIds=new Set();
 function rememberOnlinePacketId(id){
   if(!id)return false;
@@ -2405,7 +2479,39 @@ function rememberOnlinePacketId(id){
   return false;
 }
 function createOnlineActionId(prefix="a"){return prefix+"-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8);}
-function clearOnlinePending(){onlinePendingActionId=null;onlinePendingSeq=null;onlinePendingSince=0;}
+function clearOnlinePending(){onlinePendingActionId=null;onlinePendingSeq=null;onlinePendingSince=0;onlinePendingMove=null;}
+function setOnlinePending(actionId,move=null){onlinePendingActionId=actionId;onlinePendingSeq=onlineTurnSeq;onlinePendingSince=Date.now();onlinePendingMove=Array.isArray(move)?move.slice():null;}
+function onlinePendingLabel(){
+  if(!onlinePendingActionId)return "";
+  if(onlinePendingActionId.startsWith("reset-"))return "Nouvelle partie en cours de synchronisation…";
+  if(onlinePendingActionId.startsWith("settings-"))return "Règle en cours de synchronisation…";
+  return "Coup en cours de validation…";
+}
+
+function validOnlineMatchId(id){
+  return typeof id==="string" && id.length>=5 && id.length<=80 && /^[a-zA-Z0-9_-]+$/.test(id);
+}
+function queueOnlineResultReceipt(matchId,winner){
+  if(myRole!=="red" || !validOnlineMatchId(matchId) || !validOnlinePlayer(winner))return;
+  const current=onlinePendingResults.get(matchId);
+  onlinePendingResults.set(matchId,{winner,lastSentAt:current?.lastSentAt||0,createdAt:current?.createdAt||Date.now()});
+}
+function sendQueuedOnlineResult(matchId,force=false){
+  if(myRole!=="red" || !onlineConnected || !onlineOpponentId)return;
+  const item=onlinePendingResults.get(matchId);
+  if(!item)return;
+  const now=Date.now();
+  if(!force && now-item.lastSentAt<1800)return;
+  item.lastSentAt=now;
+  onlinePendingResults.set(matchId,item);
+  sendOnlineDataReliable({type:"RESULT",target:onlineOpponentId,winner:item.winner,matchId,seq:onlineTurnSeq});
+}
+function acknowledgeOnlineResult(matchId,winner){
+  if(myRole!=="blue" || !onlineConnected || !validOnlineMatchId(matchId) || !validOnlinePlayer(winner))return;
+  // Chaque réception valide provoque un ACK. Les doublons sont voulus ici :
+  // si un ACK précédent s'est perdu, le rouge finira quand même par le recevoir.
+  sendOnlineDataReliable({type:"RESULT_ACK",target:onlineOpponentId,matchId,winner});
+}
 const ONLINE_COUNTED_MATCHES_KEY="jeuDesRondsCountedOnlineMatchesS1";
 let onlineCountedMatchIds=new Set();
 try{
@@ -2422,7 +2528,16 @@ function rememberCountedOnlineMatch(matchId){
 
 function updateHardStats(){
   const el=document.getElementById("hardStats");
-  if(el)el.innerHTML=`Victoires contre le Bot Difficile : <b>${hardWins}</b> • Série : <b>${hardStreak}</b>/5`;
+  if(el)el.innerHTML=`Victoires contre le Bot Élite : <b>${hardWins}</b> • Série : <b>${hardStreak}</b>/5`;
+  const rate=eliteAdaptationRate();
+  const rateEl=document.getElementById("eliteAdaptationRate");
+  const fill=document.getElementById("eliteAdaptationFill");
+  const note=document.getElementById("eliteAdaptationNote");
+  if(rateEl)rateEl.textContent=rate+"%";
+  if(fill)fill.style.width=rate+"%";
+  if(note){
+    note.textContent=rate<20?"Le Bot Élite observe encore tes premiers réflexes.":rate<55?"Il commence à reconnaître tes placements et tes quantités favorites.":rate<85?"Il adapte désormais ses réponses selon ton style et la phase de partie.":"Lecture avancée : tes habitudes récentes influencent fortement ses choix équivalents.";
+  }
 }
 function getOnlineWinrate(){
   const total=onlineWins+onlineLosses;
@@ -2527,10 +2642,13 @@ function createOnlineMatchId(){
   return Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8);
 }
 function registerOnlineWinner(winner, matchId=null){
-  if(!winner) return;
+  if(!validOnlinePlayer(winner)) return false;
+  const id=matchId || onlineMatchId;
+  if(!validOnlineMatchId(id)) return false;
   // Le résultat est envoyé avec l'identifiant de partie afin d'éviter
   // qu'un ancien résultat ne soit comptabilisé dans une nouvelle partie.
-  registerOnlineResult(winner===myRole, matchId || onlineMatchId);
+  registerOnlineResult(winner===myRole,id);
+  return true;
 }
 
 function finishOnlineMatch(winner){
@@ -2544,10 +2662,11 @@ function finishOnlineMatch(winner){
   showGameEndOverlay(winner);
   // Le rouge est l'unique autorité réseau pour la fin de partie.
   if(onlineConnected && myRole==="red"){
-    // STATE contient aussi gameOver + winner : une resynchronisation suffit désormais
-    // à réparer intégralement un RESULT perdu ou reçu en retard.
+    // STATE contient aussi gameOver + winner. En plus, le RESULT reste dans une file
+    // jusqu'à ce que le joueur bleu confirme explicitement son enregistrement.
     sendAuthoritativeState();
-    sendOnlineDataReliable({type:"RESULT", winner, matchId:onlineMatchId, seq:onlineTurnSeq});
+    queueOnlineResultReceipt(onlineMatchId,winner);
+    sendQueuedOnlineResult(onlineMatchId,true);
   }
 }
 
@@ -2596,20 +2715,25 @@ function registerHardResult(winner){
 }
 
 function reset(isOnlineSync=false){
- hideGameEndOverlay();
- careerResultCounted=false;careerMatchStartedAt=Date.now();
- if(!masterChallengeActive)masterBanner.classList.remove("show");
  // En ligne, le rouge reste l'autorité même pour « Nouvelle partie ».
- // Le bleu demande le reset au rouge au lieu de créer un second état concurrent.
+ // Le bleu demande d'abord le reset : on ne modifie aucun chrono/écran local tant
+ // que la nouvelle manche officielle n'a pas réellement été reçue.
  if(mode==="online" && !isOnlineSync && onlineConnected && myRole==="blue"){
-   selected=[];W.textContent="⏳ Nouvelle partie demandée…";
-   sendOnlineDataReliable({type:"RESET_REQUEST",matchId:onlineMatchId,seq:onlineTurnSeq,actionId:createOnlineActionId("reset")});
+   if(onlinePendingActionId){W.textContent="⏳ Une synchronisation est déjà en cours…";render();return;}
+   const actionId=createOnlineActionId("reset");
+   selected=[];setOnlinePending(actionId);W.textContent="⏳ Nouvelle partie demandée…";
+   if(gameEndOverlay.classList.contains("show"))gameEndSubtitle.textContent="Nouvelle partie en cours de synchronisation…";
+   sendOnlineDataReliable({type:"RESET_REQUEST",matchId:onlineMatchId,seq:onlineTurnSeq,actionId});
    render();
    return;
  }
+ hideGameEndOverlay();
+ careerResultCounted=false;careerMatchStartedAt=Date.now();
+ if(!masterChallengeActive)masterBanner.classList.remove("show");
  if(mode==="bot-hard" && humanMovesThisGame>0){
    humanProfile.games++;
    saveHumanProfile();
+   updateHardStats();
  }
  humanMovesThisGame=0;
  gameGeneration++; // invalide immédiatement tout ancien tour asynchrone du bot
@@ -2650,6 +2774,11 @@ function reset(isOnlineSync=false){
 }
 
 function botIsTurn(){return isBotMode()&&player===botColor&&!gameOver}
+function botDisplayName(){
+ if(mode==="bot-hard")return "Bot — Élite";
+ if(mode==="bot-medium")return "Bot — Tactique";
+ return "Bot — Initiation";
+}
 function onlineIsNotMyTurn(){return mode==="online"&&(!onlineConnected || player!==myRole)&&!gameOver}
 
 function hasOtherAmountMove(){
@@ -2702,22 +2831,39 @@ function render(){
  }
  B.querySelectorAll(":scope > .cell").forEach(c=>c.remove());
  board.forEach((v,i)=>{
-  let c=document.createElement("div");c.className="cell";
+  const isSelected=selected.includes(i);
+  const canPick=!v && !gameOver && !thinking && !botIsTurn() && !onlineIsNotMyTurn() && !(mode==="online"&&myRole==="blue"&&onlinePendingActionId);
+  let c=document.createElement("div");
+  c.className="cell"+(isSelected?" selected-cell":"")+(canPick?" playable-cell":" locked-cell");
+  c.setAttribute("role","gridcell");
+  c.setAttribute("aria-label",v?`Case ${i+1}, ${v==="red"?"rouge":"bleue"}`:isSelected?`Case ${i+1}, sélectionnée`:`Case ${i+1}, vide`);
+  c.setAttribute("aria-selected",isSelected?"true":"false");
+  c.tabIndex=canPick?0:-1;
   if(v)c.innerHTML=`<div class="dot ${v}Dot"></div>`;
-  if(selected.includes(i))c.innerHTML=`<div class="dot ${player}Dot"></div>`;
-  c.onclick=()=>pick(i);B.insertBefore(c,gameEndOverlay);
+  if(isSelected)c.innerHTML=`<div class="dot ${player}Dot"></div>`;
+  c.onclick=()=>pick(i);
+  c.onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&canPick){e.preventDefault();pick(i);}};
+  B.insertBefore(c,gameEndOverlay);
  });
  
  if(mode==="online"){
    if(!onlineConnected){
      S.innerHTML="En attente d'un adversaire...";
+   } else if(onlinePendingActionId && myRole==="blue") {
+     S.innerHTML=`<b>⏳ ${onlinePendingLabel()}</b>`;
    } else {
      const isMyTurn = player===myRole;
      const turnName=isMyTurn?playerProfileName:onlineOpponentProfileName;
      S.innerHTML=gameOver?"Partie terminée":`Tour : <span class="${player}">${player==="red"?"🔴":"🔵"} ${turnName}</span> ${isMyTurn?"<b>(À TOI !)</b>":"(Adversaire...)"}`;
    }
  } else {
-   S.innerHTML=gameOver?"Partie terminée":thinking?"🤖 Le Bot réfléchit...":`Tour : <span class="${player}">${player==="red"?"🔴 Rouge":"🔵 Bleu"}</span>`;
+   if(gameOver)S.innerHTML="Partie terminée";
+   else if(isBotMode()){
+     const botTurnNow=player===botColor;
+     S.innerHTML=thinking?`🤖 ${botDisplayName()} réfléchit…`:`Tour : <span class="${player}">${player==="red"?"🔴":"🔵"} ${botTurnNow?botDisplayName():"Vous"}</span>`;
+   }else{
+     S.innerHTML=`Tour : <span class="${player}">${player==="red"?"🔴 Rouge":"🔵 Bleu"}</span>`;
+   }
  }
 
  RC.textContent=board.filter(x=>x==="red").length;BC.textContent=board.filter(x=>x==="blue").length;SC.textContent=selected.length;
@@ -2729,6 +2875,11 @@ function render(){
  const canControl = !gameOver && !thinking && !botIsTurn() && !onlineIsNotMyTurn() && !(mode==="online" && myRole==="blue" && onlinePendingActionId);
  finishBtn.disabled = !canControl || !isValidSelection;
  undoBtn.disabled = !canControl || selected.length === 0;
+ const onlineBusy = mode==="online" && onlineConnected && myRole==="blue" && !!onlinePendingActionId;
+ const resetBtn=document.getElementById("reset");
+ if(resetBtn)resetBtn.disabled=onlineBusy;
+ if(gameEndNew)gameEndNew.disabled=onlineBusy;
+ if(hardCheckbox)hardCheckbox.disabled=onlineBusy;
 }
 
 function contiguous(a){
@@ -2747,7 +2898,7 @@ function legal(a){
 
 function pick(i){
  if(previewSkin){W.textContent="👁️ Aperçu uniquement : ce skin est verrouillé.";return;}
- if(gameOver||thinking||botIsTurn()||onlineIsNotMyTurn()||board[i])return;
+ if(gameOver||thinking||botIsTurn()||onlineIsNotMyTurn()||(mode==="online"&&myRole==="blue"&&onlinePendingActionId)||board[i])return;
  let a=selected.includes(i)?selected.filter(x=>x!==i):[...selected,i];
  if(a.length>4){W.textContent="Maximum 4 ronds.";return}
  if(!contiguous(a)){W.textContent="❌ Les ronds doivent être collés en ligne horizontale ou verticale.";return}
@@ -2771,7 +2922,13 @@ function pick(i){
 function play(a, isOnlineAction=false, ackActionId=null, ackTarget=null){
  if(!legal(a)){return false}
 
- // Le Bot Difficile observe uniquement les coups du joueur humain local.
+ // La carrière ne comptabilise que les coups humains réellement acceptés.
+ if(!isOnlineAction){
+   if(isBotMode() && player!==botColor)recordCareerMove(a);
+   else if(mode==="online" && myRole==="red" && player==="red")recordCareerMove(a);
+ }
+
+ // Le Bot Élite observe uniquement les coups du joueur humain local.
  if(mode==="bot-hard" && player!==botColor && !isOnlineAction){
    learnHumanMove(a);
  }
@@ -2789,7 +2946,7 @@ function play(a, isOnlineAction=false, ackActionId=null, ackTarget=null){
      if(terminalWinner){
        finishOnlineMatch(terminalWinner);
      }else{
-       sendAuthoritativeState(ackTarget,ackActionId);
+       sendAuthoritativeState(ackTarget,ackActionId,true);
      }
    }
  }
@@ -2803,14 +2960,13 @@ function finish(){
    W.textContent=`❌ En mode difficile, le nombre de ronds doit être différent du tour précédent (${lastAmount}).`;
    return;
  }
- recordCareerMove(selected.slice());
  if(mode==="online" && onlineConnected && myRole==="blue"){
    // Le bleu propose un coup, mais ne touche jamais lui-même au plateau officiel.
    // Il reste verrouillé jusqu'à l'accusé de réception contenu dans le STATE du rouge.
    if(onlinePendingActionId){W.textContent="⏳ Ton coup précédent est encore en validation…";render();return;}
    const move=selected.slice();
    const actionId=createOnlineActionId("move");
-   onlinePendingActionId=actionId;onlinePendingSeq=onlineTurnSeq;onlinePendingSince=Date.now();
+   setOnlinePending(actionId,move);
    selected=[];
    sendOnlineDataReliable({type:"MOVE_REQUEST",move,matchId:onlineMatchId,seq:onlineTurnSeq,actionId});
    W.textContent="⏳ Coup envoyé — validation en cours…";
@@ -2962,8 +3118,10 @@ function botTurn(){
 
   thinking=false;
   if(generationAtStart!==gameGeneration)return;
-  if(play(a)){render();botTurn();}
- },450+Math.random()*450);
+  if(!Array.isArray(a) || !legal(a))a=randomMove(ms.filter(legal));
+  if(a && play(a)){render();botTurn();}
+  else {render();}
+ },360+Math.random()*420);
 }
 
 // Logique Réseau En Ligne — HTTPS + SSE sur le port 443
@@ -3006,6 +3164,7 @@ function destroyOnlineConnection(){
   onlineOpponentId=null;
   onlineHostId=null;
   onlineOpponentProfileName="Adversaire";clearOnlinePending();onlineProcessedPacketIds.clear();
+  onlinePendingResults.clear();onlineResultReceipts.clear();
   if(typeof updateProfileScreen==="function")updateProfileScreen();
   if(onlineSource){
     try{onlineSource.close();}catch(e){}
@@ -3053,13 +3212,13 @@ function sendOnlineDataReliable(data){
   return payload.packetId;
 }
 
-function sendAuthoritativeState(target=null,ackActionId=null){
+function sendAuthoritativeState(target=null,ackActionId=null,ackAccepted=null){
   if(mode!=="online" || !onlineConnected || myRole!=="red")return;
   onlineLastStateSentAt=Date.now();
   sendOnlineDataReliable({
     type:"STATE",target:target||undefined,matchId:onlineMatchId,seq:onlineTurnSeq,
     board:board.slice(),player,lastAmount,lastPlayer,hardMode,skin:activeSkin,resetAt:onlineResetAt,
-    gameOver:!!gameOver,winner:onlineWinner||undefined,ackActionId:ackActionId||undefined
+    gameOver:!!gameOver,winner:onlineWinner||undefined,ackActionId:ackActionId||undefined,ackAccepted:ackAccepted===null?undefined:!!ackAccepted
   });
 }
 
@@ -3071,6 +3230,15 @@ function scheduleGuestJoin(){
   send();
   [700,1600,3000,5000,8000,12000].forEach(ms=>onlineJoinTimers.push(setTimeout(send,ms)));
 }
+
+function validOnlineMove(move){
+  return Array.isArray(move) && move.length>=1 && move.length<=4 &&
+    move.every(i=>Number.isInteger(i)&&i>=0&&i<16) && new Set(move).size===move.length;
+}
+function validOnlineBoard(candidate){
+  return Array.isArray(candidate) && candidate.length===16 && candidate.every(v=>v===null||v==="red"||v==="blue");
+}
+function validOnlinePlayer(v){return v==="red"||v==="blue";}
 
 function handleOnlinePacket(data){
   if(!data || typeof data!=="object" || data.sender===onlineClientId)return;
@@ -3096,6 +3264,7 @@ function handleOnlinePacket(data){
     onlineMatchId=createOnlineMatchId();
     onlineMatchCounted=false;
     onlineWinner=null;clearOnlinePending();
+    onlinePendingResults.clear();onlineResultReceipts.clear();
     onlineStatus.innerHTML="🟢 Adversaire connecté ! Partie lancée.";
     publishOnline({
       type:"INIT",target:onlineOpponentId,role:"blue",player,
@@ -3114,8 +3283,8 @@ function handleOnlinePacket(data){
     onlineOpponentId=data.sender;
     onlineOpponentProfileName=cleanPlayerName(data.profileName||"Adversaire");
     myRole=data.role||"blue";
-    if(Array.isArray(data.board)&&data.board.length===16)board=data.board.slice();
-    player=data.player;
+    if(validOnlineBoard(data.board))board=data.board.slice();
+    if(validOnlinePlayer(data.player))player=data.player;
     onlineMatchId=data.matchId||createOnlineMatchId();
     onlineResetAt=Number.isFinite(data.resetAt)?data.resetAt:Date.now();
     onlineMatchCounted=false;
@@ -3125,7 +3294,11 @@ function handleOnlinePacket(data){
     applySkin(data.skin||"arcade",false,true);
     onlineConnected=true;selected=[];clearOnlinePending();gameOver=!!data.gameOver;
     lastAmount=data.lastAmount??null;lastPlayer=data.lastPlayer??null;
-    if(gameOver && onlineWinner){registerOnlineWinner(onlineWinner,onlineMatchId);showGameEndOverlay(onlineWinner);}
+    if(gameOver && validOnlinePlayer(onlineWinner)){
+      registerOnlineWinner(onlineWinner,onlineMatchId);
+      acknowledgeOnlineResult(onlineMatchId,onlineWinner);
+      showGameEndOverlay(onlineWinner);
+    }
     clearConnectionTimer();clearJoinTimers();
     onlineStatus.innerHTML="🟢 Connecté à la partie !";
     render();
@@ -3141,6 +3314,11 @@ function handleOnlinePacket(data){
   if(!onlineConnected)return;
   if(onlineOpponentId && data.sender!==onlineOpponentId)return;
 
+  // Autorité stricte : le bleu propose, le rouge arbitre. Un client ne peut jamais
+  // injecter un état final ou un résultat dans le sens inverse.
+  if((data.type==="STATE" || data.type==="RESULT" || data.type==="RESET") && myRole!=="blue")return;
+  if(data.type==="RESULT_ACK" && myRole!=="red")return;
+
   if(data.type==="RESET_REQUEST"){
     if(myRole==="red" && (!data.matchId || data.matchId===onlineMatchId)) reset();
   }else if(data.type==="SETTINGS_RESET_REQUEST"){
@@ -3151,7 +3329,7 @@ function handleOnlinePacket(data){
     }
   }else if(data.type==="STATE_REQUEST"){
     if(myRole==="red") sendAuthoritativeState(data.sender);
-  }else if(data.type==="MOVE_REQUEST" && Array.isArray(data.move)){
+  }else if(data.type==="MOVE_REQUEST" && validOnlineMove(data.move)){
     // Seul le rouge tranche. Une requête ancienne, dupliquée ou hors-tour est ignorée,
     // puis l'état courant est renvoyé pour resynchroniser le bleu.
     if(myRole==="red"){
@@ -3160,19 +3338,20 @@ function handleOnlinePacket(data){
       if(sameMatch && sameSeq && player==="blue" && legal(data.move)){
         play(data.move,true,data.actionId||null,data.sender);
       }else{
-        sendAuthoritativeState(data.sender,data.actionId||null);
+        sendAuthoritativeState(data.sender,data.actionId||null,false);
       }
     }
   }else if(data.type==="STATE"){
+    let adoptedNewMatch=false;
     if(data.matchId && onlineMatchId && data.matchId!==onlineMatchId){
       // Le rouge peut aussi réparer un RESET raté en envoyant son état autoritaire.
       if(Number.isFinite(data.resetAt) && data.resetAt>=onlineResetAt){
-        onlineMatchId=data.matchId;onlineResetAt=data.resetAt;onlineMatchCounted=false;onlineWinner=null;gameOver=false;
+        onlineMatchId=data.matchId;onlineResetAt=data.resetAt;onlineMatchCounted=false;onlineWinner=null;gameOver=false;adoptedNewMatch=true;
       }else return;
     }
     const seq=Number(data.seq);
     if(Number.isFinite(seq) && seq < onlineTurnSeq) return;
-    if(Array.isArray(data.board) && data.board.length===16) board=data.board.slice();
+    if(validOnlineBoard(data.board)) board=data.board.slice();
     if(data.player==="red" || data.player==="blue") player=data.player;
     lastAmount=data.lastAmount??null;
     lastPlayer=data.lastPlayer??null;
@@ -3180,18 +3359,27 @@ function handleOnlinePacket(data){
     if(myRole==="blue" && onlinePendingActionId){
       const acknowledged=data.ackActionId===onlinePendingActionId;
       const advanced=Number.isFinite(seq) && onlinePendingSeq!==null && seq>onlinePendingSeq;
-      if(acknowledged || advanced){clearOnlinePending();W.textContent="";}
+      const accepted=(acknowledged && data.ackAccepted===true) || advanced;
+      if(accepted && onlinePendingMove)recordCareerMove(onlinePendingMove);
+      if(acknowledged || advanced || adoptedNewMatch){
+        const rejected=acknowledged && data.ackAccepted===false && !advanced;
+        clearOnlinePending();
+        W.textContent=rejected?"🟠 Ce coup n'a pas été appliqué. Le plateau a été resynchronisé.":"";
+      }
     }
     if(typeof data.hardMode!=="undefined"){
       hardCheckbox.checked=!!data.hardMode;hardMode=!!data.hardMode;
     }
     if(data.skin) applySkin(data.skin,false,true);
-    selected=[];W.textContent="";
+    selected=[];
+    if(!onlinePendingActionId)W.textContent="";
     if(typeof data.gameOver!=="undefined") gameOver=!!data.gameOver;
-    if(data.winner && (!data.matchId || data.matchId===onlineMatchId)){
+    if(validOnlinePlayer(data.winner) && validOnlineMatchId(data.matchId||onlineMatchId) && (!data.matchId || data.matchId===onlineMatchId)){
+      const resultId=data.matchId||onlineMatchId;
       onlineWinner=data.winner;
       gameOver=true;
-      registerOnlineWinner(data.winner,data.matchId||onlineMatchId);
+      registerOnlineWinner(data.winner,resultId);
+      acknowledgeOnlineResult(resultId,data.winner);
       showGameEndOverlay(data.winner);
     }else if(!gameOver){
       onlineWinner=null;
@@ -3199,14 +3387,28 @@ function handleOnlinePacket(data){
     }
     render();
   }else if(data.type==="RESULT"){
+    // Seul un résultat valide, identifié et émis par l'autorité rouge arrive ici.
+    if(!validOnlinePlayer(data.winner) || !validOnlineMatchId(data.matchId))return;
     registerOnlineWinner(data.winner,data.matchId);
+    acknowledgeOnlineResult(data.matchId,data.winner);
     // Un résultat retardé d'une ancienne partie doit être compté, mais ne doit
     // jamais fermer ou recouvrir la partie actuellement en cours.
-    if(data.winner && (!data.matchId || data.matchId===onlineMatchId)){
+    if(data.matchId===onlineMatchId){
       onlineWinner=data.winner;
       gameOver=true;selected=[];
       showGameEndOverlay(data.winner);
       render();
+    }
+  }else if(data.type==="RESULT_ACK"){
+    if(!validOnlineMatchId(data.matchId) || !validOnlinePlayer(data.winner))return;
+    const pending=onlinePendingResults.get(data.matchId);
+    if(pending && pending.winner===data.winner){
+      onlinePendingResults.delete(data.matchId);
+      onlineResultReceipts.add(data.matchId);
+      if(onlineResultReceipts.size>120){
+        const keep=Array.from(onlineResultReceipts).slice(-80);
+        onlineResultReceipts.clear();keep.forEach(id=>onlineResultReceipts.add(id));
+      }
     }
   }else if(data.type==="RESET"){
     // Une copie retardée d'un ancien RESET ne doit jamais écraser une partie plus récente.
@@ -3214,6 +3416,7 @@ function handleOnlinePacket(data){
     if(incomingResetAt && incomingResetAt<onlineResetAt) return;
     if(data.matchId && data.matchId===onlineMatchId && incomingResetAt && incomingResetAt<=onlineResetAt) return;
     if(data.matchId && data.matchId===onlineMatchId && onlineTurnSeq>0) return;
+    if(!validOnlinePlayer(data.player))return;
     player=data.player;
     onlineMatchId=data.matchId||createOnlineMatchId();
     if(incomingResetAt) onlineResetAt=incomingResetAt;
@@ -3251,6 +3454,9 @@ function connectOnlineRelay(code,role){
     if(myRole==="red"){
       // Heartbeat autoritaire : même sans coup, le bleu reçoit régulièrement la vérité du match.
       if(now-onlineLastStateSentAt>2400)sendAuthoritativeState();
+      // Un résultat n'est considéré distribué qu'après accusé de réception du bleu.
+      // Cela continue même si une nouvelle manche a déjà commencé.
+      for(const matchId of onlinePendingResults.keys())sendQueuedOnlineResult(matchId,false);
       return;
     }
     if(myRole==="blue"){
@@ -3260,7 +3466,7 @@ function connectOnlineRelay(code,role){
         onlineLastPacketAt=now;
       }
       if(onlinePendingActionId && now-onlinePendingSince>9000){
-        clearOnlinePending();W.textContent="🟠 Validation trop longue — état resynchronisé, tu peux rejouer si nécessaire.";render();
+        clearOnlinePending();W.textContent="🟠 Réseau trop lent : état officiel récupéré. Tu peux rejouer si le coup n’est pas visible.";render();
       }
     }
   },900);
@@ -3279,8 +3485,12 @@ function connectOnlineRelay(code,role){
   onlineSource.onopen=()=>{
     // Une reconnexion SSE déclenche immédiatement une resynchronisation.
     if(onlineConnected){
-      if(myRole==="red") sendAuthoritativeState();
-      else if(myRole==="blue") sendOnlineDataReliable({type:"STATE_REQUEST",matchId:onlineMatchId,seq:onlineTurnSeq});
+      if(myRole==="red"){
+        sendAuthoritativeState();
+        for(const matchId of onlinePendingResults.keys())sendQueuedOnlineResult(matchId,true);
+      }else if(myRole==="blue"){
+        sendOnlineDataReliable({type:"STATE_REQUEST",matchId:onlineMatchId,seq:onlineTurnSeq});
+      }
     }
     if(role==="host"){
       onlineStatus.innerHTML=`Salon créé ! Code : <b style="font-size:20px;color:#fff">${code}</b><br><small>Donne ce code à ton adversaire et garde cette page ouverte.</small>`;
@@ -3342,7 +3552,7 @@ document.querySelectorAll(".mode").forEach(x=>x.onclick=()=>{
   mode=x.dataset.mode;
   document.querySelectorAll(".mode").forEach(y=>y.classList.toggle("active",y===x));
 
-  // La fiche du Bot Difficile n'apparaît que sur ce mode.
+  // La fiche du Bot Élite n'apparaît que sur ce mode.
   diffBox.classList.toggle("show",mode==="bot-hard");
   onlineBox.classList.toggle("show",mode==="online");
   rankingBox.classList.toggle("show",mode==="ranking");
@@ -3383,7 +3593,10 @@ hardCheckbox.onchange=()=>{
     if(myRole==="blue"){
       // Le rouge applique le réglage et effectue l'unique reset autoritaire.
       hardCheckbox.checked=hardMode;
-      sendOnlineDataReliable({type:"SETTINGS_RESET_REQUEST",hardMode:requested,matchId:onlineMatchId,seq:onlineTurnSeq});
+      if(onlinePendingActionId){W.textContent="⏳ Une synchronisation est déjà en cours…";render();return;}
+      const actionId=createOnlineActionId("settings");
+      setOnlinePending(actionId);
+      sendOnlineDataReliable({type:"SETTINGS_RESET_REQUEST",hardMode:requested,matchId:onlineMatchId,seq:onlineTurnSeq,actionId});
       W.textContent="⏳ Changement de règle demandé…";
       render();
       return;
@@ -3398,6 +3611,9 @@ hardCheckbox.onchange=()=>{
 
 finishBtn.onclick=finish;
 undoBtn.onclick=()=>{selected=[];W.textContent="";render()};
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape" && selected.length && !gameOver && !thinking){selected=[];W.textContent="";render();}
+});
 document.getElementById("reset").onclick=()=>reset();
 
 const skinToggle=document.getElementById("skinToggle");
@@ -3606,7 +3822,7 @@ function importProgress(){
 
   // === CODE DE SECOURS — RESET ONLINE SAISON 1 ===
   // Ne touche qu'aux statistiques compétitives en ligne.
-  // Aucun skin, aucune victoire Bot Difficile, aucune série et aucune mémoire IA ne sont modifiés.
+  // Aucun skin, aucune victoire Bot Élite, aucune série et aucune mémoire IA ne sont modifiés.
   const emergencyCode=String(entered).trim().toUpperCase().replace(/\s+/g,"");
   if(emergencyCode==="JDR-RESET-ONLINE-S1"){
     onlineWins=0;
@@ -3649,7 +3865,7 @@ function importProgress(){
     "• "+d.onlineLosses+" défaite(s) en ligne\n"+
     "• Winrate : "+rate.toFixed(1)+" %\n"+
     "• Rang : "+getOnlineRank(rate,d.onlineWins+d.onlineLosses)+"\n"+
-    "• "+d.hardWins+" victoire(s) contre le Bot Difficile\n"+
+    "• "+d.hardWins+" victoire(s) contre le Bot Élite\n"+
     "• Série actuelle : "+d.hardStreak+"\n"+
     "• Série de 5 déjà réalisée : "+(d.hardStreakAchieved?"Oui":"Non")+"\n"+
     "• Crystal Saison 1 : "+(d.crystalS1Unlocked?"Débloqué":"Non débloqué")+
