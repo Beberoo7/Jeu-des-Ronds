@@ -285,7 +285,7 @@ body.skin-void .board::before{
 }
 @keyframes voidCosmicRing{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 body.skin-void .board::after{
-  content:"✦  ·  ✧     ·     ✦   ·   ✧     ·     ✦";
+  content:"  ·       ·        ·        ·     ";
   position:absolute;
   inset:6px;
   z-index:5;
@@ -486,7 +486,7 @@ body.skin-competition .blue{color:#77a7d4;text-shadow:none}
   box-shadow:0 0 10px #55eaff88,inset 0 0 9px #001020;
 }
 .void-preview:after{
-  content:"✦";
+  content:"";
   position:absolute;
   inset:0;
   display:flex;
@@ -517,7 +517,7 @@ body.skin-competition .blue{color:#77a7d4;text-shadow:none}
   box-shadow:inset 0 0 10px #fff,0 0 10px #c879ff66 !important;
 }
 .crystal-preview:before{
-  content:"🌸";
+  content:"";
   position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
   font-size:21px;
@@ -944,7 +944,7 @@ body.skin-crystal .board:before{
   filter:blur(6px);
 }
 body.skin-crystal .board:after{
-  content:"✦   ✿   ✦";
+  content:"      ";
   position:absolute;
   inset:-8px;
   border-radius:32px;
@@ -1120,7 +1120,7 @@ body.skin-crystal .game-end-subtitle{color:#7a6790 !important;}
    animation:voidMobileNebula 5.5s ease-in-out infinite alternate;
  }
  body.skin-void .board::after{
-   content:"✦  ·  ✧   ·   ✦  ·  ✧";
+   content:"  ·     ·     ·  ";
    inset:10px;
    z-index:1;
    font-size:12px;
@@ -1830,6 +1830,58 @@ body.skin-divine .share-toggle{color:#fbbf24;border-color:#f59e0b88;background:#
   .share-card{padding:18px;border-radius:20px}.share-card h2{font-size:24px}
 }
 
+
+/* === CORRECTIF GLOBAL : SURBRILLANCE DE SÉLECTION SUR TOUS LES SKINS ===
+   Placé en toute fin de feuille pour passer devant les box-shadow/bordures propres aux skins. */
+body .board .cell.selected-cell{
+  position:relative !important;
+  z-index:7 !important;
+  outline:3px solid rgba(255,255,255,.98) !important;
+  outline-offset:-5px !important;
+  filter:brightness(1.18) saturate(1.16) !important;
+  box-shadow:0 0 0 3px rgba(141,114,255,.92),0 0 28px rgba(118,92,255,.78),inset 0 0 22px rgba(255,255,255,.24) !important;
+  transform:translateY(-2px) scale(1.018) !important;
+}
+body .board .cell.selected-cell:has(.redDot){
+  outline-color:#ffd4da !important;
+  box-shadow:0 0 0 3px rgba(255,64,89,.95),0 0 30px rgba(255,64,89,.72),inset 0 0 22px rgba(255,255,255,.24) !important;
+}
+body .board .cell.selected-cell:has(.blueDot){
+  outline-color:#d9edff !important;
+  box-shadow:0 0 0 3px rgba(61,145,255,.95),0 0 30px rgba(61,145,255,.72),inset 0 0 22px rgba(255,255,255,.24) !important;
+}
+/* Variante tactile : la sélection reste visible sans état hover. */
+@media (hover:none){
+  body .board .cell.selected-cell{transform:scale(1.012) !important}
+}
+
+/* Remplacements visuels 100 % CSS : aucune police emoji nécessaire. */
+.crystal-preview:before{
+  content:"" !important;
+  position:absolute;left:50%;top:50%;width:19px;height:19px;transform:translate(-50%,-50%) rotate(45deg);
+  border-radius:55% 15% 55% 15%;
+  background:linear-gradient(145deg,#fff,#e6c7ff 55%,#d89bd6);
+  box-shadow:9px 0 0 -2px #efd5ff,-9px 0 0 -2px #f7e7ff,0 9px 0 -2px #e7b9de,0 -9px 0 -2px #fff;
+  filter:drop-shadow(0 0 5px #ffffff);
+}
+body.skin-crystal .board:after,
+body.skin-void .board:after,
+.void-preview:after{content:"" !important;}
+.celebration-icon{
+  width:52px;height:52px;margin:0 auto 8px;border-radius:50%;
+  border:3px solid currentColor;position:relative;font-size:0 !important;
+  box-shadow:0 0 22px currentColor;
+}
+.celebration-icon:before,.celebration-icon:after{
+  content:"";position:absolute;background:currentColor;border-radius:999px;
+}
+.celebration-icon:before{width:22px;height:3px;left:12px;top:23px;transform:rotate(45deg)}
+.celebration-icon:after{width:22px;height:3px;left:12px;top:23px;transform:rotate(-45deg)}
+.achievement-icon{
+  display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:24px;padding:0 6px;
+  border:1px solid currentColor;border-radius:6px;font-size:10px !important;font-weight:900;letter-spacing:.05em;
+}
+
 </style>
 </head>
 <body>
@@ -2082,7 +2134,7 @@ Choisis directement <b>1 à 4 cases</b>, puis appuie sur « J'ai fini ».
 </div>
 
 <div class="save-box" id="saveBox">
-  <div class="save-title">💾 Sauvegarde de progression</div>
+  <div class="save-title"> Sauvegarde de progression</div>
   <div class="save-help">Exporte ce code pour récupérer ta progression sur un autre appareil. Il sauvegarde aussi la carrière Ultimate : niveau, XP, séries, statistiques, Défi Maître et déblocages importants.</div>
   <div class="save-row">
     <input id="saveCode" class="save-code" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Exemple : JDR4-....">
@@ -2100,7 +2152,7 @@ Choisis directement <b>1 à 4 cases</b>, puis appuie sur « J'ai fini ».
 
 <div class="celebration" id="celebrationOverlay">
   <div class="celebration-card">
-    <div class="celebration-icon" id="celebrationIcon">🏆</div>
+    <div class="celebration-icon" id="celebrationIcon" aria-hidden="true"></div>
     <div class="celebration-title" id="celebrationTitle">Accomplissement</div>
     <div class="celebration-text" id="celebrationText"></div>
     <button class="primary" id="celebrationClose" type="button">Continuer</button>
@@ -2168,36 +2220,36 @@ function unlockedTitles(){return CAREER_TITLES.filter(x=>x[1]()).map(x=>x[0]);}
 function ensureCareerTitle(){const u=unlockedTitles();if(!u.includes(selectedCareerTitle)){selectedCareerTitle=u[u.length-1]||"Novice des Ronds";localStorage.setItem(CAREER_TITLE_KEY,selectedCareerTitle);}}
 
 const ACHIEVEMENTS=[
-["first","🏁","Premier pas","Gagner ta première partie.",()=>career.wins>=1],
-["w5","⚔️","Prise en main","Remporter 5 parties.",()=>career.wins>=5],
-["w25","🥉","Habitué","Remporter 25 parties.",()=>career.wins>=25],
-["w50","🥈","Vétéran","Remporter 50 parties.",()=>career.wins>=50],
-["w100","🥇","Centurion","Remporter 100 parties.",()=>career.wins>=100],
-["w250","👑","Légende","Remporter 250 parties.",()=>career.wins>=250],
-["easy","🤖","Premier bot","Battre le Bot Facile.",()=>career.easyW>=1],
-["medium","🧠","Plus si facile","Battre le Bot Moyen.",()=>career.mediumW>=1],
-["hard","💀","Le mur tombe","Battre le Bot Élite.",()=>hardWins>=1],
-["hard20","🥇","Doré","20 victoires contre le Bot Élite.",()=>hardWins>=20],
-["hard50","💎","Diamant","50 victoires contre le Bot Élite.",()=>hardWins>=50],
-["hard100","🌌","Voilacté","100 victoires contre le Bot Élite.",()=>hardWins>=100],
-["hard200","👑","Maître Absolu","200 victoires contre le Bot Élite.",()=>hardWins>=200],
-["streak3","🔥","En rythme","3 victoires consécutives.",()=>career.bestStreak>=3],
-["streak5","🔥","Implacable","5 victoires consécutives.",()=>career.bestStreak>=5],
-["streak10","⚡","Invaincu","10 victoires consécutives.",()=>career.bestStreak>=10],
-["online1","🌐","Connexion établie","Gagner ta première partie en ligne.",()=>onlineWins>=1],
-["online10","📡","Compétiteur","10 victoires en ligne.",()=>onlineWins>=10],
-["online25","🏟️","Régulier","25 victoires en ligne.",()=>onlineWins>=25],
-["online50","🌍","Prédateur en ligne","50 victoires en ligne.",()=>onlineWins>=50],
-["goldrank","🥇","Rang Gold","Atteindre Gold ou mieux.",()=>onlineWins+onlineLosses>=5&&getOnlineWinrate()>=30],
-["diamondrank","💎","Rang Diamant","Atteindre Diamant ou mieux.",()=>onlineWins+onlineLosses>=5&&getOnlineWinrate()>=60],
-["masterrank","👑","Rang Maître","Atteindre Maître ou mieux.",()=>onlineWins+onlineLosses>=5&&getOnlineWinrate()>=70],
-["gmrank","🌟","Grand Maître","Atteindre Grand Maître ou mieux.",()=>isGrandMasterOrHigherRank(getOnlineRank(getOnlineWinrate(),onlineWins+onlineLosses))],
+["first","1","Premier pas","Gagner ta première partie.",()=>career.wins>=1],
+["w5","5","Prise en main","Remporter 5 parties.",()=>career.wins>=5],
+["w25","25","Habitué","Remporter 25 parties.",()=>career.wins>=25],
+["w50","50","Vétéran","Remporter 50 parties.",()=>career.wins>=50],
+["w100","100","Centurion","Remporter 100 parties.",()=>career.wins>=100],
+["w250","250","Légende","Remporter 250 parties.",()=>career.wins>=250],
+["easy","BOT","Premier bot","Battre le Bot Facile.",()=>career.easyW>=1],
+["medium","IA","Plus si facile","Battre le Bot Moyen.",()=>career.mediumW>=1],
+["hard","ELITE","Le mur tombe","Battre le Bot Élite.",()=>hardWins>=1],
+["hard20","OR","Doré","20 victoires contre le Bot Élite.",()=>hardWins>=20],
+["hard50","DIA","Diamant","50 victoires contre le Bot Élite.",()=>hardWins>=50],
+["hard100","VOID","Voilacté","100 victoires contre le Bot Élite.",()=>hardWins>=100],
+["hard200","MAX","Maître Absolu","200 victoires contre le Bot Élite.",()=>hardWins>=200],
+["streak3","3X","En rythme","3 victoires consécutives.",()=>career.bestStreak>=3],
+["streak5","5X","Implacable","5 victoires consécutives.",()=>career.bestStreak>=5],
+["streak10","10X","Invaincu","10 victoires consécutives.",()=>career.bestStreak>=10],
+["online1","WEB","Connexion établie","Gagner ta première partie en ligne.",()=>onlineWins>=1],
+["online10","10","Compétiteur","10 victoires en ligne.",()=>onlineWins>=10],
+["online25","25","Régulier","25 victoires en ligne.",()=>onlineWins>=25],
+["online50","50","Prédateur en ligne","50 victoires en ligne.",()=>onlineWins>=50],
+["goldrank","G","Rang Gold","Atteindre Gold ou mieux.",()=>onlineWins+onlineLosses>=5&&getOnlineWinrate()>=30],
+["diamondrank","D","Rang Diamant","Atteindre Diamant ou mieux.",()=>onlineWins+onlineLosses>=5&&getOnlineWinrate()>=60],
+["masterrank","M","Rang Maître","Atteindre Maître ou mieux.",()=>onlineWins+onlineLosses>=5&&getOnlineWinrate()>=70],
+["gmrank","GM","Grand Maître","Atteindre Grand Maître ou mieux.",()=>isGrandMasterOrHigherRank(getOnlineRank(getOnlineWinrate(),onlineWins+onlineLosses))],
 ["moves100","⭕","Cent coups","Jouer 100 coups comptabilisés.",()=>career.totalMoves>=100],
 ["moves500","⭕","Main sûre","Jouer 500 coups comptabilisés.",()=>career.totalMoves>=500],
-["moves1000","♾️","Mille décisions","Jouer 1 000 coups comptabilisés.",()=>career.totalMoves>=1000],
-["master1","🛡️","Épreuve I","Réussir la première épreuve du Défi Maître.",()=>career.masterCleared>=1],
-["master3","⚔️","Épreuve III","Réussir les trois premières épreuves.",()=>career.masterCleared>=3],
-["master6","👑","Maître des Ronds","Terminer les six épreuves du Défi Maître.",()=>career.masterCleared>=6]
+["moves1000","1K","Mille décisions","Jouer 1 000 coups comptabilisés.",()=>career.totalMoves>=1000],
+["master1","I","Épreuve I","Réussir la première épreuve du Défi Maître.",()=>career.masterCleared>=1],
+["master3","III","Épreuve III","Réussir les trois premières épreuves.",()=>career.masterCleared>=3],
+["master6","VI","Maître des Ronds","Terminer les six épreuves du Défi Maître.",()=>career.masterCleared>=6]
 ];
 let previousAchievementIds=new Set();
 const celebrationQueue=[];let celebrationBusy=false;
@@ -2217,9 +2269,9 @@ function registerCareerResult(winner){
   if(didWin){career.wins++;career.currentStreak++;career.bestStreak=Math.max(career.bestStreak,career.currentStreak);}else{career.losses++;career.currentStreak=0;}
   if(mode==="bot-easy"){if(didWin)career.easyW++;else career.easyL++;}
   if(mode==="bot-medium"){if(didWin)career.mediumW++;else career.mediumL++;}
-  if(mode==="bot-hard"){if(didWin)career.hardW++;else career.hardL++;if(masterChallengeActive&&didWin&&masterChallengeActive===career.masterCleared+1){career.masterCleared=Math.max(career.masterCleared,masterChallengeActive);queueCelebration("👑","Épreuve réussie","Défi Maître — Épreuve "+masterChallengeActive+" terminée."+(masterChallengeActive===6?" Tu es désormais Maître des Ronds.":""));}}
+  if(mode==="bot-hard"){if(didWin)career.hardW++;else career.hardL++;if(masterChallengeActive&&didWin&&masterChallengeActive===career.masterCleared+1){career.masterCleared=Math.max(career.masterCleared,masterChallengeActive);queueCelebration("","Épreuve réussie","Défi Maître — Épreuve "+masterChallengeActive+" terminée."+(masterChallengeActive===6?" Tu es désormais Maître des Ronds.":""));}}
   if(mode==="online"){if(didWin)career.onlineW++;else career.onlineL++;}
-  saveCareer();ensureCareerTitle();const newLevel=prestigeLevelFromXp(career.xp);if(newLevel>oldLevel)queueCelebration("✨","Niveau "+newLevel,"Ton niveau de prestige vient d'augmenter.");checkNewAchievements();updateUltimateUI();
+  saveCareer();ensureCareerTitle();const newLevel=prestigeLevelFromXp(career.xp);if(newLevel>oldLevel)queueCelebration("","Niveau "+newLevel,"Ton niveau de prestige vient d'augmenter.");checkNewAchievements();updateUltimateUI();
 }
 function updateUltimateUI(){
   ensureCareerTitle();const level=prestigeLevelFromXp(career.xp),start=prestigeLevelStart(level),end=prestigeLevelEnd(level),pct=Math.max(0,Math.min(100,(career.xp-start)/(end-start)*100));
@@ -2228,13 +2280,13 @@ function updateUltimateUI(){
   const sel=document.getElementById("careerTitleSelect"),titles=unlockedTitles();sel.innerHTML="";titles.forEach(t=>{const o=document.createElement("option");o.value=t;o.textContent=t;o.selected=t===selectedCareerTitle;sel.appendChild(o);});
   const maxMove=Math.max(1,...career.moveCounts.slice(1));document.getElementById("moveBars").innerHTML=[1,2,3,4].map(n=>`<div class="move-row"><span>${n} rond${n>1?"s":""}</span><div class="move-track"><div class="move-fill" style="width:${(career.moveCounts[n]/maxMove*100).toFixed(1)}%"></div></div><b>${career.moveCounts[n]}</b></div>`).join("");
   const maxCell=Math.max(1,...career.cellCounts);document.getElementById("careerHeatmap").innerHTML=career.cellCounts.map((v,i)=>`<div class="heatcell" style="background:rgba(114,92,255,${(0.08+0.72*v/maxCell).toFixed(2)})" title="Case ${i+1} : ${v} fois">${v}</div>`).join("");
-  const done=ACHIEVEMENTS.filter(a=>a[4]()).length;document.getElementById("achievementSummary").textContent=done+" / "+ACHIEVEMENTS.length+" accomplis";document.getElementById("achievementGrid").innerHTML=ACHIEVEMENTS.map(a=>{const ok=a[4]();return `<div class="achievement ${ok?"done":""}"><div class="achievement-icon">${a[1]}</div><div class="achievement-name">${a[2]}</div><div class="achievement-desc">${a[3]}</div><div class="achievement-state">${ok?"✓ ACCOMPLI":"À accomplir"}</div></div>`}).join("");
+  const done=ACHIEVEMENTS.filter(a=>a[4]()).length;document.getElementById("achievementSummary").textContent=done+" / "+ACHIEVEMENTS.length+" accomplis";document.getElementById("achievementGrid").innerHTML=ACHIEVEMENTS.map(a=>{const ok=a[4]();return `<div class="achievement ${ok?"done":""}"><div class="achievement-icon">${a[1]}</div><div class="achievement-name">${a[2]}</div><div class="achievement-desc">${a[3]}</div><div class="achievement-state">${ok?" ACCOMPLI":"À accomplir"}</div></div>`}).join("");
   renderMasterScreen();
 }
 document.getElementById("careerTitleSelect").addEventListener("change",e=>{selectedCareerTitle=e.target.value;localStorage.setItem(CAREER_TITLE_KEY,selectedCareerTitle);updateUltimateUI();});
 const MASTER_SOLVER_RATE={1:.65,2:.75,3:.84,4:.90,5:.96,6:1};
 const MASTER_NAMES=["Initiation","Lecture du jeu","Stratège","Sans répétition","Presque parfait","Le Maître"];
-function renderMasterScreen(){const prog=document.getElementById("masterProgress");prog.innerHTML=Array.from({length:6},(_,i)=>`<div class="master-dot ${career.masterCleared>i?"done":""}"></div>`).join("");const wrap=document.getElementById("masterStages");wrap.innerHTML="";for(let i=1;i<=6;i++){const unlocked=i<=career.masterCleared+1,done=i<=career.masterCleared;const row=document.createElement("div");row.className="master-stage "+(!unlocked?"locked":"");row.innerHTML=`<div><b>${done?"✓ ":""}Épreuve ${i} — ${MASTER_NAMES[i-1]}</b><small>${i<=3?"IA renforcée":"IA renforcée + règle difficile"}${i===6?" • solveur à 100 %":""}</small></div><button class="${done?"secondary":"primary"}" ${unlocked?"":"disabled"}>${done?"Rejouer":"Affronter"}</button>`;row.querySelector("button").onclick=()=>startMasterChallenge(i);wrap.appendChild(row);}}
+function renderMasterScreen(){const prog=document.getElementById("masterProgress");prog.innerHTML=Array.from({length:6},(_,i)=>`<div class="master-dot ${career.masterCleared>i?"done":""}"></div>`).join("");const wrap=document.getElementById("masterStages");wrap.innerHTML="";for(let i=1;i<=6;i++){const unlocked=i<=career.masterCleared+1,done=i<=career.masterCleared;const row=document.createElement("div");row.className="master-stage "+(!unlocked?"locked":"");row.innerHTML=`<div><b>${done?" ":""}Épreuve ${i} — ${MASTER_NAMES[i-1]}</b><small>${i<=3?"IA renforcée":"IA renforcée + règle difficile"}${i===6?" • solveur à 100 %":""}</small></div><button class="${done?"secondary":"primary"}" ${unlocked?"":"disabled"}>${done?"Rejouer":"Affronter"}</button>`;row.querySelector("button").onclick=()=>startMasterChallenge(i);wrap.appendChild(row);}}
 function startMasterChallenge(stage){if(stage>career.masterCleared+1)return;masterChallengeActive=stage;mode="bot-hard";botDifficulty="hard";document.querySelectorAll(".mode").forEach(y=>y.classList.toggle("active",y.dataset.mode==="bot-hard"));diffBox.classList.add("show");onlineBox.classList.remove("show");rankingBox.classList.remove("show");profileBox.classList.remove("show");careerBox.classList.remove("show");achievementsBox.classList.remove("show");masterBox.classList.remove("show");gamePanel.style.display="";hardCheckbox.checked=stage>=4;masterBanner.textContent="DÉFI MAÎTRE — Épreuve "+stage+" : "+MASTER_NAMES[stage-1];masterBanner.classList.add("show");reset();}
 
 const PLAYER_PROFILE_NAME_KEY="jeuDesRondsPlayerNameV1";
@@ -2303,7 +2355,7 @@ function showGameEndOverlay(winner){
   if(isBotMode())didWin=winner!==botColor;
   else didWin=winner===myRole;
   registerCareerResult(winner);
-  gameEndTitle.textContent=didWin?"🏆 VOUS AVEZ GAGNÉ !":"❌ VOUS AVEZ PERDU !";
+  gameEndTitle.textContent=didWin?" VOUS AVEZ GAGNÉ !":" VOUS AVEZ PERDU !";
   gameEndTitle.className="game-end-title "+(didWin?"win":"lose");
   gameEndSubtitle.textContent=resultContextText(didWin)+` • +${xpForResult(didWin)} XP`;
   gameEndOverlay.classList.add("show");
@@ -2619,14 +2671,14 @@ function getOnlineWinrate(){
 }
 function getOnlineRank(rate,total=onlineWins+onlineLosses){
   if(total===0) return "Non classé";
-  if(total<5) return `🎯 Placement ${total}/5`;
+  if(total<5) return ` Placement ${total}/5`;
 
   if(rate < 10) return "Fer";
-  if(rate < 20) return "🥉 Bronze";
-  if(rate < 30) return "🥈 Silver";
+  if(rate < 20) return " Bronze";
+  if(rate < 30) return " Silver";
   if(rate < 40) return "Gold";
-  if(rate < 50) return "💠 Platine";
-  if(rate < 60) return "💚 Émeraude";
+  if(rate < 50) return " Platine";
+  if(rate < 60) return " Émeraude";
   if(rate < 70) return "Diamant";
   if(rate < 80) return "Maître";
   if(rate < 90) return "Grand Maître";
@@ -2658,11 +2710,11 @@ const ONLINE_RANK_ROWS=[
   ["Grand Maître","80 à 89,9 %",""],
   ["Maître","70 à 79,9 %",""],
   ["Diamant","60 à 69,9 %",""],
-  ["💚 Émeraude","50 à 59,9 %",""],
-  ["💠 Platine","40 à 49,9 %",""],
+  [" Émeraude","50 à 59,9 %",""],
+  [" Platine","40 à 49,9 %",""],
   ["Gold","30 à 39,9 %",""],
-  ["🥈 Silver","20 à 29,9 %",""],
-  ["🥉 Bronze","10 à 19,9 %",""],
+  [" Silver","20 à 29,9 %",""],
+  [" Bronze","10 à 19,9 %",""],
   ["Fer","0 à 9,9 %",""]
 ];
 function updateRankingScreen(){
@@ -2884,21 +2936,21 @@ function render(){
    const loser=lastPlayer;
    const winner=loser==="red"?"blue":"red";
    gameOver=true;selected=[];
-   R.textContent=`${loser==="red"?"🔴 Rouge":"🔵 Bleu"} a rempli le dernier rond : ${loser==="red"?"Rouge":"Bleu"} perd !`;
+   R.textContent=`${loser==="red"?" Rouge":" Bleu"} a rempli le dernier rond : ${loser==="red"?"Rouge":"Bleu"} perd !`;
    registerHardResult(winner);
    if(mode==="online") finishOnlineMatch(winner);
    showGameEndOverlay(winner);
   } else if(mayResolveTerminal && empty===1){
    const winner=player==="red"?"blue":"red";
    gameOver=true;selected=[];
-   R.textContent=`${player==="red"?"🔴 Rouge":"🔵 Bleu"} doit jouer le dernier rond : ${player==="red"?"Rouge":"Bleu"} perd !`;
+   R.textContent=`${player==="red"?" Rouge":" Bleu"} doit jouer le dernier rond : ${player==="red"?"Rouge":"Bleu"} perd !`;
    registerHardResult(winner);
    if(mode==="online") finishOnlineMatch(winner);
    showGameEndOverlay(winner);
   } else if(mode!=="online" && !thinking&&botIsTurn()&&moves().length===0){
    gameOver=true;selected=[];
    const winner=player==="red"?"blue":"red";
-   R.textContent=`${player==="red"?"🔴 Rouge":"🔵 Bleu"} n'a aucun coup légal : il perd !`;
+   R.textContent=`${player==="red"?" Rouge":" Bleu"} n'a aucun coup légal : il perd !`;
    registerHardResult(winner);
    showGameEndOverlay(winner);
   }
@@ -2928,15 +2980,15 @@ function render(){
    } else {
      const isMyTurn = player===myRole;
      const turnName=isMyTurn?playerProfileName:onlineOpponentProfileName;
-     S.innerHTML=gameOver?"Partie terminée":`Tour : <span class="${player}">${player==="red"?"🔴":"🔵"} ${turnName}</span> ${isMyTurn?"<b>(À TOI !)</b>":"(Adversaire...)"}`;
+     S.innerHTML=gameOver?"Partie terminée":`Tour : <span class="${player}">${player==="red"?"":""} ${turnName}</span> ${isMyTurn?"<b>(À TOI !)</b>":"(Adversaire...)"}`;
    }
  } else {
    if(gameOver)S.innerHTML="Partie terminée";
    else if(isBotMode()){
      const botTurnNow=player===botColor;
-     S.innerHTML=thinking?`🤖 ${botDisplayName()} réfléchit…`:`Tour : <span class="${player}">${player==="red"?"🔴":"🔵"} ${botTurnNow?botDisplayName():"Vous"}</span>`;
+     S.innerHTML=thinking?` ${botDisplayName()} réfléchit…`:`Tour : <span class="${player}">${player==="red"?"":""} ${botTurnNow?botDisplayName():"Vous"}</span>`;
    }else{
-     S.innerHTML=`Tour : <span class="${player}">${player==="red"?"🔴 Rouge":"🔵 Bleu"}</span>`;
+     S.innerHTML=`Tour : <span class="${player}">${player==="red"?" Rouge":" Bleu"}</span>`;
    }
  }
 
@@ -2971,20 +3023,20 @@ function legal(a){
 }
 
 function pick(i){
- if(previewSkin){W.textContent="👁️ Aperçu uniquement : ce skin est verrouillé.";return;}
+ if(previewSkin){W.textContent=" Aperçu uniquement : ce skin est verrouillé.";return;}
  if(gameOver||thinking||botIsTurn()||onlineIsNotMyTurn()||(mode==="online"&&myRole==="blue"&&onlinePendingActionId)||board[i])return;
  let a=selected.includes(i)?selected.filter(x=>x!==i):[...selected,i];
  if(a.length>4){W.textContent="Maximum 4 ronds.";return}
- if(!contiguous(a)){W.textContent="❌ Les ronds doivent être collés en ligne horizontale ou verticale.";return}
+ if(!contiguous(a)){W.textContent=" Les ronds doivent être collés en ligne horizontale ou verticale.";return}
  
  selected=a;
  
  const allowSameAmount = !hasOtherAmountMove();
  if(hardMode && lastAmount === a.length){
    if(allowSameAmount){
-     W.textContent=`ℹ️ Impasse détectée : tu es exceptionnellement autorisé à jouer ${a.length} rond(s) car aucune autre quantité n'est possible.`;
+     W.textContent=`ℹ Impasse détectée : tu es exceptionnellement autorisé à jouer ${a.length} rond(s) car aucune autre quantité n'est possible.`;
    } else {
-     W.textContent=`❌ En mode difficile, le coup final ne peut pas être de ${a.length} rond(s) comme au tour précédent. Ajoute d'autres ronds ou change de sélection.`;
+     W.textContent=` En mode difficile, le coup final ne peut pas être de ${a.length} rond(s) comme au tour précédent. Ajoute d'autres ronds ou change de sélection.`;
    }
  } else {
    W.textContent="";
@@ -3031,7 +3083,7 @@ function finish(){
  if(!selected.length){W.textContent="Choisis au moins 1 rond.";return}
  const allowSameAmount = !hasOtherAmountMove();
  if(hardMode && selected.length === lastAmount && !allowSameAmount){
-   W.textContent=`❌ En mode difficile, le nombre de ronds doit être différent du tour précédent (${lastAmount}).`;
+   W.textContent=` En mode difficile, le nombre de ronds doit être différent du tour précédent (${lastAmount}).`;
    return;
  }
  if(mode==="online" && onlineConnected && myRole==="blue"){
@@ -3266,7 +3318,7 @@ function sendOnlineData(data){
   // Le jeu n'a pas besoin d'attendre la réponse HTTP pour rester fluide.
   publishOnline(data).then(ok=>{
     if(!ok && mode==="online"){
-      onlineStatus.innerHTML="🟠 Envoi réseau interrompu, nouvelle tentative au prochain échange…";
+      onlineStatus.innerHTML=" Envoi réseau interrompu, nouvelle tentative au prochain échange…";
     }
   });
   return true;
@@ -3280,7 +3332,7 @@ function sendOnlineDataReliable(data){
   delays.forEach(ms=>setTimeout(()=>{
     if(mode!=="online" || !onlineTopic || !onlineClientId)return;
     publishOnline(payload).then(ok=>{
-      if(!ok && mode==="online") onlineStatus.innerHTML="🟠 Réseau instable — resynchronisation automatique…";
+      if(!ok && mode==="online") onlineStatus.innerHTML=" Réseau instable — resynchronisation automatique…";
     });
   },ms));
   return payload.packetId;
@@ -3339,7 +3391,7 @@ function handleOnlinePacket(data){
     onlineMatchCounted=false;
     onlineWinner=null;clearOnlinePending();
     onlinePendingResults.clear();onlineResultReceipts.clear();
-    onlineStatus.innerHTML="🟢 Adversaire connecté ! Partie lancée.";
+    onlineStatus.innerHTML=" Adversaire connecté ! Partie lancée.";
     publishOnline({
       type:"INIT",target:onlineOpponentId,role:"blue",player,
       profileName:playerProfileName,
@@ -3374,14 +3426,14 @@ function handleOnlinePacket(data){
       showGameEndOverlay(onlineWinner);
     }
     clearConnectionTimer();clearJoinTimers();
-    onlineStatus.innerHTML="🟢 Connecté à la partie !";
+    onlineStatus.innerHTML=" Connecté à la partie !";
     render();
     return;
   }
 
   if(data.type==="ROOM_FULL" && myRole==="guest"){
     clearConnectionTimer();clearJoinTimers();
-    onlineStatus.innerHTML="❌ Ce salon a déjà deux joueurs.";
+    onlineStatus.innerHTML=" Ce salon a déjà deux joueurs.";
     return;
   }
 
@@ -3438,7 +3490,7 @@ function handleOnlinePacket(data){
       if(acknowledged || advanced || adoptedNewMatch){
         const rejected=acknowledged && data.ackAccepted===false && !advanced;
         clearOnlinePending();
-        W.textContent=rejected?"🟠 Ce coup n'a pas été appliqué. Le plateau a été resynchronisé.":"";
+        W.textContent=rejected?" Ce coup n'a pas été appliqué. Le plateau a été resynchronisé.":"";
       }
     }
     if(typeof data.hardMode!=="undefined"){
@@ -3540,13 +3592,13 @@ function connectOnlineRelay(code,role){
         onlineLastPacketAt=now;
       }
       if(onlinePendingActionId && now-onlinePendingSince>9000){
-        clearOnlinePending();W.textContent="🟠 Réseau trop lent : état officiel récupéré. Tu peux rejouer si le coup n’est pas visible.";render();
+        clearOnlinePending();W.textContent=" Réseau trop lent : état officiel récupéré. Tu peux rejouer si le coup n’est pas visible.";render();
       }
     }
   },900);
 
   if(typeof EventSource==="undefined" || typeof fetch==="undefined"){
-    onlineStatus.innerHTML="❌ Ce navigateur ne prend pas en charge le mode en ligne.";
+    onlineStatus.innerHTML=" Ce navigateur ne prend pas en charge le mode en ligne.";
     return;
   }
 
@@ -3587,9 +3639,9 @@ function connectOnlineRelay(code,role){
   onlineSource.onerror=()=>{
     if(mode!=="online")return;
     if(!onlineConnected){
-      onlineStatus.innerHTML="🟠 Réseau 5G en reconnexion… garde la page ouverte.";
+      onlineStatus.innerHTML=" Réseau 5G en reconnexion… garde la page ouverte.";
     }else{
-      onlineStatus.innerHTML="🟠 Connexion momentanément interrompue, reconnexion automatique…";
+      onlineStatus.innerHTML=" Connexion momentanément interrompue, reconnexion automatique…";
     }
   };
 }
@@ -3610,13 +3662,13 @@ hostBtn.onclick=()=>{
 joinBtn.onclick=()=>{
   const code=joinCodeInput.value.trim().replace(/\D/g,"");
   joinCodeInput.value=code;
-  if(code.length!==4){onlineStatus.innerHTML="❌ Entre un code valide à 4 chiffres.";return;}
+  if(code.length!==4){onlineStatus.innerHTML=" Entre un code valide à 4 chiffres.";return;}
   selected=[];onlineConnected=false;
   connectOnlineRelay(code,"guest");
   clearConnectionTimer();
   connectionTimer=setTimeout(()=>{
     if(!onlineConnected){
-      onlineStatus.innerHTML="❌ Aucun adversaire trouvé. Vérifie le code et que le créateur garde sa page ouverte.";
+      onlineStatus.innerHTML=" Aucun adversaire trouvé. Vérifie le code et que le créateur garde sa page ouverte.";
     }
   },18000);
 };
@@ -3726,7 +3778,7 @@ function applySkin(skin,save=true,remotePlayable=false){
   });
   
   if(save&&!previewSkin)localStorage.setItem("jeuDesRondsSkin",skin);
-  if(previewSkin){selected=[];W.textContent="👁️ Aperçu : ce skin est verrouillé. Débloque-le pour pouvoir jouer dessus.";}else{W.textContent="";}
+  if(previewSkin){selected=[];W.textContent=" Aperçu : ce skin est verrouillé. Débloque-le pour pouvoir jouer dessus.";}else{W.textContent="";}
   render();
 }
 
@@ -3863,9 +3915,9 @@ function exportProgress(){
     saveCodeInput.value=formatSaveCode(raw);
     saveCodeInput.focus();
     saveCodeInput.select();
-    setSaveMessage("✅ Code V4 Ultimate généré et vérifié. Tu peux le copier.",true);
+    setSaveMessage(" Code V4 Ultimate généré et vérifié. Tu peux le copier.",true);
   }catch(e){
-    setSaveMessage("❌ Erreur interne pendant la génération du code.");
+    setSaveMessage(" Erreur interne pendant la génération du code.");
   }
 }
 
@@ -3873,13 +3925,13 @@ async function copyProgressCode(){
   if(!saveCodeInput.value.trim())exportProgress();
   try{
     await navigator.clipboard.writeText(saveCodeInput.value.trim());
-    setSaveMessage("✅ Code copié dans le presse-papiers.",true);
+    setSaveMessage(" Code copié dans le presse-papiers.",true);
   }catch(e){
     saveCodeInput.focus();
     saveCodeInput.select();
     try{
       document.execCommand("copy");
-      setSaveMessage("✅ Code copié.",true);
+      setSaveMessage(" Code copié.",true);
     }catch(err){
       setSaveMessage("Sélectionne le code puis copie-le manuellement.");
     }
@@ -3890,7 +3942,7 @@ function importProgress(){
   const entered=saveCodeInput.value.trim();
 
   if(!entered){
-    setSaveMessage("❌ Colle d'abord un code de sauvegarde.");
+    setSaveMessage(" Colle d'abord un code de sauvegarde.");
     return;
   }
 
@@ -3909,7 +3961,7 @@ function importProgress(){
     localStorage.setItem(ONLINE_SEASON_KEY,String(ONLINE_SEASON));
     updateOnlineStats();
     saveCodeInput.value="";
-    setSaveMessage("✅ Stats en ligne remises à zéro : Non classé • Placement 0/5.",true);
+    setSaveMessage(" Stats en ligne remises à zéro : Non classé • Placement 0/5.",true);
     return;
   }
 
@@ -3918,13 +3970,13 @@ function importProgress(){
     d=parseSaveCode(entered);
   }catch(e){
     if(e && e.message==="old-version"){
-      setSaveMessage("❌ Ancien code JDR2 détecté. Les codes JDR3 et JDR4 sont acceptés.");
+      setSaveMessage(" Ancien code JDR2 détecté. Les codes JDR3 et JDR4 sont acceptés.");
     }else if(e && e.message==="length"){
-      setSaveMessage("❌ Code incomplet : vérifie que tu l'as copié en entier.");
+      setSaveMessage(" Code incomplet : vérifie que tu l'as copié en entier.");
     }else if(e && e.message==="checksum"){
-      setSaveMessage("❌ Code modifié ou corrompu.");
+      setSaveMessage(" Code modifié ou corrompu.");
     }else{
-      setSaveMessage("❌ Code invalide.");
+      setSaveMessage(" Code invalide.");
     }
     return;
   }
@@ -3975,7 +4027,7 @@ function importProgress(){
   if(!isSkinUnlocked(activeSkin))applySkin("arcade",true);
 
   saveCodeInput.value=formatSaveCode(buildSaveCode());
-  setSaveMessage("✅ Progression restaurée avec succès.",true);
+  setSaveMessage(" Progression restaurée avec succès.",true);
 }
 
 exportSaveBtn.addEventListener("click",exportProgress);
@@ -4032,7 +4084,7 @@ shareNativeBtn?.addEventListener("click",async()=>{
   }
   try{
     await navigator.clipboard.writeText(url);
-    const old=shareNativeBtn.textContent;shareNativeBtn.textContent="Lien copié ✓";
+    const old=shareNativeBtn.textContent;shareNativeBtn.textContent="Lien copié ";
     setTimeout(()=>shareNativeBtn.textContent=old,1400);
   }catch(e){
     window.prompt("Copie ce lien :",url);
