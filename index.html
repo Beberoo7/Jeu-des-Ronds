@@ -3366,7 +3366,7 @@ function botTurn(){
 // Aucun lien direct entre téléphones : chaque appareil parle uniquement à ntfy.sh
 // en HTTPS standard. C'est beaucoup plus compatible avec les réseaux 4G/5G/CGNAT.
 const ONLINE_RELAY="https://ntfy.sh";
-const ONLINE_PREFIX="jdr-beberoo-v6";
+const ONLINE_PREFIX="jdr-beberoo-v7";
 
 function clearConnectionTimer(){
   if(connectionTimer){clearTimeout(connectionTimer);connectionTimer=null;}
@@ -3413,7 +3413,7 @@ function destroyOnlineConnection(){
 
 async function publishOnline(data){
   if(!onlineTopic || !onlineClientId)return false;
-  const packet={...data,sender:onlineClientId,ts:Date.now()};
+  const packet={...data,packetId:data.packetId||createOnlineActionId("net"),sender:onlineClientId,ts:Date.now()};
   try{
     const r=await fetch(ONLINE_RELAY+"/",{
       method:"POST",
@@ -3440,7 +3440,7 @@ function sendOnlineDataReliable(data){
   // Chaque action logique garde le même packetId pendant toutes ses tentatives.
   // Ainsi un paquet reçu 2 ou 3 fois ne peut jamais être exécuté 2 ou 3 fois.
   const payload={...data,packetId:data.packetId||createOnlineActionId("pkt")};
-  const delays=[0,260,850,1800];
+  const delays=[0,950];
   delays.forEach(ms=>setTimeout(()=>{
     if(mode!=="online" || !onlineTopic || !onlineClientId)return;
     publishOnline(payload).then(ok=>{
@@ -3450,14 +3450,16 @@ function sendOnlineDataReliable(data){
   return payload.packetId;
 }
 
-function sendAuthoritativeState(target=null,ackActionId=null,ackAccepted=null){
+function sendAuthoritativeState(target=null,ackActionId=null,ackAccepted=null,reliable=true){
   if(mode!=="online" || !onlineConnected || myRole!=="red")return;
   onlineLastStateSentAt=Date.now();
-  sendOnlineDataReliable({
+  const payload={
     type:"STATE",target:target||undefined,matchId:onlineMatchId,seq:onlineTurnSeq,
     board:board.slice(),player,lastAmount,lastPlayer,hardMode,skin:activeSkin,resetAt:onlineResetAt,
     gameOver:!!gameOver,winner:onlineWinner||undefined,ackActionId:ackActionId||undefined,ackAccepted:ackAccepted===null?undefined:!!ackAccepted
-  });
+  };
+  if(reliable) sendOnlineDataReliable(payload);
+  else publishOnline({...payload,packetId:createOnlineActionId("hb")});
 }
 
 function scheduleGuestJoin(){
@@ -3466,7 +3468,7 @@ function scheduleGuestJoin(){
     if(!onlineConnected && myRole==="guest")publishOnline({type:"JOIN",profileName:playerProfileName});
   };
   send();
-  [700,1600,3000,5000,8000,12000].forEach(ms=>onlineJoinTimers.push(setTimeout(send,ms)));
+  [1000,2500,5000,9000,14000].forEach(ms=>onlineJoinTimers.push(setTimeout(send,ms)));
 }
 
 function validOnlineMove(move){
@@ -3489,7 +3491,18 @@ function handleOnlinePacket(data){
   // L'hôte accepte le premier adversaire qui rejoint ce code.
   if(data.type==="JOIN" && (myRole==="host" || myRole==="red")){
     if(onlineOpponentId && onlineOpponentId!==data.sender){
-      publishOnline({type:"ROOM_FULL",target:data.sender});
+      publishOnline({type:"ROOM_FULL",target:data.sender,packetId:createOnlineActionId("full")});
+      return;
+    }
+    // Un même invité peut renvoyer JOIN tant qu'il n'a pas reçu INIT.
+    // Surtout ne pas recréer une nouvelle partie à chaque doublon : on renvoie l'état existant.
+    if(onlineConnected && onlineOpponentId===data.sender && myRole==="red"){
+      sendOnlineDataReliable({
+        type:"INIT",target:data.sender,role:"blue",player,profileName:playerProfileName,
+        hardMode,skin:activeSkin,matchId:onlineMatchId,board:board.slice(),
+        lastAmount,lastPlayer,seq:onlineTurnSeq,resetAt:onlineResetAt,
+        gameOver:!!gameOver,winner:onlineWinner||undefined
+      });
       return;
     }
     onlineOpponentId=data.sender;
@@ -3504,10 +3517,10 @@ function handleOnlinePacket(data){
     onlineWinner=null;clearOnlinePending();
     onlinePendingResults.clear();onlineResultReceipts.clear();
     onlineStatus.innerHTML=" Adversaire connecté ! Partie lancée.";
-    publishOnline({
+    sendOnlineDataReliable({
       type:"INIT",target:onlineOpponentId,role:"blue",player,
       profileName:playerProfileName,
-      hardMode,skin:activeSkin,matchId:onlineMatchId,board,
+      hardMode,skin:activeSkin,matchId:onlineMatchId,board:board.slice(),
       lastAmount,lastPlayer,seq:onlineTurnSeq,resetAt:onlineResetAt,
       gameOver:!!gameOver,winner:onlineWinner||undefined
     });
@@ -3698,7 +3711,7 @@ function connectOnlineRelay(code,role){
     const now=Date.now();
     if(myRole==="red"){
       // Heartbeat autoritaire : même sans coup, le bleu reçoit régulièrement la vérité du match.
-      if(now-onlineLastStateSentAt>2400)sendAuthoritativeState();
+      if(now-onlineLastStateSentAt>8000)sendAuthoritativeState(null,null,null,false);
       // Un résultat n'est considéré distribué qu'après accusé de réception du bleu.
       // Cela continue même si une nouvelle manche a déjà commencé.
       for(const matchId of onlinePendingResults.keys())sendQueuedOnlineResult(matchId,false);
@@ -3706,11 +3719,11 @@ function connectOnlineRelay(code,role){
     }
     if(myRole==="blue"){
       // Si un coup attend trop longtemps ou si le flux devient silencieux, on redemande l'état officiel.
-      if((onlinePendingActionId && now-onlinePendingSince>1400) || now-onlineLastPacketAt>4200){
+      if((onlinePendingActionId && now-onlinePendingSince>2500) || now-onlineLastPacketAt>10000){
         sendOnlineDataReliable({type:"STATE_REQUEST",matchId:onlineMatchId,seq:onlineTurnSeq,actionId:onlinePendingActionId||undefined});
         onlineLastPacketAt=now;
       }
-      if(onlinePendingActionId && now-onlinePendingSince>9000){
+      if(onlinePendingActionId && now-onlinePendingSince>12000){
         clearOnlinePending();W.textContent=" Réseau trop lent : état officiel récupéré. Tu peux rejouer si le coup n’est pas visible.";render();
       }
     }
@@ -3758,7 +3771,7 @@ function connectOnlineRelay(code,role){
   onlineSource.onerror=()=>{
     if(mode!=="online")return;
     if(!onlineConnected){
-      onlineStatus.innerHTML=" Réseau 5G en reconnexion… garde la page ouverte.";
+      onlineStatus.innerHTML=" Connexion au relais interrompue — reconnexion automatique…";
     }else{
       onlineStatus.innerHTML=" Connexion momentanément interrompue, reconnexion automatique…";
     }
