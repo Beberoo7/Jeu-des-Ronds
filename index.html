@@ -1882,6 +1882,111 @@ body.skin-void .board:after,
   border:1px solid currentColor;border-radius:6px;font-size:10px !important;font-weight:900;letter-spacing:.05em;
 }
 
+
+/* === CALIBRAGE SURBRILLANCE DE SÉLECTION — 2026-09-08 ===
+   Sélection volontairement discrète et adaptée à chaque skin.
+   Aucun changement de logique : uniquement l'affichage des cases sélectionnées. */
+
+/* Base / Arcade : fin liseré violet, presque sans halo */
+.cell.selected-cell{
+  border-color:#9a86ff !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(220,214,255,.82),
+    0 0 0 1px rgba(122,98,255,.30),
+    0 0 9px rgba(118,92,255,.26) !important;
+  transform:translateY(-1px) scale(1.006) !important;
+}
+
+/* Papier : marque sombre façon trait de crayon, sans lumière artificielle */
+body.skin-paper .cell.selected-cell{
+  border-color:#2f2a25 !important;
+  box-shadow:
+    inset 0 0 0 2px rgba(47,42,37,.30),
+    2px 3px 0 rgba(47,42,37,.16) !important;
+  transform:rotate(0deg) scale(1.006) !important;
+}
+
+/* Bois / Compétition : ivoire chaud, très léger */
+body.skin-competition .cell.selected-cell{
+  border-color:#ead7b8 !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(234,215,184,.42),
+    0 0 7px rgba(201,171,126,.22) !important;
+  transform:scale(1.006) !important;
+}
+
+/* Or : violet royal pour contraster avec les pions et le plateau dorés */
+body.skin-gold .cell.selected-cell{
+  border-color:#b99cff !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(222,210,255,.78),
+    0 0 0 1px rgba(129,92,246,.34),
+    0 0 9px rgba(129,92,246,.28) !important;
+  transform:translateY(-1px) scale(1.006) !important;
+}
+
+/* Diamant : violet froid, distinct du cyan du skin */
+body.skin-diamond .cell.selected-cell{
+  border-color:#c59cff !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(236,221,255,.75),
+    0 0 8px rgba(170,105,255,.25) !important;
+  transform:translateY(-1px) scale(1.006) !important;
+}
+
+/* Voilacté : rose-violet discret, différent du bleu cosmique */
+body.skin-void .cell.selected-cell{
+  border-color:#dc8dff !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(245,214,255,.68),
+    0 0 8px rgba(210,105,255,.26) !important;
+  transform:translateY(-1px) scale(1.006) !important;
+}
+
+/* Échec : liseré ambre fin lisible sur cases blanches comme noires */
+body.skin-chess .cell.selected-cell{
+  border:0 !important;
+  box-shadow:
+    inset 0 0 0 3px rgba(255,184,77,.92),
+    inset 0 0 0 5px rgba(35,25,10,.35) !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+/* Divin : cyan froid pour ne pas se confondre avec l'or/violet du thème */
+body.skin-divine .cell.selected-cell{
+  border-color:#79e8ff !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(215,250,255,.70),
+    0 0 8px rgba(88,220,255,.25) !important;
+  transform:translateY(-1px) scale(1.006) !important;
+}
+
+/* Spirit Blossom : contour prune foncé, sans voile blanc ni gros halo.
+   C'est volontairement plus sombre afin de rester visible sur le verre très clair. */
+body.skin-crystal .cell.selected-cell{
+  border-color:#7a3da0 !important;
+  box-shadow:
+    inset 0 0 0 2px rgba(104,48,139,.50),
+    0 0 0 1px rgba(255,255,255,.52),
+    0 0 7px rgba(106,55,142,.18) !important;
+  transform:translateY(-1px) scale(1.004) !important;
+}
+
+/* Sur tactile, pas d'effet de survol qui vienne renforcer la sélection. */
+@media (hover:none){
+  .cell.selected-cell:hover{
+    transform:translateY(-1px) scale(1.006) !important;
+  }
+  body.skin-chess .cell.selected-cell:hover{
+    transform:none !important;
+    filter:none !important;
+  }
+  body.skin-crystal .cell.selected-cell:hover{
+    transform:translateY(-1px) scale(1.004) !important;
+  }
+}
+
 </style>
 </head>
 <body>
