@@ -6092,6 +6092,10 @@ banSmall=function(){
     res(BANPHOTO_SMALL)};im.onerror=()=>res("");im.src=BANPHOTO});
 };
 
+/* ---------- Nouvelle partie : on efface la mise en scène de la fin précédente ---------- */
+{const _rs=reset;reset=function(){try{clearFinale()}catch(e){}return _rs.apply(this,arguments)}}
+{const _sm=setMode;setMode=function(){try{clearFinale()}catch(e){}return _sm.apply(this,arguments)}}
+
 updateHardStats();
 checkCrystalSeasonUnlock();
 updateOnlineStats();
