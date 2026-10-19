@@ -1148,7 +1148,10 @@ body.skin-chess .pawn.blue .pi,.sv-chess i.b::after{background:
 @keyframes maPulse{50%{box-shadow:0 6px 18px #0005,0 0 0 7px color-mix(in srgb,var(--accent) 18%,transparent)}}
 
 
+
 /* ===== UI v4 START ===== */
+.poster-tip{margin:10px 6px 0;text-align:center;font-size:12.5px;line-height:1.35;color:var(--muted)}
+#posterImg{-webkit-touch-callout:default;user-select:auto}
 /* ---- badge Provisoire ---- */
 .prov-badge{display:inline-block;vertical-align:middle;font:700 9.5px/1 var(--sc,"Outfit");letter-spacing:.16em;text-transform:uppercase;
   padding:4px 8px 3px;border-radius:999px;background:linear-gradient(180deg,var(--accent2),var(--accent));color:var(--accent-ink);box-shadow:0 2px 6px #0004}
@@ -1697,7 +1700,7 @@ body.skin-challenger.ch-photo::after{opacity:.35}
 </div>
 <div class="poster-modal" id="posterModal" hidden>
   <div class="poster-box"><img id="posterImg" alt="Affiche de victoire"><div class="poster-wait">Préparation de l'affiche…</div>
-    <div class="poster-actions"><button class="primary" id="posterShare" type="button">Partager</button><button class="secondary" id="posterClose" type="button">Fermer</button></div></div>
+    <div class="poster-actions"><button class="primary" id="posterShare" type="button">Partager</button><button class="secondary" id="posterClose" type="button">Fermer</button></div><p class="poster-tip">Snapchat, Instagram : touche « Partager » et choisis l'appli, ou appuie longuement sur l'image pour l'enregistrer dans tes photos.</p></div>
 </div>
 <!-- ============ ACCUEIL ============ -->
 <section id="scrHome">
@@ -4717,13 +4720,15 @@ async function openPoster(){
   modal.hidden=false;img.removeAttribute("src");modal.classList.add("loading");
   const c=await makePoster(posterInfo);
   const blob=await new Promise(r=>c.toBlob(r,"image/png"));
-  modal._blob=blob;img.src=URL.createObjectURL(blob);modal.classList.remove("loading");
+  modal._blob=blob;modal._canvas=c;img.src=URL.createObjectURL(blob);modal.classList.remove("loading");
 }
 async function sharePoster(){
   const modal=$id("posterModal"),blob=modal._blob;if(!blob)return;
-  const file=new File([blob],"jeu-des-ronds.png",{type:"image/png"});
+  // Snapchat, Instagram… n'acceptent bien qu'une image seule : pas de texte joint, et un JPEG léger.
+  let jpg=null;try{if(modal._canvas)jpg=await new Promise(r=>modal._canvas.toBlob(r,"image/jpeg",.9))}catch(e){}
+  const file=jpg?new File([jpg],"jeu-des-ronds.jpg",{type:"image/jpeg"}):new File([blob],"jeu-des-ronds.png",{type:"image/png"});
   if(navigator.canShare&&navigator.canShare({files:[file]})){
-    try{await navigator.share({files:[file],text:"Le Jeu des Ronds"});return}catch(e){if(e&&e.name==="AbortError")return}
+    try{await navigator.share({files:[file]});return}catch(e){if(e&&e.name==="AbortError")return}
   }
   const a=document.createElement("a");a.href=$id("posterImg").src;a.download="jeu-des-ronds.png";document.body.appendChild(a);a.click();a.remove();
 }
@@ -4956,7 +4961,7 @@ let BANPHOTO_SMALL="";
 function banSmall(){
   if(!BANPHOTO)return Promise.resolve("");if(BANPHOTO_SMALL)return Promise.resolve(BANPHOTO_SMALL);
   return new Promise(res=>{const im=new Image();im.onload=()=>{const c=document.createElement("canvas");
-    for(const [w,q] of [[220,.62],[200,.55],[170,.5],[150,.45],[130,.4],[110,.35]]){c.width=w;c.height=w/2;c.getContext("2d").drawImage(im,0,0,w,w/2);const d=c.toDataURL("image/jpeg",q);if(d.length<2900){BANPHOTO_SMALL=d;break}}
+    for(const [w,q] of [[200,.5],[180,.46],[160,.42],[140,.4],[120,.38],[100,.34],[80,.3]]){c.width=w;c.height=w/2;c.getContext("2d").drawImage(im,0,0,w,w/2);const d=c.toDataURL("image/jpeg",q);if(d.length<1700){BANPHOTO_SMALL=d;break}}
     res(BANPHOTO_SMALL)};im.onerror=()=>res("");im.src=BANPHOTO});
 }
 function loadBannerFile(file){
@@ -5284,7 +5289,7 @@ async function shareCard(){
   const modal=$id("posterModal"),img=$id("posterImg");
   modal.hidden=false;img.removeAttribute("src");modal.classList.add("loading","card4x5");
   const c=await makeCard();const blob=await new Promise(r=>c.toBlob(r,"image/png"));
-  modal._blob=blob;img.src=URL.createObjectURL(blob);modal.classList.remove("loading");
+  modal._blob=blob;modal._canvas=c;img.src=URL.createObjectURL(blob);modal.classList.remove("loading");
 }
 $id("posterClose").addEventListener("click",()=>$id("posterModal").classList.remove("card4x5"));
 $id("gameEndShare").addEventListener("click",()=>$id("posterModal").classList.remove("card4x5"));
